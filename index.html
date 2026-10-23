@@ -1359,10 +1359,11 @@ async function requestReply() {
   renderMessages(true);
   const t0 = performance.now();
   try {
-    const { reply, sources: apiSources } = await callBackend(model);
+    const { reply, sources: rawSources, searched } = await callBackend(model);
+    const apiSources = searched ? rawSources : [];
     const latency = Math.round(performance.now() - t0);
     const { data, error } = await sb.from("messages")
-      .insert({ conversation_id: currentId, user_id: user.id, role: "assistant", content: reply, model: model.id, metadata: { latency_ms: latency, ...(apiSources.length ? { sources: apiSources } : {}) } })
+      .insert({ conversation_id: currentId, user_id: user.id, role: "assistant", content: reply, model: model.id, metadata: { latency_ms: latency, searched, ...(apiSources.length ? { sources: apiSources } : {}) } })
       .select("id,role,content,model,created_at,metadata").single();
     if (error) throw error;
     messages.push(data);
@@ -1395,7 +1396,13 @@ function extractApiSources(d) {
     .slice(0, 10).map(x => ({ url: x.url, title: x.title ? String(x.title).slice(0, 160) : "" }));
 }
 
+/* ¿El usuario pidió buscar/consultar fuentes? (saludos y charla normal → no se muestran fuentes) */
+const SEARCH_RE = /\b(busca\w*|busque\w*|busqueda\w*|investiga\w*|averigua\w*|googlea\w*|wikipedia|wiki|internet|en la web|en la red|noticias?|ultimas?|actualidad|ahora mismo|hoy en dia|precio|cotizacion|fuentes?|enlaces?|links?|referencias?)\b/;
+const wantsSearch = t => SEARCH_RE.test(String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
 function splitSources(m) {
+  // Respuesta que no usó búsqueda: se deja el texto tal cual y no se muestra el botón de fuentes
+  if (m.metadata && m.metadata.searched === false) return { text: String(m.content).trim(), sources: [] };
   const found = [];
   const add = (url, title) => {
     url = String(url || "").replace(/[).,;:]+$/, "");
@@ -1509,7 +1516,8 @@ async function callBackend(model) {
   const data = await res.json().catch(() => null);
   const reply = extractReply(data);
   if (!reply) { const e = new Error("empty"); e.userMessage = `${model.name} devolvió una respuesta vacía.`; throw e; }
-  return { reply, sources: extractApiSources(data) };
+  const flag = data && [data.searched, data.used_search, data.web_search, data.search_used, data.did_search, data.used_web_search].find(v => typeof v === "boolean");
+  return { reply, sources: extractApiSources(data), searched: typeof flag === "boolean" ? flag : wantsSearch(last.content) };
 }
 
 /* Acepta los formatos de respuesta más habituales */
