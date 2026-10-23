@@ -548,6 +548,10 @@
    CONFIGURACIÓN — edita solo este bloque
    ===================================================================== */
 const CONFIG = {
+  // true = el código lo envía tu Send SMS Hook (WhatsApp, etc.): no se manda "channel" a Supabase.
+  // false = Supabase envía por Twilio / Twilio Verify y se puede elegir WhatsApp o SMS.
+  PHONE_VIA_HOOK: true,
+
   // Supabase > Project Settings > API
   SUPABASE_URL: "https://tbhcgenucgiwnqgfizud.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaGNnZW51Y2dpd25xZ2ZpenVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NjQ4MTcsImV4cCI6MjEwODM0MDgxN30.lZi4abjNo7i0nJVntl7owNjzHNeKFVkywwBthjGlvmI",          // la clave "anon / public". NUNCA pongas aquí la service_role.
@@ -993,7 +997,7 @@ $("#otp-resend").onclick = async () => {
   if (!sb || !pending) return;
   showNotice();
   const { error } = pending.kind === "phone"
-    ? await sb.auth.signInWithOtp({ phone: pending.value, options: { channel: pending.channel } })
+    ? await sb.auth.signInWithOtp(otpOptions(pending.value, pending.channel))
     : await sb.auth.resend({ type: "signup", email: pending.value });
   if (error) return showNotice(authError(error));
   showNotice("Te hemos enviado un nuevo código.", "ok");
@@ -1011,6 +1015,11 @@ function normalizePhone(raw) {
   return /^\+[1-9]\d{7,14}$/.test(v) ? v : null;
 }
 
+// Con Send SMS Hook, Supabase solo entrega el código a tu hook; el canal lo decide el hook.
+function otpOptions(phone, channel) {
+  return CONFIG.PHONE_VIA_HOOK ? { phone } : { phone, options: { channel } };
+}
+
 async function sendPhoneCode(channel) {
   if (!sb) return;
   const phone = normalizePhone($("#phone-number").value);
@@ -1019,16 +1028,21 @@ async function sendPhoneCode(channel) {
   btns.forEach(b => b.disabled = true); showNotice();
   try {
     // Sin "channel" Supabase envía SMS; para WhatsApp hay que indicarlo (requiere Twilio / Twilio Verify)
-    const { error } = await sb.auth.signInWithOtp({ phone, options: { channel } });
+    const { error } = await sb.auth.signInWithOtp(otpOptions(phone, channel));
     if (error) throw error;
     showOtpStep("phone", phone, channel);
   } catch (err) {
-    const m = (err && err.message || "").toLowerCase();
-    showNotice(m.includes("provider") || m.includes("unsupported") || m.includes("disabled")
-      ? "El acceso con teléfono no está activado en Supabase."
-      : channel === "whatsapp" && (m.includes("whatsapp") || m.includes("sending") || m.includes("sms"))
-        ? "No se pudo enviar por WhatsApp. Prueba a recibirlo por SMS."
-        : authError(err));
+    console.error("[teléfono] signInWithOtp:", err);
+    const raw = (err && (err.message || err.error_description) || "").trim();
+    const m = raw.toLowerCase();
+    const hint = CONFIG.PHONE_VIA_HOOK && (m.includes("hook") || m.includes("sending") || m.includes("sms") || m.includes("500") || m.includes("unexpected"))
+      ? "Tu Send SMS Hook ha fallado al enviar el código. Revisa sus logs en Supabase (Logs → Auth / Edge Functions)."
+      : m.includes("provider") || m.includes("unsupported") || m.includes("disabled")
+      ? "El acceso con teléfono no está activado en Supabase (Authentication → Providers → Phone)."
+      : channel === "whatsapp" && (m.includes("whatsapp") || m.includes("sending") || m.includes("sms") || m.includes("twilio") || m.includes("channel"))
+        ? "No se pudo enviar por WhatsApp. Revisa Twilio en Supabase o prueba por SMS."
+        : authError(err);
+    showNotice(raw && !hint.includes(raw) ? `${hint} (Detalle: ${raw})` : hint);
   } finally {
     btns.forEach(b => b.disabled = false);
   }
@@ -1037,6 +1051,7 @@ $("#btn-phone").onclick = () => showPanel("phone");
 $("#phone-back").onclick = () => showPanel("main");
 $("#phone-form").addEventListener("submit", e => { e.preventDefault(); sendPhoneCode("whatsapp"); });
 $("#phone-sms").onclick = () => sendPhoneCode("sms");
+$("#phone-sms").hidden = !!CONFIG.PHONE_VIA_HOOK;   // con hook no hay alternativa por SMS
 
 async function logout() {
   closePopover();
