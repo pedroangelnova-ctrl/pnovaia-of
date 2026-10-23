@@ -84,6 +84,8 @@
   .btn-google:hover:not(:disabled) { background: var(--hover); }
   .btn-google:disabled { opacity: .55; cursor: default; }
   .btn-google svg { width: 18px; height: 18px; flex: none; }
+  .btn-google + .btn-google { margin-top: 10px; }
+  .hint { margin: -4px 2px 12px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
   .legal-note { margin: 16px 0 0; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
   .legal-note a { color: var(--muted); text-decoration: underline; }
   .otp-input { text-align: center; font-size: 26px; letter-spacing: .45em; padding-left: .45em !important; font-variant-numeric: tabular-nums; }
@@ -172,9 +174,51 @@
   .content code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .88em; background: var(--code-bg); padding: 2px 6px; border-radius: 6px; }
   .content pre { margin: 0 0 14px; background: var(--code-bg); border-radius: 14px; padding: 14px 16px; overflow-x: auto; }
   .content pre code { background: none; padding: 0; font-size: 14px; line-height: 1.55; }
+  .content > *:first-child { margin-top: 0; }
+  .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 { margin: 22px 0 8px; line-height: 1.35; font-weight: 600; }
+  .content h1 { font-size: 1.4em; } .content h2 { font-size: 1.25em; } .content h3 { font-size: 1.12em; } .content h4, .content h5, .content h6 { font-size: 1em; }
+  .content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .content blockquote { margin: 0 0 14px; padding: 2px 16px; border-left: 3px solid var(--border); color: var(--muted); }
+  .content hr { border: 0; border-top: 1px solid var(--border); margin: 20px 0; }
+  .content ul ul, .content ul ol, .content ol ul, .content ol ol { margin: 4px 0; }
+  .content .tbl { margin: 0 0 14px; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  .content table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.5; }
+  .content th, .content td { padding: 9px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+  .content tr:last-child td { border-bottom: 0; }
+  .content th { background: var(--code-bg); font-weight: 600; white-space: nowrap; }
+  .content td + td, .content th + th { border-left: 1px solid var(--border); }
   .msg-actions { display: flex; gap: 2px; margin-top: 6px; margin-left: -8px; }
   .msg-actions .icon-btn { width: 32px; height: 32px; }
   .msg-actions .i { width: 18px; height: 18px; }
+  .msg.assistant.live .msg-actions { visibility: hidden; }
+  .msg.assistant.live .content > *:last-child::after { content: ""; display: inline-block; width: 9px; height: 9px; margin-left: 5px; border-radius: 50%; background: var(--text); vertical-align: middle; animation: blink 1s infinite ease-in-out; }
+  .src-row { margin-top: 12px; }
+  .msg.assistant.live .src-row { display: none; }
+  .src-chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 6px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; color: var(--text); background: var(--bg); }
+  .src-chip:hover { background: var(--hover); }
+  .src-stack { display: inline-flex; }
+  .src-stack .fav + .fav { margin-left: -8px; }
+  .fav { position: relative; flex: none; width: 22px; height: 22px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--hover); border: 2px solid var(--bg); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .fav::before { content: attr(data-l); }
+  .fav img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #fff; }
+  .fav.sm { width: 28px; height: 28px; border: 1px solid var(--border); }
+  #src-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .3); }
+  #src-panel { position: fixed; z-index: 61; top: 0; right: 0; bottom: 0; width: min(400px, 100%); background: var(--bg); border-left: 1px solid var(--border); box-shadow: var(--shadow); display: flex; flex-direction: column; animation: src-in .22s ease-out; }
+  #src-panel[hidden], #src-overlay[hidden] { display: none; }
+  .src-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 10px 20px; border-bottom: 1px solid var(--border); }
+  .src-head h3 { margin: 0; font-size: 17px; }
+  #src-list { overflow-y: auto; padding: 8px; }
+  .src-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px; color: var(--text); text-decoration: none; }
+  .src-item:hover { background: var(--hover); }
+  .src-item .fav { margin-top: 2px; }
+  .src-item .src-host { display: block; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .src-item .src-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500; margin-top: 2px; overflow-wrap: anywhere; }
+  .src-item .src-body { min-width: 0; }
+  @keyframes src-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @media (max-width: 720px) {
+    #src-panel { top: auto; left: 0; width: 100%; max-height: 72vh; border-left: 0; border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; animation-name: src-up; }
+    @keyframes src-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+  }
   .typing { display: inline-flex; gap: 5px; padding: 8px 0; }
   .typing i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); opacity: .5; animation: blink 1.1s infinite ease-in-out; }
   .typing i:nth-child(2) { animation-delay: .15s; }
@@ -250,7 +294,21 @@
         <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
         Continuar con Google
       </button>
+      <button class="btn-google" id="btn-phone" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Continuar con teléfono
+      </button>
     </div>
+    <form id="phone-form" novalidate hidden>
+      <label class="field">
+        <span>Número de teléfono</span>
+        <input id="phone-number" type="tel" inputmode="tel" autocomplete="tel" placeholder="+34 612 345 678" required>
+      </label>
+      <p class="hint">Con prefijo internacional. Si escribes un móvil español de 9 cifras, añadiremos +34. Si no tienes cuenta, se crea al verificar el código.</p>
+      <button class="btn-primary" id="phone-submit" type="submit">Recibir código por WhatsApp</button>
+      <button class="link-btn" id="phone-sms" type="button">Recibir por SMS</button>
+      <button class="link-btn" id="phone-back" type="button">Volver</button>
+    </form>
     <form id="otp-form" novalidate hidden>
       <label class="field">
         <span>Código de verificación</span>
@@ -259,6 +317,14 @@
       <button class="btn-primary" id="otp-submit" type="submit">Verificar correo</button>
       <button class="link-btn" id="otp-resend" type="button">Reenviar código</button>
       <button class="link-btn" id="otp-back" type="button">Cambiar correo</button>
+    </form>
+    <form id="name-form" novalidate hidden>
+      <label class="field">
+        <span>Tu nombre</span>
+        <input id="phone-name" type="text" autocomplete="name" maxlength="60" placeholder="Por ejemplo, Pedro" required>
+      </label>
+      <button class="btn-primary" id="name-submit" type="submit">Continuar</button>
+      <button class="link-btn" id="name-cancel" type="button">Cancelar</button>
     </form>
     <p class="legal-note" id="legal-note">Al continuar aceptas las <a href="/condiciones-del-servicio" target="_blank" rel="noopener">Condiciones del servicio</a> y la <a href="/politica-de-privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</p>
     <div id="auth-notice" class="notice" role="status" hidden></div>
@@ -319,6 +385,12 @@
     </div>
   </main>
 </div>
+
+<div id="src-overlay" hidden></div>
+<aside id="src-panel" role="dialog" aria-label="Fuentes" hidden>
+  <div class="src-head"><h3>Fuentes</h3><button class="icon-btn" id="src-close" type="button" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  <div id="src-list"></div>
+</aside>
 
 <div id="toast" role="alert" hidden></div>
 
@@ -389,26 +461,151 @@ function toast(msg) {
   toastTimer = setTimeout(() => { t.hidden = true; }, 4000);
 }
 
-/* Markdown mínimo y seguro: bloques de código, `código`, **negrita** y listas */
+/* Markdown seguro (sin librerías): todo el texto se escapa antes de generar HTML.
+   Soporta: bloques de código, tablas (GFM), títulos, listas anidadas, citas, separadores,
+   negrita, cursiva, tachado, `código`, enlaces http(s) y escapes con barra invertida. */
 function renderMd(src) {
-  return String(src).split("```").map((part, i) => {
+  return String(src).replace(/\r\n?/g, "\n").split("```").map((part, i) => {
     if (i % 2 === 1) {
       const nl = part.indexOf("\n");
       const code = nl > -1 ? part.slice(nl + 1) : part;
       return `<pre><code>${esc(code.replace(/\n$/, ""))}</code></pre>`;
     }
-    return part.split(/\n{2,}/).map(block => {
-      block = block.trim();
-      if (!block) return "";
-      const lines = block.split("\n");
-      const inline = t => esc(t).replace(/`([^`\n]+)`/g, "<code>$1</code>").replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
-      if (lines.every(l => /^\s*[-*]\s+/.test(l)))
-        return "<ul>" + lines.map(l => `<li>${inline(l.replace(/^\s*[-*]\s+/, ""))}</li>`).join("") + "</ul>";
-      if (lines.every(l => /^\s*\d+[.)]\s+/.test(l)))
-        return "<ol>" + lines.map(l => `<li>${inline(l.replace(/^\s*\d+[.)]\s+/, ""))}</li>`).join("") + "</ol>";
-      return `<p>${lines.map(inline).join("<br>")}</p>`;
-    }).join("");
+    return mdBlocks(part);
   }).join("");
+}
+
+function mdInline(t) {
+  const stash = [];
+  const keep = h => "\u0000" + (stash.push(h) - 1) + "\u0000";
+  t = String(t).replace(/`([^`\n]+)`/g, (_, c) => keep("<code>" + esc(c) + "</code>"));
+  // \* \_ \| \. \( … → el carácter literal, sin barra y sin que se interprete como Markdown
+  t = t.replace(/\\([\\`*_{}\[\]()#+\-.!|~>])/g, (_, c) => keep(esc(c)));
+  t = esc(t)
+    .replace(/&lt;br\s*\/?&gt;/gi, "<br>")
+    .replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, txt, u) =>
+      `<a href="${u.replace(/"/g, "%22")}" target="_blank" rel="noopener noreferrer">${txt}</a>`)
+    .replace(/\*\*([^*\n]+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^\w])__([^_\n]+?)__(?!\w)/g, "$1<strong>$2</strong>")
+    .replace(/~~([^~\n]+?)~~/g, "<del>$1</del>")
+    .replace(/(^|[^*\w])\*([^*\s][^*\n]*?)\*(?![*\w])/g, "$1<em>$2</em>")
+    .replace(/(^|[^_\w])_([^_\s][^_\n]*?)_(?![_\w])/g, "$1<em>$2</em>")
+    .replace(/\n/g, "<br>");
+  return t.replace(/\u0000(\d+)\u0000/g, (_, n) => stash[+n]);
+}
+
+/* Algunos modelos escapan las barras de las tablas: \| Col \| Col \|  → | Col | Col |
+   Solo se repara cuando la fila usa \| como separador (empieza o acaba con \|, o es la fila ---). */
+function fixEscapedRow(l) {
+  if (!l.includes("\\|")) return l;
+  const looksEscaped = /^\s*\\\|/.test(l) || /\\\|\s*$/.test(l) || /^\s*:?-{2,}:?(\s*\\?\|\s*:?-{2,}:?)+\s*\\?\|?\s*$/.test(l);
+  return looksEscaped ? l.replace(/\\\|/g, "|") : l;
+}
+
+function mdSplitRow(l) {
+  l = l.trim();
+  const cells = []; let cur = "";
+  for (let k = 0; k < l.length; k++) {
+    const c = l[k];
+    if (c === "\\" && l[k + 1] === "|") { cur += "|"; k++; }
+    else if (c === "|") { cells.push(cur); cur = ""; }
+    else cur += c;
+  }
+  cells.push(cur);
+  if (cells.length && cells[0].trim() === "") cells.shift();
+  if (cells.length && cells[cells.length - 1].trim() === "") cells.pop();
+  return cells.map(c => c.trim());
+}
+
+const MD_SEP = l => l.includes("|") && l.includes("-") && /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/.test(l);
+const MD_LI = /^(\s*)([-*+•]|\d+[.)])\s+(.*)$/;
+const MD_HEAD = /^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$/;
+const MD_HR = /^\s{0,3}([-*_])(\s*\1){2,}\s*$/;
+
+function mdList(items, pos, lvl) {
+  const ord = items[pos].ord;
+  const start = ord && items[pos].num !== 1 ? ` start="${items[pos].num}"` : "";
+  let html = ord ? `<ol${start}>` : "<ul>";
+  while (pos < items.length && items[pos].lvl >= lvl) {
+    if (items[pos].lvl === lvl && items[pos].ord !== ord) break;
+    html += "<li>" + mdInline(items[pos].txt);
+    pos++;
+    if (pos < items.length && items[pos].lvl > lvl) {
+      const r = mdList(items, pos, items[pos].lvl);
+      html += r[0]; pos = r[1];
+    }
+    html += "</li>";
+  }
+  return [html + (ord ? "</ol>" : "</ul>"), pos];
+}
+
+function mdBlocks(text) {
+  // Si el servidor entregó "\n" literales en vez de saltos de línea reales
+  if (!text.includes("\n") && text.includes("\\n")) text = text.replace(/\\n/g, "\n");
+  const lines = text.split("\n").map(fixEscapedRow);
+  const out = [];
+  const startsBlock = (l, nxt) => !l.trim() || MD_HEAD.test(l) || MD_HR.test(l) || MD_LI.test(l) || /^\s*>/.test(l)
+    || (l.includes("|") && nxt !== undefined && MD_SEP(nxt));
+  let i = 0;
+  while (i < lines.length) {
+    const l = lines[i];
+    if (!l.trim()) { i++; continue; }
+
+    let m = l.match(MD_HEAD);
+    if (m) { out.push(`<h${m[1].length}>${mdInline(m[2])}</h${m[1].length}>`); i++; continue; }
+
+    if (MD_HR.test(l) && !l.includes("|")) { out.push("<hr>"); i++; continue; }
+
+    // tabla: fila de cabecera + fila ---|---
+    if (l.includes("|") && i + 1 < lines.length && MD_SEP(lines[i + 1])) {
+      const head = mdSplitRow(l);
+      const aligns = mdSplitRow(lines[i + 1]).map(c => /^:-+:$/.test(c) ? "center" : /-:$/.test(c) ? "right" : /^:-/.test(c) ? "left" : "");
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].trim() && lines[i].includes("|")) { rows.push(mdSplitRow(lines[i])); i++; }
+      const cell = (tag, c, k) => `<${tag}${aligns[k] ? ` style="text-align:${aligns[k]}"` : ""}>${mdInline(c || "")}</${tag}>`;
+      out.push(`<div class="tbl"><table><thead><tr>${head.map((c, k) => cell("th", c, k)).join("")}</tr></thead>`
+        + (rows.length ? `<tbody>${rows.map(r => `<tr>${head.map((_, k) => cell("td", r[k], k)).join("")}</tr>`).join("")}</tbody>` : "")
+        + `</table></div>`);
+      continue;
+    }
+
+    // cita
+    if (/^\s*>/.test(l)) {
+      const q = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) { q.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+      out.push(`<blockquote>${mdBlocks(q.join("\n"))}</blockquote>`);
+      continue;
+    }
+
+    // lista (con anidación por sangría y líneas en blanco entre elementos)
+    if (MD_LI.test(l)) {
+      const items = [];
+      while (i < lines.length) {
+        const mm = lines[i].match(MD_LI);
+        if (mm) {
+          const lvl = mm[1].replace(/\t/g, "    ").length;
+          items.push({ lvl, ord: /\d/.test(mm[2]), num: parseInt(mm[2], 10), txt: mm[3] });
+          i++;
+        } else if (!lines[i].trim()) {
+          let j = i; while (j < lines.length && !lines[j].trim()) j++;
+          if (j < lines.length && MD_LI.test(lines[j])) i = j; else break;
+        } else if (/^\s{2,}\S/.test(lines[i]) && items.length) {
+          items[items.length - 1].txt += "\n" + lines[i].trim(); i++;
+        } else break;
+      }
+      let pos = 0;
+      while (pos < items.length) { const r = mdList(items, pos, items[pos].lvl); out.push(r[0]); pos = r[1]; }
+      continue;
+    }
+
+    // párrafo
+    const p = [];
+    while (i < lines.length && !startsBlock(lines[i], lines[i + 1])) { p.push(lines[i].trim()); i++; }
+    if (!p.length) { p.push(lines[i].trim()); i++; }
+    out.push(`<p>${mdInline(p.join("\n"))}</p>`);
+  }
+  return out.join("");
 }
 
 /* =====================================================================
@@ -484,7 +681,7 @@ $("#auth-form").addEventListener("submit", async e => {
       if (error) throw error;
       if (data.user && data.user.identities && data.user.identities.length === 0)
         throw new Error("User already registered");
-      if (!data.session) showOtpStep(email);   // sin sesión = falta verificar el correo con el código
+      if (!data.session) showOtpStep("email", email);   // sin sesión = falta verificar el correo con el código
     }
   } catch (err) {
     showNotice(authError(err));
@@ -513,31 +710,93 @@ $("#btn-google").onclick = async () => {
   }
 };
 
-/* ---------- Verificación del correo con código OTP ---------- */
-let pendingEmail = null, resendTimer = null;
+/* ---------- Paneles de acceso, código OTP (correo o teléfono) ---------- */
+let pending = null, resendTimer = null;   // pending = { kind: "email" | "phone", value, channel }
 
-function showOtpStep(email) {
-  pendingEmail = email;
-  $("#auth-form").hidden = true;
-  $("#oauth-block").hidden = true;
-  document.querySelector(".tabs").hidden = true;
-  $("#otp-form").hidden = false;
-  $("#auth-title").textContent = "Verifica tu correo";
-  $("#auth-sub").textContent = "Introduce el código que hemos enviado a " + email + ".";
+function showPanel(name) {                 // "main" | "phone" | "otp" | "name"
+  const main = name === "main";
+  $("#auth-form").hidden = !main;
+  $("#oauth-block").hidden = !main;
+  document.querySelector(".tabs").hidden = !main;
+  $("#phone-form").hidden = name !== "phone";
+  $("#otp-form").hidden = name !== "otp";
+  $("#name-form").hidden = name !== "name";
+  if (name !== "otp") clearInterval(resendTimer);
+  if (main) { $("#auth-sub").textContent = "Tus chats se guardan en tu cuenta."; setAuthMode(authMode); }
+  else showNotice();
+  if (name === "phone") {
+    $("#auth-title").textContent = "Continúa con tu teléfono";
+    $("#auth-sub").textContent = "Te enviaremos un código de verificación.";
+    $("#phone-number").focus();
+  }
+  if (name === "name") {
+    $("#auth-title").textContent = "¿Cómo te llamas?";
+    $("#auth-sub").textContent = "Así aparecerá tu nombre en PNova IA.";
+    $("#phone-name").focus();
+  }
+}
+
+/* ---------- Nombre para cuentas creadas con teléfono ---------- */
+let namePending = null;   // sesión a la espera de que el usuario escriba su nombre
+
+function needsName(u) {
+  const md = u.user_metadata || {};
+  return !!u.phone && !u.email && !(md.display_name || md.full_name || md.name);
+}
+
+function gateSession(session) {
+  if (needsName(session.user)) {
+    if (namePending) return;                 // ya se está pidiendo
+    namePending = session;
+    $("#app-view").hidden = true;
+    $("#auth-view").hidden = false;
+    $("#phone-name").value = "";
+    showPanel("name");
+  } else {
+    enterApp(session);
+  }
+}
+
+$("#name-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!sb || !namePending) return;
+  const name = $("#phone-name").value.trim();
+  if (name.length < 2) return showNotice("Escribe tu nombre.");
+  const btn = $("#name-submit"); btn.disabled = true; showNotice();
+  try {
+    const { data, error } = await sb.auth.updateUser({ data: { display_name: name } });
+    if (error) throw error;
+    const session = { ...namePending, user: data.user || namePending.user };
+    // Si el perfil ya existe (lo crea el trigger), se actualiza el nombre; si no, loadProfile lo creará.
+    await sb.from("profiles").update({ display_name: name }).eq("id", session.user.id);
+    namePending = null;
+    enterApp(session);
+  } catch (err) {
+    showNotice(authError(err));
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$("#name-cancel").onclick = async () => {
+  if (!sb) return;
+  namePending = null;
+  await sb.auth.signOut();                   // onAuthStateChange vuelve a la pantalla de acceso
+};
+
+function showOtpStep(kind, value, channel) {
+  pending = { kind, value, channel };
+  showPanel("otp");
+  const phone = kind === "phone";
+  $("#auth-title").textContent = phone ? "Verifica tu teléfono" : "Verifica tu correo";
+  $("#auth-sub").textContent = phone
+    ? "Introduce el código que hemos enviado " + (channel === "whatsapp" ? "por WhatsApp" : "por SMS") + " a " + value + "."
+    : "Introduce el código que hemos enviado a " + value + ".";
+  $("#otp-submit").textContent = phone ? "Verificar teléfono" : "Verificar correo";
+  $("#otp-back").textContent = phone ? "Cambiar número" : "Cambiar correo";
   $("#otp-code").value = "";
-  showNotice();
   startResendCooldown(60);
   $("#otp-code").focus();
-}
-function hideOtpStep() {
-  pendingEmail = null;
-  clearInterval(resendTimer);
-  $("#otp-form").hidden = true;
-  $("#auth-form").hidden = false;
-  $("#oauth-block").hidden = false;
-  document.querySelector(".tabs").hidden = false;
-  $("#auth-sub").textContent = "Tus chats se guardan en tu cuenta.";
-  setAuthMode("register");
 }
 function startResendCooldown(sec) {
   const b = $("#otp-resend");
@@ -551,16 +810,23 @@ function startResendCooldown(sec) {
 }
 
 $("#otp-code").addEventListener("input", e => { e.target.value = e.target.value.replace(/\D/g, ""); });
-$("#otp-back").onclick = hideOtpStep;
+$("#otp-back").onclick = () => {
+  const phone = pending && pending.kind === "phone";
+  pending = null;
+  showPanel(phone ? "phone" : "main");
+  if (!phone) setAuthMode("register");
+};
 
 $("#otp-form").addEventListener("submit", async e => {
   e.preventDefault();
-  if (!sb || !pendingEmail) return;
+  if (!sb || !pending) return;
   const token = $("#otp-code").value.trim();
-  if (token.length < 6) return showNotice("Escribe el código completo que te llegó por correo.");
+  if (token.length < 6) return showNotice("Escribe el código completo que te llegó.");
   const btn = $("#otp-submit"); btn.disabled = true; showNotice();
   try {
-    const { error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: "signup" });
+    const { error } = pending.kind === "phone"
+      ? await sb.auth.verifyOtp({ phone: pending.value, token, type: "sms" })   // WhatsApp y SMS se verifican con type "sms"
+      : await sb.auth.verifyOtp({ email: pending.value, token, type: "signup" });
     if (error) throw error;
     // Éxito: onAuthStateChange recibe SIGNED_IN y entra en la app.
   } catch (err) {
@@ -574,13 +840,53 @@ $("#otp-form").addEventListener("submit", async e => {
 });
 
 $("#otp-resend").onclick = async () => {
-  if (!sb || !pendingEmail) return;
+  if (!sb || !pending) return;
   showNotice();
-  const { error } = await sb.auth.resend({ type: "signup", email: pendingEmail });
+  const { error } = pending.kind === "phone"
+    ? await sb.auth.signInWithOtp({ phone: pending.value, options: { channel: pending.channel } })
+    : await sb.auth.resend({ type: "signup", email: pending.value });
   if (error) return showNotice(authError(error));
   showNotice("Te hemos enviado un nuevo código.", "ok");
   startResendCooldown(60);
 };
+
+/* ---------- Teléfono (WhatsApp o SMS) ---------- */
+function normalizePhone(raw) {
+  let v = String(raw).trim().replace(/[\s().-]/g, "");
+  if (v.startsWith("00")) v = "+" + v.slice(2);
+  if (!v.startsWith("+")) {
+    if (/^[6-9]\d{8}$/.test(v)) v = "+34" + v;   // móvil/fijo español sin prefijo
+    else return null;
+  }
+  return /^\+[1-9]\d{7,14}$/.test(v) ? v : null;
+}
+
+async function sendPhoneCode(channel) {
+  if (!sb) return;
+  const phone = normalizePhone($("#phone-number").value);
+  if (!phone) return showNotice("Escribe tu número con prefijo internacional, por ejemplo +34612345678.");
+  const btns = ["#phone-submit", "#phone-sms"].map($);
+  btns.forEach(b => b.disabled = true); showNotice();
+  try {
+    // Sin "channel" Supabase envía SMS; para WhatsApp hay que indicarlo (requiere Twilio / Twilio Verify)
+    const { error } = await sb.auth.signInWithOtp({ phone, options: { channel } });
+    if (error) throw error;
+    showOtpStep("phone", phone, channel);
+  } catch (err) {
+    const m = (err && err.message || "").toLowerCase();
+    showNotice(m.includes("provider") || m.includes("unsupported") || m.includes("disabled")
+      ? "El acceso con teléfono no está activado en Supabase."
+      : channel === "whatsapp" && (m.includes("whatsapp") || m.includes("sending") || m.includes("sms"))
+        ? "No se pudo enviar por WhatsApp. Prueba a recibirlo por SMS."
+        : authError(err));
+  } finally {
+    btns.forEach(b => b.disabled = false);
+  }
+}
+$("#btn-phone").onclick = () => showPanel("phone");
+$("#phone-back").onclick = () => showPanel("main");
+$("#phone-form").addEventListener("submit", e => { e.preventDefault(); sendPhoneCode("whatsapp"); });
+$("#phone-sms").onclick = () => sendPhoneCode("sms");
 
 async function logout() {
   closePopover();
@@ -592,16 +898,18 @@ async function logout() {
    Vistas
    ===================================================================== */
 function showAuth() {
-  user = null; profile = null; conversations = []; messages = []; currentId = null;
+  user = null; profile = null; conversations = []; messages = []; currentId = null; namePending = null;
   $("#app-view").hidden = true;
   $("#auth-view").hidden = false;
   $("#auth-password").value = "";
   $("#btn-google").disabled = false;
-  if (pendingEmail) { pendingEmail = null; clearInterval(resendTimer); $("#otp-form").hidden = true; $("#auth-form").hidden = false; $("#oauth-block").hidden = false; document.querySelector(".tabs").hidden = false; }
+  $("#btn-phone").disabled = false;
+  pending = null; showPanel("main");
   if (!configured) {
     showNotice("Falta configurar Supabase: abre index.html y rellena SUPABASE_URL y SUPABASE_ANON_KEY en el bloque CONFIG.", "warn");
     $("#auth-submit").disabled = true;
     $("#btn-google").disabled = true;
+    $("#btn-phone").disabled = true;
   }
 }
 
@@ -626,7 +934,7 @@ async function loadProfile() {
   profile = data || { id: user.id, email: user.email, display_name: fallbackName };
   const name = profile.display_name || fallbackName;
   $("#user-name").textContent = name;
-  $("#user-email").textContent = user.email || "";
+  $("#user-email").textContent = user.email || (user.phone ? "+" + String(user.phone).replace(/^\+/, "") : "");
   $("#user-avatar").textContent = (name[0] || "P").toUpperCase();
 }
 
@@ -674,7 +982,7 @@ async function openConversation(id) {
   if (id === currentId || loadingConv) return;
   loadingConv = true;
   const { data, error } = await sb.from("messages")
-    .select("id,role,content,model,created_at").eq("conversation_id", id).order("created_at", { ascending: true });
+    .select("id,role,content,model,created_at,metadata").eq("conversation_id", id).order("created_at", { ascending: true });
   loadingConv = false;
   if (error) { toast("No se pudo abrir el chat."); return; }
   currentId = id; messages = data || []; lastFailed = false;
@@ -734,14 +1042,18 @@ async function deleteConversation(id) {
 /* =====================================================================
    Mensajes
    ===================================================================== */
+let typeToken = 0;
 function renderMessages(typing = false) {
+  typeToken++;
+  if (srcMsgId && !messages.some(m => m.id === srcMsgId)) closeSources();   // cancela cualquier animación de escritura en curso
   const main = $("#main");
   const empty = !messages.length && !typing && !lastFailed;
   main.classList.toggle("is-empty", empty);
   const box = $("#messages");
   box.innerHTML = messages.map((m, i) => m.role === "user"
     ? `<div class="msg user"><div class="bubble">${esc(m.content)}</div></div>`
-    : `<div class="msg assistant"><div class="content">${renderMd(m.content)}</div>
+    : `<div class="msg assistant"><div class="content">${renderMd(partsOf(m).text)}</div>
+         ${sourcesChip(i, partsOf(m).sources)}
          <div class="msg-actions"><button class="icon-btn" type="button" data-copy="${i}" aria-label="Copiar respuesta" title="Copiar">${icon("copy")}</button></div></div>`
   ).join("")
   + (typing ? `<div class="msg assistant" aria-label="PNova IA está escribiendo"><div class="typing"><i></i><i></i><i></i></div></div>` : "")
@@ -754,11 +1066,13 @@ $("#messages").addEventListener("click", async e => {
   const copyBtn = e.target.closest("[data-copy]");
   if (copyBtn) {
     try {
-      await navigator.clipboard.writeText(messages[+copyBtn.dataset.copy].content);
+      await navigator.clipboard.writeText(partsOf(messages[+copyBtn.dataset.copy]).text);
       copyBtn.innerHTML = icon("check");
       setTimeout(() => { copyBtn.innerHTML = icon("copy"); }, 1500);
     } catch (err) { toast("No se pudo copiar."); }
   }
+  const srcBtn = e.target.closest("[data-sources]");
+  if (srcBtn) openSources(messages[+srcBtn.dataset.sources]);
   if (e.target.closest("#btn-retry") && !sending) {
     lastFailed = false; sending = true; updateSend();
     await requestReply();
@@ -787,7 +1101,7 @@ async function sendMessage(text) {
     }
     const { data: saved, error: e2 } = await sb.from("messages")
       .insert({ conversation_id: currentId, user_id: user.id, role: "user", content: text, model: model.id })
-      .select("id,role,content,model,created_at").single();
+      .select("id,role,content,model,created_at,metadata").single();
     if (e2) throw e2;
     messages.push(saved);
     renderMessages(); scrollDown();
@@ -807,23 +1121,123 @@ async function requestReply() {
   renderMessages(true);
   const t0 = performance.now();
   try {
-    const reply = await callBackend(model);
+    const { reply, sources: apiSources } = await callBackend(model);
     const latency = Math.round(performance.now() - t0);
     const { data, error } = await sb.from("messages")
-      .insert({ conversation_id: currentId, user_id: user.id, role: "assistant", content: reply, model: model.id, metadata: { latency_ms: latency } })
-      .select("id,role,content,model,created_at").single();
+      .insert({ conversation_id: currentId, user_id: user.id, role: "assistant", content: reply, model: model.id, metadata: { latency_ms: latency, ...(apiSources.length ? { sources: apiSources } : {}) } })
+      .select("id,role,content,model,created_at,metadata").single();
     if (error) throw error;
     messages.push(data);
     const c = conversations.find(x => x.id === currentId);
     if (c) { c.updated_at = data.created_at; conversations = [c, ...conversations.filter(x => x !== c)]; }
     renderList();
-    renderMessages(); scrollDown();
+    renderMessages();
+    typeReply(partsOf(data).text);
   } catch (err) {
     lastFailed = err.name === "AbortError"
       ? `${model.name} tardó demasiado en responder. Si el servidor estaba dormido, vuelve a intentarlo.`
       : (err.userMessage || "No se pudo obtener respuesta. Vuelve a intentarlo.");
     renderMessages();
   }
+}
+
+/* =====================================================================
+   Fuentes: quita las URLs del texto y las muestra como iconos + panel
+   ===================================================================== */
+const URL_RE = /https?:\/\/[^\s<>()\[\]"']*[^\s<>()\[\]"'.,;:!?*_]/g;
+const attr = s => esc(s).replace(/"/g, "&quot;");
+const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } };
+
+function extractApiSources(d) {
+  if (!d || typeof d !== "object") return [];
+  const arr = d.sources ?? d.citations ?? d.results ?? d.search_results ?? d.references;
+  if (!Array.isArray(arr)) return [];
+  return arr.map(x => typeof x === "string" ? { url: x } : { url: x && (x.url || x.link || x.href), title: x && (x.title || x.name) })
+    .filter(x => typeof x.url === "string" && /^https?:\/\//i.test(x.url) && hostOf(x.url))
+    .slice(0, 10).map(x => ({ url: x.url, title: x.title ? String(x.title).slice(0, 160) : "" }));
+}
+
+function splitSources(m) {
+  const found = [];
+  const add = (url, title) => {
+    url = String(url || "").replace(/[).,;:]+$/, "");
+    const host = hostOf(url);
+    if (!host || found.some(f => f.url === url)) return;
+    found.push({ url, title: (title || "").trim(), host });
+  };
+  ((m.metadata && m.metadata.sources) || []).forEach(x => add(x.url, x.title));
+
+  // líneas que son solo un enlace markdown (listas de fuentes) → se eliminan
+  const mdOnly = /^\s*(?:[-*•]|\d+[.)])?\s*\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)\s*\.?\s*$/;
+  const pre = String(m.content).split("\n").filter(l => {
+    const k = l.match(mdOnly);
+    if (!k) return true;
+    add(k[2], /^https?:\/\//i.test(k[1]) ? "" : k[1]);
+    return false;
+  }).join("\n");
+  // [texto](https://...) → se queda solo "texto"
+  let text = pre.replace(/\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) => {
+    add(u, /^https?:\/\//i.test(t) ? "" : t);
+    return /^https?:\/\//i.test(t) ? "" : t;
+  });
+  // URLs sueltas → se eliminan; si la línea se queda vacía, se borra
+  const onlyLabel = /^(fuentes?|sources?|referencias?|enlaces?|links?|url|ver más|leer más|más información)?[\s:.\-–—]*$/i;
+  text = text.split("\n").map(line => {
+    if (!/https?:\/\//i.test(line)) return line;
+    const out = line.replace(URL_RE, u => { add(u); return ""; })
+      .replace(/\(\s*\)|\[\s*\]|<\s*>/g, "").replace(/[ \t]{2,}/g, " ").replace(/\s+([.,;:])/g, "$1").replace(/\s+(en|de|ver|visita|consulta|fuente|fuentes|según|más información en)\s*[.:;]?$/i, ".").trimEnd();
+    const bare = out.replace(/^[\s>*•\-–]+|^\d+[.)]\s*/, "").replace(/[*_]/g, "");
+    return onlyLabel.test(bare) ? null : out;
+  }).filter(l => l !== null).join("\n");
+  // encabezado "Fuentes:" que se haya quedado al final sin contenido
+  text = text.replace(/\n+[#>*\s]*(fuentes|sources|referencias|enlaces)[*\s:]*$/i, "").replace(/\n{3,}/g, "\n\n").trim();
+  return { text, sources: found };
+}
+const partsOf = m => m._parts || (m._parts = splitSources(m));
+
+const favHtml = (host, cls = "") =>
+  `<span class="fav ${cls}" data-l="${attr(host.charAt(0))}"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></span>`;
+
+function sourcesChip(i, srcs) {
+  if (!srcs.length) return "";
+  const hosts = [...new Set(srcs.map(s => s.host))].slice(0, 3);
+  return `<div class="src-row"><button type="button" class="src-chip" data-sources="${i}" aria-label="Ver ${srcs.length} fuentes"><span class="src-stack">${hosts.map(h => favHtml(h)).join("")}</span><span>Fuentes</span></button></div>`;
+}
+
+let srcMsgId = null;
+function openSources(m) {
+  if (!m) return;
+  srcMsgId = m.id;
+  $("#src-list").innerHTML = partsOf(m).sources.map(s =>
+    `<a class="src-item" href="${attr(s.url)}" target="_blank" rel="noopener noreferrer">${favHtml(s.host, "sm")}
+       <span class="src-body"><span class="src-host">${esc(s.host)}</span><span class="src-title">${esc(s.title || s.host)}</span></span></a>`).join("");
+  $("#src-overlay").hidden = false; $("#src-panel").hidden = false;
+  $("#src-close").focus();
+}
+function closeSources() { srcMsgId = null; $("#src-overlay").hidden = true; $("#src-panel").hidden = true; }
+$("#src-close").onclick = closeSources;
+$("#src-overlay").onclick = closeSources;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && srcMsgId) closeSources(); });
+
+/* Efecto de escritura: va mostrando la respuesta poco a poco */
+function typeReply(full) {
+  const el = document.querySelector("#messages .msg.assistant:last-of-type");
+  const content = el && el.querySelector(".content");
+  if (!content || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { scrollDown(); return; }
+  const token = typeToken, scroller = $("#scroll");
+  const cps = Math.max(90, full.length / 5);        // caracteres/seg; las respuestas largas no pasan de ~5 s
+  const t0 = performance.now();
+  el.classList.add("live");
+  const step = now => {
+    if (token !== typeToken) return;                // el usuario cambió de chat o envió otro mensaje
+    const n = Math.min(full.length, Math.floor((now - t0) / 1000 * cps));
+    const stick = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 120;
+    content.innerHTML = renderMd(full.slice(0, n));
+    if (stick) scroller.scrollTop = scroller.scrollHeight;
+    if (n < full.length) requestAnimationFrame(step);
+    else { el.classList.remove("live"); content.innerHTML = renderMd(full); }
+  };
+  requestAnimationFrame(step);
 }
 
 async function callBackend(model) {
@@ -857,7 +1271,7 @@ async function callBackend(model) {
   const data = await res.json().catch(() => null);
   const reply = extractReply(data);
   if (!reply) { const e = new Error("empty"); e.userMessage = `${model.name} devolvió una respuesta vacía.`; throw e; }
-  return reply;
+  return { reply, sources: extractApiSources(data) };
 }
 
 /* Acepta los formatos de respuesta más habituales */
@@ -980,12 +1394,12 @@ $("#search-input").addEventListener("input", renderList);
   sb.auth.onAuthStateChange((event, session) => {
     setTimeout(() => {
       if (event === "SIGNED_OUT" || !session) { showAuth(); return; }
-      if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && (!user || user.id !== session.user.id)) enterApp(session);
+      if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && (!user || user.id !== session.user.id)) gateSession(session);
     }, 0);
   });
 
   const { data } = await sb.auth.getSession();
-  if (data.session) { if (!user) enterApp(data.session); }
+  if (data.session) { if (!user) gateSession(data.session); }
   else showAuth();
 })();
 </script>
