@@ -85,6 +85,7 @@
   .btn-google:disabled { opacity: .55; cursor: default; }
   .btn-google svg { width: 18px; height: 18px; flex: none; }
   .btn-google + .btn-google { margin-top: 10px; }
+  .soon { margin-left: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
   .hint { margin: -4px 2px 12px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
   .legal-note { margin: 16px 0 0; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
   .legal-note a { color: var(--muted); text-decoration: underline; }
@@ -444,7 +445,7 @@
       </button>
       <button class="btn-google" id="btn-phone" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        Continuar con teléfono
+        Continuar con teléfono<span class="soon" id="phone-soon" hidden>Próximamente</span>
       </button>
     </div>
     <form id="phone-form" novalidate hidden>
@@ -548,6 +549,9 @@
    CONFIGURACIÓN — edita solo este bloque
    ===================================================================== */
 const CONFIG = {
+  // false = el botón "Continuar con teléfono" aparece como "Próximamente" y no se puede pulsar.
+  PHONE_ENABLED: false,
+
   // true = el código lo envía tu Send SMS Hook (WhatsApp, etc.): no se manda "channel" a Supabase.
   // false = Supabase envía por Twilio / Twilio Verify y se puede elegir WhatsApp o SMS.
   PHONE_VIA_HOOK: true,
@@ -1076,13 +1080,15 @@ function showAuth() {                          // sin sesión: se muestra la pan
   $("#app-view").hidden = true;
   $("#auth-password").value = "";
   $("#btn-google").disabled = false;
-  $("#btn-phone").disabled = false;
+  $("#btn-phone").disabled = !CONFIG.PHONE_ENABLED;
   pending = null; showPanel("main");
   applyConfigWarning();
   showLanding();
 }
 
 /* ---------- Pantalla de inicio ---------- */
+$("#phone-soon").hidden = CONFIG.PHONE_ENABLED;
+$("#btn-phone").disabled = !CONFIG.PHONE_ENABLED;
 const landing = $("#landing-view");
 
 const Stars = (() => {
