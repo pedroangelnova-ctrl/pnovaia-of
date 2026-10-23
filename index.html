@@ -78,6 +78,9 @@
   .notice.error { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger); }
   .notice.ok { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
   .notice.warn { background: var(--hover); color: var(--text); }
+  .otp-input { text-align: center; font-size: 26px; letter-spacing: .45em; padding-left: .45em !important; font-variant-numeric: tabular-nums; }
+  .link-btn { display: block; margin: 12px auto 0; color: var(--muted); font-size: 14px; text-decoration: underline; }
+  .link-btn:disabled { opacity: .55; cursor: default; text-decoration: none; }
   .notice code { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
 
   /* ---------- App layout ---------- */
@@ -231,6 +234,15 @@
         <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required>
       </label>
       <button class="btn-primary" id="auth-submit" type="submit">Iniciar sesión</button>
+    </form>
+    <form id="otp-form" novalidate hidden>
+      <label class="field">
+        <span>Código de verificación</span>
+        <input id="otp-code" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="••••••" required>
+      </label>
+      <button class="btn-primary" id="otp-submit" type="submit">Verificar correo</button>
+      <button class="link-btn" id="otp-resend" type="button">Reenviar código</button>
+      <button class="link-btn" id="otp-back" type="button">Cambiar correo</button>
     </form>
     <div id="auth-notice" class="notice" role="status" hidden></div>
   </div>
@@ -455,11 +467,7 @@ $("#auth-form").addEventListener("submit", async e => {
       if (error) throw error;
       if (data.user && data.user.identities && data.user.identities.length === 0)
         throw new Error("User already registered");
-      if (!data.session) {
-        showNotice("Te hemos enviado un correo para confirmar tu cuenta. Ábrelo y vuelve aquí para iniciar sesión.", "ok");
-        setAuthMode("login");
-        showNotice("Te hemos enviado un correo para confirmar tu cuenta. Ábrelo y vuelve aquí para iniciar sesión.", "ok");
-      }
+      if (!data.session) showOtpStep(email);   // sin sesión = falta verificar el correo con el código
     }
   } catch (err) {
     showNotice(authError(err));
@@ -467,6 +475,74 @@ $("#auth-form").addEventListener("submit", async e => {
     btn.disabled = false;
   }
 });
+
+
+/* ---------- Verificación del correo con código OTP ---------- */
+let pendingEmail = null, resendTimer = null;
+
+function showOtpStep(email) {
+  pendingEmail = email;
+  $("#auth-form").hidden = true;
+  document.querySelector(".tabs").hidden = true;
+  $("#otp-form").hidden = false;
+  $("#auth-title").textContent = "Verifica tu correo";
+  $("#auth-sub").textContent = "Introduce el código que hemos enviado a " + email + ".";
+  $("#otp-code").value = "";
+  showNotice();
+  startResendCooldown(60);
+  $("#otp-code").focus();
+}
+function hideOtpStep() {
+  pendingEmail = null;
+  clearInterval(resendTimer);
+  $("#otp-form").hidden = true;
+  $("#auth-form").hidden = false;
+  document.querySelector(".tabs").hidden = false;
+  $("#auth-sub").textContent = "Tus chats se guardan en tu cuenta.";
+  setAuthMode("register");
+}
+function startResendCooldown(sec) {
+  const b = $("#otp-resend");
+  clearInterval(resendTimer);
+  b.disabled = true;
+  const tick = () => {
+    if (sec <= 0) { clearInterval(resendTimer); b.disabled = false; b.textContent = "Reenviar código"; return; }
+    b.textContent = "Reenviar código (" + sec-- + "s)";
+  };
+  tick(); resendTimer = setInterval(tick, 1000);
+}
+
+$("#otp-code").addEventListener("input", e => { e.target.value = e.target.value.replace(/\D/g, ""); });
+$("#otp-back").onclick = hideOtpStep;
+
+$("#otp-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!sb || !pendingEmail) return;
+  const token = $("#otp-code").value.trim();
+  if (token.length < 6) return showNotice("Escribe el código completo que te llegó por correo.");
+  const btn = $("#otp-submit"); btn.disabled = true; showNotice();
+  try {
+    const { error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: "signup" });
+    if (error) throw error;
+    // Éxito: onAuthStateChange recibe SIGNED_IN y entra en la app.
+  } catch (err) {
+    const m = (err && err.message || "").toLowerCase();
+    showNotice(m.includes("expired") || m.includes("invalid")
+      ? "El código no es válido o ha caducado. Pide uno nuevo."
+      : authError(err));
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$("#otp-resend").onclick = async () => {
+  if (!sb || !pendingEmail) return;
+  showNotice();
+  const { error } = await sb.auth.resend({ type: "signup", email: pendingEmail });
+  if (error) return showNotice(authError(error));
+  showNotice("Te hemos enviado un nuevo código.", "ok");
+  startResendCooldown(60);
+};
 
 async function logout() {
   closePopover();
@@ -482,6 +558,7 @@ function showAuth() {
   $("#app-view").hidden = true;
   $("#auth-view").hidden = false;
   $("#auth-password").value = "";
+  if (pendingEmail) { pendingEmail = null; clearInterval(resendTimer); $("#otp-form").hidden = true; $("#auth-form").hidden = false; document.querySelector(".tabs").hidden = false; }
   if (!configured) {
     showNotice("Falta configurar Supabase: abre index.html y rellena SUPABASE_URL y SUPABASE_ANON_KEY en el bloque CONFIG.", "warn");
     $("#auth-submit").disabled = true;
