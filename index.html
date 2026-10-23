@@ -14,7 +14,7 @@
     --text: #0d0d0d;
     --muted: #6e6e73;
     --border: #e5e5e7;
-    --user: #eaf2fd;
+    --user: #f0f0f2;
     --composer: #ffffff;
     --code-bg: #f4f5f7;
     --accent: #1d6ff2;
@@ -33,7 +33,7 @@
       --text: #ececf1;
       --muted: #9a9ca6;
       --border: #2c2e36;
-      --user: #1e2c4b;
+      --user: #2d2f37;
       --composer: #202228;
       --code-bg: #0f1013;
       --accent: #4c8dff;
@@ -78,6 +78,14 @@
   .notice.error { background: color-mix(in srgb, var(--danger) 12%, transparent); color: var(--danger); }
   .notice.ok { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
   .notice.warn { background: var(--hover); color: var(--text); }
+  .oauth-sep { display: flex; align-items: center; gap: 12px; margin: 18px 0 14px; color: var(--muted); font-size: 13px; }
+  .oauth-sep::before, .oauth-sep::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .btn-google { width: 100%; height: 46px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-google:hover:not(:disabled) { background: var(--hover); }
+  .btn-google:disabled { opacity: .55; cursor: default; }
+  .btn-google svg { width: 18px; height: 18px; flex: none; }
+  .legal-note { margin: 16px 0 0; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .legal-note a { color: var(--muted); text-decoration: underline; }
   .otp-input { text-align: center; font-size: 26px; letter-spacing: .45em; padding-left: .45em !important; font-variant-numeric: tabular-nums; }
   .link-btn { display: block; margin: 12px auto 0; color: var(--muted); font-size: 14px; text-decoration: underline; }
   .link-btn:disabled { opacity: .55; cursor: default; text-decoration: none; }
@@ -154,7 +162,8 @@
   #messages { padding-top: 12px; padding-bottom: 24px; }
   .msg { margin: 18px 0; }
   .msg.user { display: flex; justify-content: flex-end; }
-  .msg.user .bubble { max-width: 85%; background: var(--user); padding: 10px 18px; border-radius: 22px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.user { margin-left: auto; }
+  .msg.user .bubble { max-width: min(85%, 560px); width: fit-content; background: var(--user); color: var(--text); padding: 10px 18px; border-radius: 24px 24px 6px 24px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
   .msg.assistant .content { font-size: 16px; line-height: 1.7; overflow-wrap: anywhere; }
   .content p { margin: 0 0 14px; }
   .content p:last-child, .content ul:last-child, .content ol:last-child { margin-bottom: 0; }
@@ -235,6 +244,13 @@
       </label>
       <button class="btn-primary" id="auth-submit" type="submit">Iniciar sesión</button>
     </form>
+    <div id="oauth-block">
+      <div class="oauth-sep"><span>o</span></div>
+      <button class="btn-google" id="btn-google" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Continuar con Google
+      </button>
+    </div>
     <form id="otp-form" novalidate hidden>
       <label class="field">
         <span>Código de verificación</span>
@@ -244,6 +260,7 @@
       <button class="link-btn" id="otp-resend" type="button">Reenviar código</button>
       <button class="link-btn" id="otp-back" type="button">Cambiar correo</button>
     </form>
+    <p class="legal-note" id="legal-note">Al continuar aceptas las <a href="/condiciones-del-servicio" target="_blank" rel="noopener">Condiciones del servicio</a> y la <a href="/politica-de-privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</p>
     <div id="auth-notice" class="notice" role="status" hidden></div>
   </div>
 </section>
@@ -322,7 +339,7 @@ const CONFIG = {
       id: "pnova-1.5",
       name: "PNova 1.5",
       description: "Modelo de texto de PNova Group",
-      endpoint: "https://pnova-backend2.onrender.com/chat",
+      endpoint: "https://pnova-ai-api.pedroangelnp-es.workers.dev/chat",
       sendAuthToken: false   // true = envía el token de Supabase en la cabecera Authorization
     },
     {
@@ -335,7 +352,7 @@ const CONFIG = {
   ],
   DEFAULT_MODEL: "pnova-1.5",
   HISTORY_LIMIT: 20,          // mensajes previos que se envían al backend
-  REQUEST_TIMEOUT_MS: 90000   // Render gratis puede tardar en despertar
+  REQUEST_TIMEOUT_MS: 90000   // tiempo máximo de espera de la respuesta
 };
 
 /* =====================================================================
@@ -477,12 +494,32 @@ $("#auth-form").addEventListener("submit", async e => {
 });
 
 
+/* ---------- Iniciar sesión con Google ---------- */
+$("#btn-google").onclick = async () => {
+  if (!sb) return;
+  const btn = $("#btn-google"); btn.disabled = true; showNotice();
+  try {
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: location.origin + location.pathname }
+    });
+    if (error) throw error;   // si todo va bien, el navegador redirige a Google
+  } catch (err) {
+    btn.disabled = false;
+    const m = (err && err.message || "").toLowerCase();
+    showNotice(m.includes("not enabled") || m.includes("unsupported provider")
+      ? "El inicio de sesión con Google no está activado en Supabase."
+      : authError(err));
+  }
+};
+
 /* ---------- Verificación del correo con código OTP ---------- */
 let pendingEmail = null, resendTimer = null;
 
 function showOtpStep(email) {
   pendingEmail = email;
   $("#auth-form").hidden = true;
+  $("#oauth-block").hidden = true;
   document.querySelector(".tabs").hidden = true;
   $("#otp-form").hidden = false;
   $("#auth-title").textContent = "Verifica tu correo";
@@ -497,6 +534,7 @@ function hideOtpStep() {
   clearInterval(resendTimer);
   $("#otp-form").hidden = true;
   $("#auth-form").hidden = false;
+  $("#oauth-block").hidden = false;
   document.querySelector(".tabs").hidden = false;
   $("#auth-sub").textContent = "Tus chats se guardan en tu cuenta.";
   setAuthMode("register");
@@ -558,10 +596,12 @@ function showAuth() {
   $("#app-view").hidden = true;
   $("#auth-view").hidden = false;
   $("#auth-password").value = "";
-  if (pendingEmail) { pendingEmail = null; clearInterval(resendTimer); $("#otp-form").hidden = true; $("#auth-form").hidden = false; document.querySelector(".tabs").hidden = false; }
+  $("#btn-google").disabled = false;
+  if (pendingEmail) { pendingEmail = null; clearInterval(resendTimer); $("#otp-form").hidden = true; $("#auth-form").hidden = false; $("#oauth-block").hidden = false; document.querySelector(".tabs").hidden = false; }
   if (!configured) {
     showNotice("Falta configurar Supabase: abre index.html y rellena SUPABASE_URL y SUPABASE_ANON_KEY en el bloque CONFIG.", "warn");
     $("#auth-submit").disabled = true;
+    $("#btn-google").disabled = true;
   }
 }
 
@@ -576,7 +616,7 @@ async function enterApp(session) {
 }
 
 async function loadProfile() {
-  const fallbackName = (user.user_metadata && user.user_metadata.display_name) || (user.email || "").split("@")[0] || "Usuario";
+  const fallbackName = (user.user_metadata && (user.user_metadata.display_name || user.user_metadata.full_name || user.user_metadata.name)) || (user.email || "").split("@")[0] || "Usuario";
   let { data, error } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle();
   if (!error && !data) {
     // Por si el trigger de la base de datos aún no existía cuando se creó la cuenta
