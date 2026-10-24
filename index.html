@@ -5,6 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PNova IA</title>
 <link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+(function () {
+  var d = document.documentElement;
+  try {
+    var t = localStorage.getItem("pnova.theme") || "system";
+    var dark = t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    d.dataset.theme = dark ? "dark" : "light";
+    d.dataset.accent = localStorage.getItem("pnova.accent") || "blue";
+  } catch (e) {
+    d.dataset.theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    d.dataset.accent = "blue";
+  }
+})();
+</script>
 <style>
   :root {
     --bg: #ffffff;
@@ -22,25 +39,25 @@
     --danger: #d93025;
     --shadow: 0 2px 14px rgba(20, 30, 60, .08);
     --sidebar-w: 260px;
+    --font: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #17181c;
-      --sidebar: #101114;
-      --hover: #23252b;
-      --active: #2a2d35;
-      --text: #ececf1;
-      --muted: #9a9ca6;
-      --border: #2c2e36;
-      --user: #2d2f37;
-      --composer: #202228;
-      --code-bg: #0f1013;
-      --accent: #4c8dff;
-      --danger: #ff7b72;
-      --shadow: 0 2px 14px rgba(0, 0, 0, .35);
-      color-scheme: dark;
-    }
+  :root[data-theme="dark"] {
+    --bg: #17181c;
+    --sidebar: #101114;
+    --hover: #23252b;
+    --active: #2a2d35;
+    --text: #ececf1;
+    --muted: #9a9ca6;
+    --border: #2c2e36;
+    --user: #2d2f37;
+    --composer: #202228;
+    --code-bg: #0f1013;
+    --accent: #4c8dff;
+    --danger: #ff7b72;
+    --shadow: 0 2px 14px rgba(0, 0, 0, .35);
+    color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
@@ -48,13 +65,17 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font: 15px/1.55 "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font: 15px/1.55 var(--font);
+    font-feature-settings: "cv11", "ss03";
+    letter-spacing: -0.006em;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     overflow: hidden;
   }
   [hidden] { display: none !important; }
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
-  input, textarea { font: inherit; color: inherit; }
+  input, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
   .logo { display: block; background: #fff; border-radius: 22%; object-fit: contain; }
@@ -92,7 +113,7 @@
   .otp-input { text-align: center; font-size: 26px; letter-spacing: .45em; padding-left: .45em !important; font-variant-numeric: tabular-nums; }
   .link-btn { display: block; margin: 12px auto 0; color: var(--muted); font-size: 14px; text-decoration: underline; }
   .link-btn:disabled { opacity: .55; cursor: default; text-decoration: none; }
-  .notice code { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+  .notice code { font-family: var(--mono); font-size: 13px; }
 
   /* ---------- App layout ---------- */
   #app-view { height: 100%; display: flex; }
@@ -172,10 +193,12 @@
   .content p:last-child, .content ul:last-child, .content ol:last-child { margin-bottom: 0; }
   .content ul, .content ol { margin: 0 0 14px; padding-left: 24px; }
   .content li { margin: 3px 0; }
-  .content code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .88em; background: var(--code-bg); padding: 2px 6px; border-radius: 6px; }
+  .content code { font-family: var(--mono); font-size: .88em; background: var(--code-bg); padding: 2px 6px; border-radius: 6px; }
   .content pre { margin: 0 0 14px; background: var(--code-bg); border-radius: 14px; padding: 14px 16px; overflow-x: auto; }
   .content pre code { background: none; padding: 0; font-size: 14px; line-height: 1.55; }
   .content > *:first-child { margin-top: 0; }
+  h1, h2, h3 { letter-spacing: -0.02em; }
+  .content code, .content pre code { letter-spacing: 0; }
   .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 { margin: 22px 0 8px; line-height: 1.35; font-weight: 600; }
   .content h1 { font-size: 1.4em; } .content h2 { font-size: 1.25em; } .content h3 { font-size: 1.12em; } .content h4, .content h5, .content h6 { font-size: 1em; }
   .content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
@@ -231,10 +254,10 @@
   #composer-wrap { flex: none; padding: 0 0 12px; }
   .composer {
     display: flex; align-items: flex-end; gap: 8px; background: var(--composer);
-    border: 1px solid var(--border); border-radius: 28px; padding: 8px 8px 8px 20px; box-shadow: var(--shadow);
+    border: 1px solid var(--border); border-radius: 28px; padding: 8px; box-shadow: var(--shadow); flex-wrap: wrap;
   }
   .composer:focus-within { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
-  .composer textarea { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; max-height: 200px; padding: 8px 0; line-height: 1.5; font-size: 16px; }
+  .composer textarea { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; max-height: 200px; padding: 8px 4px; line-height: 1.5; font-size: 16px; }
   .composer textarea::placeholder { color: var(--muted); }
   .send { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--accent-grad); flex: none; }
   .send:disabled { opacity: .3; cursor: default; }
@@ -346,6 +369,97 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
   }
+
+  /* ---------- Color de acento ---------- */
+  :root[data-accent="green"]  { --accent: #10a37f; --accent-grad: linear-gradient(135deg, #34d399 0%, #10a37f 100%); }
+  :root[data-accent="violet"] { --accent: #7c3aed; --accent-grad: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); }
+  :root[data-accent="orange"] { --accent: #ea580c; --accent-grad: linear-gradient(135deg, #fdba74 0%, #ea580c 100%); }
+  :root[data-accent="pink"]   { --accent: #db2777; --accent-grad: linear-gradient(135deg, #f9a8d4 0%, #db2777 100%); }
+  :root[data-accent="green"][data-theme="dark"]  { --accent: #34c79d; }
+  :root[data-accent="violet"][data-theme="dark"] { --accent: #a78bfa; }
+  :root[data-accent="orange"][data-theme="dark"] { --accent: #fb923c; }
+  :root[data-accent="pink"][data-theme="dark"]   { --accent: #f472b6; }
+
+  /* ---------- Ajustes ---------- */
+  .modal-overlay { position: fixed; inset: 0; z-index: 70; background: rgba(0, 0, 0, .45); display: grid; place-items: center; padding: 16px; }
+  .settings { width: min(800px, 100%); height: min(620px, calc(100% - 8px)); background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 24px 70px rgba(0, 0, 0, .35); display: grid; grid-template-columns: 216px 1fr; overflow: hidden; }
+  .set-nav { background: var(--sidebar); border-right: 1px solid var(--border); padding: 14px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+  .set-nav-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 0 8px; }
+  .set-nav-head h2 { margin: 0; font-size: 17px; font-weight: 600; }
+  .set-tabs { display: flex; flex-direction: column; gap: 2px; }
+  .set-tab { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border-radius: 10px; text-align: left; white-space: nowrap; }
+  .set-tab:hover { background: var(--hover); }
+  .set-tab[aria-selected="true"] { background: var(--active); font-weight: 600; }
+  .set-body { overflow-y: auto; padding: 22px 28px 30px; min-width: 0; }
+  .set-body h3 { margin: 0 0 6px; font-size: 20px; font-weight: 600; }
+  .set-lead { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+  .set-sec { padding: 16px 0; border-top: 1px solid var(--border); }
+  .set-sec:first-of-type { border-top: 0; }
+  .set-sec h4 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; border-top: 1px solid var(--border); }
+  .set-row:first-of-type { border-top: 0; }
+  .set-row .lbl { min-width: 0; }
+  .set-row .lbl b { display: block; font-weight: 500; }
+  .set-row .lbl small { display: block; color: var(--muted); font-size: 13px; line-height: 1.4; margin-top: 2px; }
+  .seg { display: inline-flex; background: var(--hover); border-radius: 10px; padding: 3px; flex: none; }
+  .seg button { padding: 6px 13px; border-radius: 8px; color: var(--muted); font-size: 14px; font-weight: 500; }
+  .seg button[aria-pressed="true"] { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
+  .swatches { display: flex; gap: 12px; flex: none; }
+  .swatch { width: 26px; height: 26px; border-radius: 50%; }
+  .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--text); }
+  .set-form .field { margin-bottom: 10px; }
+  .set-form .field input { height: 42px; }
+  .set-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .btn-sm { height: 38px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); font-weight: 500; white-space: nowrap; background: var(--bg); }
+  .btn-sm:hover:not(:disabled) { background: var(--hover); }
+  .btn-sm:disabled { opacity: .55; cursor: default; }
+  .btn-sm.primary { background: var(--accent); border-color: transparent; color: #fff; }
+  .btn-sm.primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.08); }
+  .btn-sm.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+  .set-msg { margin: 10px 0 0; }
+  .acc-head { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+  .acc-head .avatar { width: 52px; height: 52px; font-size: 22px; }
+  .acc-head b { display: block; font-size: 17px; }
+  .acc-head small { display: block; color: var(--muted); }
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+  .plan { border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+  .plan.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .plan h4 { margin: 0; font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .plan-price { font-size: 22px; font-weight: 700; }
+  .plan-price.muted { color: var(--muted); font-size: 16px; font-weight: 600; }
+  .plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; flex: 1; font-size: 14px; }
+  .plan li { display: flex; gap: 8px; align-items: flex-start; line-height: 1.4; }
+  .plan li::before { content: "✓"; color: var(--accent); font-weight: 700; flex: none; }
+  .plan .btn-sm { width: 100%; }
+  .set-note { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+  @media (max-width: 700px) {
+    .modal-overlay { padding: 0; }
+    .settings { height: 100%; border-radius: 0; border: 0; grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+    .set-nav { border-right: 0; border-bottom: 1px solid var(--border); padding: 10px 10px 8px; }
+    .set-tabs { flex-direction: row; overflow-x: auto; }
+    .set-tab { width: auto; padding: 8px 12px; }
+    .set-body { padding: 18px 18px 28px; }
+    .plans { grid-template-columns: 1fr; }
+    .set-row { flex-wrap: wrap; }
+  }
+
+  /* ---------- Adjuntos ---------- */
+  .attach-btn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); flex: none; }
+  .attach-btn:hover { background: var(--hover); color: var(--text); }
+  .attach-row { flex: 0 0 100%; display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 4px 6px; }
+  .att-chip { position: relative; display: flex; align-items: center; gap: 8px; max-width: 240px; padding: 5px 8px 5px 5px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); font-size: 13px; line-height: 1.3; }
+  .att-chip.static { background: var(--user); border-color: transparent; }
+  .att-thumb { width: 38px; height: 38px; border-radius: 9px; overflow: hidden; display: grid; place-items: center; flex: none; background: var(--hover); color: var(--muted); }
+  .att-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .att-meta { min-width: 0; }
+  .att-meta b { display: block; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .att-meta small { display: block; color: var(--muted); font-size: 12px; }
+  .att-x { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); flex: none; }
+  .att-x:hover { background: var(--hover); color: var(--text); }
+  .att-x .i { width: 14px; height: 14px; }
+  .msg.user { flex-direction: column; align-items: flex-end; gap: 6px; }
+  .att-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; max-width: min(85%, 560px); }
+  .att-img { max-width: 220px; max-height: 220px; border-radius: 16px; border: 1px solid var(--border); object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -540,11 +654,15 @@
       <div id="composer-wrap">
         <div class="col">
           <form class="composer" id="composer">
+            <div class="attach-row" id="attach-row" hidden></div>
+            <button class="attach-btn" id="attach-btn" type="button" aria-haspopup="menu" aria-label="Adjuntar archivos" title="Adjuntar archivos"><span data-icon="paperclip"></span></button>
             <textarea id="input" rows="1" placeholder="Pregunta a PNova IA" aria-label="Mensaje"></textarea>
-            <button class="img-toggle" id="img-toggle" type="button" aria-pressed="false" title="Crear imagen"><span data-icon="image"></span><span class="img-toggle-label">Crear imagen</span></button>
+            <button class="img-toggle" id="img-toggle" type="button" hidden aria-pressed="false" title="Crear imagen"><span data-icon="image"></span><span class="img-toggle-label">Crear imagen</span></button>
             <button class="send" id="send" type="submit" aria-label="Enviar mensaje" disabled><span data-icon="send"></span></button>
           </form>
         </div>
+        <input type="file" id="file-img" accept="image/*" multiple hidden>
+        <input type="file" id="file-any" multiple hidden>
         <div id="disclaimer">PNova IA puede cometer errores. Comprueba la información importante.</div>
       </div>
     </div>
@@ -556,6 +674,156 @@
   <div class="src-head"><h3>Fuentes</h3><button class="icon-btn" id="src-close" type="button" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
   <div id="src-list"></div>
 </aside>
+
+<!-- ================= AJUSTES ================= -->
+<div id="set-overlay" class="modal-overlay" hidden>
+  <div class="settings" role="dialog" aria-modal="true" aria-labelledby="set-title">
+    <aside class="set-nav">
+      <div class="set-nav-head">
+        <h2 id="set-title">Ajustes</h2>
+        <button class="icon-btn" id="set-close" type="button" aria-label="Cerrar ajustes"><span data-icon="x"></span></button>
+      </div>
+      <div class="set-tabs" role="tablist" aria-orientation="vertical">
+        <button class="set-tab" type="button" role="tab" data-tab="general" aria-selected="true"><span data-icon="settings"></span>General</button>
+        <button class="set-tab" type="button" role="tab" data-tab="account" aria-selected="false"><span data-icon="user"></span>Cuenta</button>
+        <button class="set-tab" type="button" role="tab" data-tab="plans" aria-selected="false"><span data-icon="zap"></span>Planes</button>
+        <button class="set-tab" type="button" role="tab" data-tab="data" aria-selected="false"><span data-icon="database"></span>Datos</button>
+      </div>
+    </aside>
+
+    <section class="set-body">
+      <!-- General -->
+      <div class="set-pane" id="pane-general" role="tabpanel">
+        <h3>General</h3>
+        <div class="set-row">
+          <div class="lbl"><b>Tema</b><small>Elige cómo se ve PNova IA.</small></div>
+          <div class="seg" id="theme-seg" role="group" aria-label="Tema">
+            <button type="button" data-theme="system" aria-pressed="false">Sistema</button>
+            <button type="button" data-theme="light" aria-pressed="false">Claro</button>
+            <button type="button" data-theme="dark" aria-pressed="false">Oscuro</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="lbl"><b>Color de acento</b><small>Botones, enlaces y detalles.</small></div>
+          <div class="swatches" id="accent-row" role="group" aria-label="Color de acento">
+            <button type="button" class="swatch" data-accent="blue" aria-pressed="false" aria-label="Azul" title="Azul" style="background:linear-gradient(135deg,#1fb6ff,#3b5bf5 55%,#8b3cf6)"></button>
+            <button type="button" class="swatch" data-accent="green" aria-pressed="false" aria-label="Verde" title="Verde" style="background:linear-gradient(135deg,#34d399,#10a37f)"></button>
+            <button type="button" class="swatch" data-accent="violet" aria-pressed="false" aria-label="Violeta" title="Violeta" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)"></button>
+            <button type="button" class="swatch" data-accent="orange" aria-pressed="false" aria-label="Naranja" title="Naranja" style="background:linear-gradient(135deg,#fdba74,#ea580c)"></button>
+            <button type="button" class="swatch" data-accent="pink" aria-pressed="false" aria-label="Rosa" title="Rosa" style="background:linear-gradient(135deg,#f9a8d4,#db2777)"></button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="lbl"><b>Idioma</b><small>Español</small></div>
+          <span class="soon">Próximamente</span>
+        </div>
+      </div>
+
+      <!-- Cuenta -->
+      <div class="set-pane" id="pane-account" role="tabpanel" hidden>
+        <h3>Cuenta</h3>
+        <div class="acc-head">
+          <span class="avatar" id="acc-avatar">P</span>
+          <div><b id="acc-name-title">Usuario</b><small id="acc-email-title"></small></div>
+        </div>
+
+        <div class="set-sec">
+          <h4>Nombre</h4>
+          <form class="set-form" id="form-name" novalidate>
+            <label class="field"><span>Nombre para mostrar</span><input id="set-name" type="text" maxlength="60" autocomplete="name"></label>
+            <div class="set-actions"><button class="btn-sm primary" type="submit">Guardar nombre</button></div>
+            <div class="notice set-msg" id="msg-name" role="status" hidden></div>
+          </form>
+        </div>
+
+        <div class="set-sec">
+          <h4>Correo electrónico</h4>
+          <form class="set-form" id="form-email" novalidate>
+            <label class="field"><span>Correo</span><input id="set-email" type="email" autocomplete="email"></label>
+            <div class="set-actions"><button class="btn-sm primary" type="submit">Cambiar correo</button></div>
+            <div class="notice set-msg" id="msg-email" role="status" hidden></div>
+          </form>
+        </div>
+
+        <div class="set-sec" id="row-phone" hidden>
+          <h4>Teléfono</h4>
+          <div class="set-row"><div class="lbl"><b id="set-phone"></b><small>Vinculado a tu cuenta.</small></div></div>
+        </div>
+
+        <div class="set-sec">
+          <h4 id="pw-title">Cambiar contraseña</h4>
+          <form class="set-form" id="form-pw" novalidate>
+            <label class="field" id="pw-current-field"><span>Contraseña actual</span><input id="pw-current" type="password" autocomplete="current-password"></label>
+            <label class="field"><span>Nueva contraseña</span><input id="pw-new" type="password" autocomplete="new-password" minlength="6"></label>
+            <label class="field"><span>Repite la nueva contraseña</span><input id="pw-new2" type="password" autocomplete="new-password" minlength="6"></label>
+            <div class="set-actions"><button class="btn-sm primary" type="submit">Guardar contraseña</button></div>
+            <div class="notice set-msg" id="msg-pw" role="status" hidden></div>
+          </form>
+        </div>
+
+        <div class="set-sec">
+          <h4>Sesión</h4>
+          <div class="set-row"><div class="lbl"><b>Método de acceso</b><small id="acc-provider">—</small></div></div>
+          <div class="set-row"><div class="lbl"><b>Cerrar sesión</b><small>Salir de PNova IA en este dispositivo.</small></div><button class="btn-sm" id="set-logout" type="button">Cerrar sesión</button></div>
+          <div class="set-row"><div class="lbl"><b>Eliminar cuenta</b><small>Borra tu cuenta y todos tus datos.</small></div><span class="soon">Próximamente</span></div>
+        </div>
+      </div>
+
+      <!-- Planes -->
+      <div class="set-pane" id="pane-plans" role="tabpanel" hidden>
+        <h3>Planes</h3>
+        <p class="set-lead">Estás usando el plan Gratis. Los planes de pago llegarán pronto.</p>
+        <div class="plans">
+          <div class="plan current">
+            <h4>Gratis <span class="soon">Tu plan</span></h4>
+            <div class="plan-price">0 €</div>
+            <ul>
+              <li>Chat con PNova 1.5</li>
+              <li>Crear imágenes con IA</li>
+              <li>Historial de chats en tu cuenta</li>
+              <li>Temas y personalización</li>
+            </ul>
+            <button class="btn-sm" type="button" disabled>Plan actual</button>
+          </div>
+          <div class="plan">
+            <h4>Plus <span class="soon">Próximamente</span></h4>
+            <div class="plan-price muted">Precio por anunciar</div>
+            <ul>
+              <li>Más mensajes e imágenes</li>
+              <li>Acceso a Nova AI</li>
+              <li>Respuestas más rápidas</li>
+            </ul>
+            <button class="btn-sm" type="button" disabled>Próximamente</button>
+          </div>
+          <div class="plan">
+            <h4>Pro <span class="soon">Próximamente</span></h4>
+            <div class="plan-price muted">Precio por anunciar</div>
+            <ul>
+              <li>Todo lo de Plus</li>
+              <li>Uso ampliado</li>
+              <li>Acceso anticipado a novedades</li>
+            </ul>
+            <button class="btn-sm" type="button" disabled>Próximamente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos -->
+      <div class="set-pane" id="pane-data" role="tabpanel" hidden>
+        <h3>Datos</h3>
+        <div class="set-row">
+          <div class="lbl"><b>Exportar mis chats</b><small>Descarga todas tus conversaciones en un archivo JSON.</small></div>
+          <button class="btn-sm" id="btn-export" type="button">Exportar</button>
+        </div>
+        <div class="set-row">
+          <div class="lbl"><b>Eliminar todos los chats</b><small>Borra todo tu historial. No se puede deshacer.</small></div>
+          <button class="btn-sm danger" id="btn-delete-all" type="button">Eliminar todo</button>
+        </div>
+        <div class="notice set-msg" id="msg-data" role="status" hidden></div>
+      </div>
+    </section>
+  </div>
+</div>
 
 <div id="toast" role="alert" hidden></div>
 
@@ -601,7 +869,15 @@ const CONFIG = {
   // Crear imagen (Worker POST /image). La clave de OpenRouter vive solo en el Worker.
   IMAGE_ENDPOINT: "https://pnova-ai-api.pedroangelnp-es.workers.dev/image",
   IMAGE_TIMEOUT_MS: 120000,   // tiempo máximo de espera de una imagen
-  IMAGE_PROMPT_MAX: 1000      // longitud máxima de la descripción
+  IMAGE_PROMPT_MAX: 1000,     // longitud máxima de la descripción
+
+  // false = «Crear imagen» aparece como «Próximamente» en el menú de adjuntar. Ponlo en true cuando quieras reactivarlo.
+  IMAGE_ENABLED: false,
+
+  // Archivos adjuntos
+  FILE_MAX: 4,                       // archivos por mensaje
+  FILE_MAX_BYTES: 5 * 1024 * 1024,   // tamaño máximo de cada archivo
+  FILE_TEXT_MAX_CHARS: 30000         // los archivos de texto se recortan a esta longitud
 };
 
 /* =====================================================================
@@ -624,6 +900,15 @@ const ICONS = {
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
   refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>'
 };
+Object.assign(ICONS, {
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  database: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  paperclip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+  file: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/>'
+});
 const icon = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 document.querySelectorAll("[data-icon]").forEach(el => { el.outerHTML = icon(el.dataset.icon); });
 
@@ -797,6 +1082,8 @@ let user = null, profile = null;
 let conversations = [], currentId = null, messages = [];
 let sending = false, loadingConv = false, lastFailed = false;
 let imageMode = false, imgPending = false, retryImagePrompt = null;   // modo «Crear imagen»
+let pendingFiles = [], readingFiles = 0;       // adjuntos del mensaje que se está escribiendo
+const attPreviews = {}, attData = {};          // por id de mensaje: miniaturas y datos (solo en memoria)
 let modelId = store.get("pnova.model") || CONFIG.DEFAULT_MODEL;
 if (!CONFIG.MODELS.some(m => m.id === modelId && m.endpoint)) modelId = CONFIG.DEFAULT_MODEL;
 const getModel = () => CONFIG.MODELS.find(m => m.id === modelId) || CONFIG.MODELS[0];
@@ -1101,6 +1388,7 @@ function applyConfigWarning() {
 }
 
 function showAuth() {                          // sin sesión: se muestra la pantalla de inicio
+  $("#set-overlay").hidden = true;
   user = null; profile = null; conversations = []; messages = []; currentId = null; namePending = null;
   $("#app-view").hidden = true;
   $("#auth-password").value = "";
@@ -1314,7 +1602,7 @@ function renderMessages(typing = false) {
   main.classList.toggle("is-empty", empty);
   const box = $("#messages");
   box.innerHTML = messages.map((m, i) => m.role === "user"
-    ? `<div class="msg user"><div class="bubble">${esc(m.content)}</div></div>`
+    ? `<div class="msg user">${attHtml(m)}${(m.metadata && m.metadata.auto_text) ? "" : `<div class="bubble">${esc(m.content)}</div>`}</div>`
     : isImageMsg(m) ? imageMsgHtml(m, i)
     : `<div class="msg assistant"><div class="content">${renderMd(partsOf(m).text)}</div>
          ${sourcesChip(i, partsOf(m).sources)}
@@ -1360,9 +1648,21 @@ function scrollDown(instant) {
 
 async function sendMessage(text, opts = {}) {
   text = text.trim();
-  if (!text || sending) return;
+  const files = opts.files || [];
+  if ((!text && !files.length) || sending) return;
   const model = getModel();
   if (!model.endpoint) { toast(`${model.name} aún no está disponible.`); return; }
+  const autoText = !text;
+  if (autoText) text = "Adjunto: " + files.map(f => f.name).join(", ");
+
+  const metadata = {};
+  if (opts.image) metadata.type = "image_prompt";
+  if (files.length) {
+    metadata.attachments = files.map(f => ({ name: f.name, type: f.type, size: f.size, kind: f.kind }));
+    const inl = files.filter(f => f.kind === "text").map(f => `Archivo "${f.name}":\n\`\`\`\n${f.text}\n\`\`\``).join("\n\n");
+    if (inl) metadata.attach_text = inl;
+    if (autoText) metadata.auto_text = true;
+  }
 
   sending = true; lastFailed = false; retryImagePrompt = null; updateSend();
   try {
@@ -1373,15 +1673,20 @@ async function sendMessage(text, opts = {}) {
       currentId = data.id; conversations.unshift(data); renderList();
     }
     const { data: saved, error: e2 } = await sb.from("messages")
-      .insert({ conversation_id: currentId, user_id: user.id, role: "user", content: text, model: model.id, ...(opts.image ? { metadata: { type: "image_prompt" } } : {}) })
+      .insert({ conversation_id: currentId, user_id: user.id, role: "user", content: text, model: model.id, ...(Object.keys(metadata).length ? { metadata } : {}) })
       .select("id,role,content,model,created_at,metadata").single();
     if (e2) throw e2;
     messages.push(saved);
+    if (files.length) {
+      attPreviews[saved.id] = files.map(f => ({ url: f.previewUrl || null }));
+      attData[saved.id] = files.filter(f => f.kind !== "text");
+    }
     renderMessages(); scrollDown();
     await (opts.image ? requestImage(text) : requestReply());
   } catch (err) {
     lastFailed = "No se pudo guardar el mensaje. Revisa tu conexión y vuelve a intentarlo.";
-    $("#input").value = text; autosize();
+    $("#input").value = autoText ? "" : text; autosize();
+    if (files.length) { pendingFiles = files; renderChips(); }
     if (opts.image) setImageMode(true);
     renderMessages();
   } finally {
@@ -1627,7 +1932,9 @@ function typeReply(full) {
 }
 
 async function callBackend(model) {
-  const history = messages.slice(-CONFIG.HISTORY_LIMIT).map(m => ({ role: m.role, content: m.content }));
+  const history = messages.slice(-CONFIG.HISTORY_LIMIT).map(m => ({ role: m.role, content: backendContent(m) }));
+  const lastMsg = messages[messages.length - 1];
+  const extra = ((lastMsg && attData[lastMsg.id]) || []).map(f => ({ name: f.name, type: f.type, size: f.size, data: f.dataUrl }));
   const last = history[history.length - 1];
   const headers = { "Content-Type": "application/json" };
   if (model.sendAuthToken) {
@@ -1645,7 +1952,8 @@ async function callBackend(model) {
         history: history.slice(0, -1),         // turnos anteriores [{role, content}]
         conversation_id: currentId,
         user_id: user.id,
-        model: model.id
+        model: model.id,
+        ...(extra.length ? { attachments: extra } : {})
       })
     });
   } catch (err) {
@@ -1658,7 +1966,7 @@ async function callBackend(model) {
   const reply = extractReply(data);
   if (!reply) { const e = new Error("empty"); e.userMessage = `${model.name} devolvió una respuesta vacía.`; throw e; }
   const flag = data && [data.searched, data.used_search, data.web_search, data.search_used, data.did_search, data.used_web_search].find(v => typeof v === "boolean");
-  return { reply, sources: extractApiSources(data), searched: typeof flag === "boolean" ? flag : wantsSearch(last.content) };
+  return { reply, sources: extractApiSources(data), searched: typeof flag === "boolean" ? flag : wantsSearch(lastMsg ? lastMsg.content : last.content) };
 }
 
 /* Acepta los formatos de respuesta más habituales */
@@ -1681,7 +1989,7 @@ function autosize() {
   input.style.height = Math.min(input.scrollHeight, 200) + "px";
   updateSend();
 }
-function updateSend() { $("#send").disabled = sending || !input.value.trim(); }
+function updateSend() { $("#send").disabled = sending || (!input.value.trim() && !pendingFiles.length); }
 
 function setImageMode(on) {
   imageMode = !!on;
@@ -1697,16 +2005,117 @@ input.addEventListener("keydown", e => {
 $("#composer").addEventListener("submit", e => {
   e.preventDefault();
   const text = input.value;
-  if (!text.trim() || sending) return;
+  const files = pendingFiles.slice();
+  if ((!text.trim() && !files.length) || sending) return;
+  if (readingFiles) return toast("Espera a que terminen de cargarse los archivos.");
   const asImage = imageMode;
   if (asImage) {
+    if (files.length) return toast("Quita los adjuntos para crear una imagen.");
     if (text.trim().length < 3) return toast("Describe la imagen con algo más de detalle.");
     if (text.trim().length > CONFIG.IMAGE_PROMPT_MAX) return toast(`La descripción es demasiado larga (máximo ${CONFIG.IMAGE_PROMPT_MAX} caracteres).`);
     setImageMode(false);                      // el modo se apaga tras cada imagen para no gastar saldo sin querer
   }
   input.value = ""; autosize();
-  sendMessage(text, { image: asImage });
+  pendingFiles = []; renderChips();
+  sendMessage(text, { image: asImage, files });
 });
+
+/* =====================================================================
+   Adjuntar archivos e imágenes
+   Texto (txt, md, csv, json, código…): su contenido se envía dentro del mensaje.
+   Imágenes y otros archivos (PDF, Word…): se envían en el campo «attachments» (base64);
+   el servidor debe leerlo para poder usarlos.
+   ===================================================================== */
+const TEXT_EXT = /\.(txt|md|markdown|csv|tsv|json|jsonl|xml|html?|css|js|mjs|ts|tsx|jsx|py|java|c|h|cpp|cs|go|rs|php|rb|sh|sql|yml|yaml|toml|ini|log|swift|kt)$/i;
+const escA = v => esc(v).replace(/"/g, "&quot;");
+const fmtSize = n => n < 1024 ? n + " B" : n < 1048576 ? Math.round(n / 1024) + " KB" : (n / 1048576).toFixed(1) + " MB";
+const readDataUrl = file => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(file); });
+
+async function addFiles(list) {
+  for (const file of Array.from(list || [])) {
+    if (pendingFiles.length >= CONFIG.FILE_MAX) { toast(`Máximo ${CONFIG.FILE_MAX} archivos por mensaje.`); break; }
+    if (!file.size) { toast(`"${file.name}" está vacío.`); continue; }
+    if (file.size > CONFIG.FILE_MAX_BYTES) { toast(`"${file.name}" pesa más de ${fmtSize(CONFIG.FILE_MAX_BYTES)}.`); continue; }
+    readingFiles++;
+    try {
+      const isImg = file.type.startsWith("image/");
+      const isTxt = !isImg && (file.type.startsWith("text/") || file.type === "application/json" || TEXT_EXT.test(file.name));
+      const f = { name: file.name, type: file.type || "application/octet-stream", size: file.size };
+      if (isImg) { f.kind = "image"; f.dataUrl = await readDataUrl(file); f.previewUrl = URL.createObjectURL(file); }
+      else if (isTxt) {
+        f.kind = "text";
+        let t = await file.text();
+        if (t.length > CONFIG.FILE_TEXT_MAX_CHARS) t = t.slice(0, CONFIG.FILE_TEXT_MAX_CHARS) + "\n…[archivo recortado]";
+        f.text = t;
+      } else { f.kind = "file"; f.dataUrl = await readDataUrl(file); }
+      pendingFiles.push(f);
+    } catch (err) { toast(`No se pudo leer "${file.name}".`); }
+    finally { readingFiles--; }
+  }
+  renderChips();
+}
+
+function renderChips() {
+  const row = $("#attach-row");
+  row.hidden = !pendingFiles.length;
+  row.innerHTML = pendingFiles.map((f, i) => `
+    <div class="att-chip">
+      <span class="att-thumb">${f.kind === "image" ? `<img src="${f.previewUrl}" alt="">` : icon("file")}</span>
+      <span class="att-meta"><b title="${escA(f.name)}">${esc(f.name)}</b><small>${fmtSize(f.size)}</small></span>
+      <button type="button" class="att-x" data-rm="${i}" aria-label="Quitar ${escA(f.name)}">${icon("x")}</button>
+    </div>`).join("");
+  updateSend();
+}
+$("#attach-row").addEventListener("click", e => {
+  const b = e.target.closest("[data-rm]"); if (!b) return;
+  const [f] = pendingFiles.splice(+b.dataset.rm, 1);
+  if (f && f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+  renderChips(); input.focus();
+});
+
+function attHtml(m) {
+  const atts = (m.metadata && m.metadata.attachments) || [];
+  if (!atts.length) return "";
+  const pv = attPreviews[m.id] || [];
+  return `<div class="att-list">` + atts.map((a, i) => (a.kind === "image" && pv[i] && pv[i].url)
+    ? `<img class="att-img" src="${pv[i].url}" alt="${escA(a.name)}">`
+    : `<div class="att-chip static"><span class="att-thumb">${icon(a.kind === "image" ? "image" : "file")}</span><span class="att-meta"><b>${esc(a.name)}</b><small>${fmtSize(a.size || 0)}</small></span></div>`
+  ).join("") + `</div>`;
+}
+
+// Lo que ve el modelo: texto escrito + contenido de archivos de texto + nombres de los demás adjuntos
+function backendContent(m) {
+  const md = m.metadata || {};
+  let c = md.auto_text ? "" : m.content;
+  if (md.attach_text) c += (c ? "\n\n" : "") + md.attach_text;
+  const others = (md.attachments || []).filter(a => a.kind !== "text").map(a => a.name);
+  if (others.length) c += (c ? "\n\n" : "") + "[Archivos adjuntos: " + others.join(", ") + "]";
+  return c || m.content;
+}
+
+$("#attach-btn").onclick = e => {
+  e.stopPropagation();
+  const on = CONFIG.IMAGE_ENABLED;
+  openPopover($("#attach-btn"),
+    `<button type="button" data-act="img">${icon("image")}Subir imagen</button>
+     <button type="button" data-act="file">${icon("file")}Subir archivo</button>
+     <button type="button" data-act="create" ${on ? "" : "disabled"}>${icon("image")}<span class="opt-text">Crear imagen${on ? "" : "<small>Próximamente</small>"}</span></button>`,
+    act => {
+      if (act === "img") $("#file-img").click();
+      else if (act === "file") $("#file-any").click();
+      else if (act === "create") { setImageMode(true); input.focus(); }
+    }, null, true);
+};
+["#file-img", "#file-any"].forEach(sel => $(sel).addEventListener("change", e => { addFiles(e.target.files); e.target.value = ""; }));
+input.addEventListener("paste", e => {
+  const fs = Array.from((e.clipboardData && e.clipboardData.files) || []);
+  if (fs.length) { e.preventDefault(); addFiles(fs); }
+});
+$("#main").addEventListener("dragover", e => { if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) e.preventDefault(); });
+$("#main").addEventListener("drop", e => {
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) { e.preventDefault(); addFiles(e.dataTransfer.files); }
+});
+$("#img-toggle").hidden = !CONFIG.IMAGE_ENABLED;
 
 /* =====================================================================
    Selector de modelo, menús y barra lateral
@@ -1725,8 +2134,15 @@ $("#model-btn").onclick = e => {
 
 $("#user-btn").onclick = e => {
   e.stopPropagation();
-  openPopover($("#user-btn"), `<button type="button" data-act="logout">${icon("logout")}Cerrar sesión</button>`,
-    act => { if (act === "logout") logout(); }, null, true);
+  openPopover($("#user-btn"),
+    `<button type="button" data-act="settings">${icon("settings")}Ajustes</button>
+     <button type="button" data-act="plans">${icon("zap")}Planes</button>
+     <button type="button" data-act="logout" class="danger">${icon("logout")}Cerrar sesión</button>`,
+    act => {
+      if (act === "logout") logout();
+      else if (act === "settings") openSettings("general");
+      else if (act === "plans") openSettings("plans");
+    }, null, true);
 };
 
 let popoverClose = null;
@@ -1779,6 +2195,208 @@ $("#btn-search").onclick = () => {
   else { $("#search-input").value = ""; renderList(); }
 };
 $("#search-input").addEventListener("input", renderList);
+
+/* =====================================================================
+   Ajustes: tema, cuenta, planes y datos
+   ===================================================================== */
+const darkMQ = matchMedia("(prefers-color-scheme: dark)");
+function applyTheme() {
+  const t = store.get("pnova.theme") || "system";
+  const dark = t === "dark" || (t === "system" && darkMQ.matches);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  document.documentElement.dataset.accent = store.get("pnova.accent") || "blue";
+}
+if (darkMQ.addEventListener) darkMQ.addEventListener("change", applyTheme);
+
+function refreshAppearance() {
+  const t = store.get("pnova.theme") || "system", a = store.get("pnova.accent") || "blue";
+  document.querySelectorAll("#theme-seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === t)));
+  document.querySelectorAll("#accent-row .swatch").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.accent === a)));
+}
+$("#theme-seg").addEventListener("click", e => {
+  const b = e.target.closest("button[data-theme]"); if (!b) return;
+  store.set("pnova.theme", b.dataset.theme); applyTheme(); refreshAppearance();
+});
+$("#accent-row").addEventListener("click", e => {
+  const b = e.target.closest(".swatch"); if (!b) return;
+  store.set("pnova.accent", b.dataset.accent); applyTheme(); refreshAppearance();
+});
+
+function setMsg(el, text, kind = "error") {
+  if (!text) { el.hidden = true; return; }
+  el.className = "notice set-msg " + kind; el.textContent = text; el.hidden = false;
+}
+const PROVIDER_LABELS = { email: "Correo y contraseña", google: "Google", phone: "Teléfono" };
+function authProviders() {
+  const am = (user && user.app_metadata) || {};
+  return am.providers || (am.provider ? [am.provider] : []);
+}
+function phoneText(u) { return u.phone ? "+" + String(u.phone).replace(/^\+/, "") : ""; }
+
+function fillAccount() {
+  const name = (profile && profile.display_name) || $("#user-name").textContent || "Usuario";
+  $("#acc-avatar").textContent = (name[0] || "P").toUpperCase();
+  $("#acc-name-title").textContent = name;
+  $("#acc-email-title").textContent = user.email || phoneText(user);
+  $("#set-name").value = name;
+  $("#set-email").value = user.email || "";
+  $("#row-phone").hidden = !user.phone;
+  $("#set-phone").textContent = phoneText(user);
+  const prov = authProviders();
+  $("#acc-provider").textContent = prov.map(p => PROVIDER_LABELS[p] || p).join(", ") || "—";
+  const hasPw = prov.includes("email");
+  $("#pw-current-field").hidden = !hasPw;
+  $("#pw-title").textContent = hasPw ? "Cambiar contraseña" : "Crear contraseña";
+}
+
+function showSetTab(name) {
+  document.querySelectorAll(".set-tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
+  document.querySelectorAll(".set-pane").forEach(p => { p.hidden = p.id !== "pane-" + name; });
+  $(".set-body").scrollTop = 0;
+}
+let setLastFocus = null;
+function openSettings(tab = "general") {
+  if (!user) return;
+  closePopover();
+  setLastFocus = document.activeElement;
+  fillAccount(); refreshAppearance();
+  document.querySelectorAll(".set-msg").forEach(m => { m.hidden = true; });
+  ["#pw-current", "#pw-new", "#pw-new2"].forEach(s => { $(s).value = ""; });
+  $("#set-overlay").hidden = false;
+  showSetTab(tab);
+  $("#set-close").focus({ preventScroll: true });
+}
+function closeSettings() {
+  $("#set-overlay").hidden = true;
+  if (setLastFocus && setLastFocus.focus) setLastFocus.focus({ preventScroll: true });
+}
+$("#set-close").onclick = closeSettings;
+$("#set-overlay").addEventListener("mousedown", e => { if (e.target.id === "set-overlay") closeSettings(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#set-overlay").hidden) closeSettings(); });
+document.querySelectorAll(".set-tab").forEach(b => b.addEventListener("click", () => showSetTab(b.dataset.tab)));
+$("#set-logout").onclick = () => { closeSettings(); logout(); };
+
+/* ---- Nombre ---- */
+$("#form-name").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("#msg-name"), name = $("#set-name").value.trim();
+  if (name.length < 2) return setMsg(msg, "Escribe un nombre de al menos 2 caracteres.");
+  const btn = e.currentTarget.querySelector("button[type=submit]"); btn.disabled = true; setMsg(msg);
+  try {
+    const { data, error } = await sb.auth.updateUser({ data: { display_name: name } });
+    if (error) throw error;
+    if (data && data.user) user = data.user;
+    await sb.from("profiles").update({ display_name: name }).eq("id", user.id);
+    if (profile) profile.display_name = name;
+    $("#user-name").textContent = name;
+    $("#user-avatar").textContent = (name[0] || "P").toUpperCase();
+    fillAccount();
+    setMsg(msg, "Nombre actualizado.", "ok");
+  } catch (err) {
+    setMsg(msg, authError(err));
+  } finally { btn.disabled = false; }
+});
+
+/* ---- Correo ---- */
+$("#form-email").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("#msg-email"), email = $("#set-email").value.trim();
+  if (!/^\S+@\S+\.\S+$/.test(email)) return setMsg(msg, "Escribe un correo válido.");
+  if (email.toLowerCase() === (user.email || "").toLowerCase()) return setMsg(msg, "Ese ya es tu correo actual.", "warn");
+  const btn = e.currentTarget.querySelector("button[type=submit]"); btn.disabled = true; setMsg(msg);
+  try {
+    const { error } = await sb.auth.updateUser({ email });
+    if (error) throw error;
+    setMsg(msg, "Te hemos enviado un correo de confirmación. Abre el enlace para completar el cambio.", "ok");
+  } catch (err) {
+    setMsg(msg, authError(err));
+  } finally { btn.disabled = false; }
+});
+
+/* ---- Contraseña ---- */
+$("#form-pw").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("#msg-pw");
+  const cur = $("#pw-current").value, p1 = $("#pw-new").value, p2 = $("#pw-new2").value;
+  const hasPw = authProviders().includes("email");
+  if (hasPw && !cur) return setMsg(msg, "Escribe tu contraseña actual.");
+  if (p1.length < 6) return setMsg(msg, "La nueva contraseña debe tener al menos 6 caracteres.");
+  if (p1 !== p2) return setMsg(msg, "Las contraseñas nuevas no coinciden.");
+  if (hasPw && p1 === cur) return setMsg(msg, "La nueva contraseña debe ser distinta de la actual.");
+  const btn = e.currentTarget.querySelector("button[type=submit]"); btn.disabled = true; setMsg(msg);
+  try {
+    if (hasPw && user.email) {
+      const chk = await sb.auth.signInWithPassword({ email: user.email, password: cur });
+      if (chk.error) throw new Error("La contraseña actual no es correcta.");
+    }
+    const { error } = await sb.auth.updateUser({ password: p1 });
+    if (error) throw error;
+    const g = await sb.auth.getUser();
+    if (g.data && g.data.user) user = g.data.user;
+    ["#pw-current", "#pw-new", "#pw-new2"].forEach(s => { $(s).value = ""; });
+    fillAccount();
+    setMsg(msg, "Contraseña actualizada.", "ok");
+  } catch (err) {
+    setMsg(msg, err && err.message === "La contraseña actual no es correcta." ? err.message : authError(err));
+  } finally { btn.disabled = false; }
+});
+
+/* ---- Datos ---- */
+async function fetchAll(table, columns, order) {
+  const out = []; let from = 0;
+  for (;;) {
+    let q = sb.from(table).select(columns);
+    order.forEach(o => { q = q.order(o, { ascending: true }); });
+    const { data, error } = await q.range(from, from + 999);
+    if (error) throw error;
+    out.push(...(data || []));
+    if (!data || data.length < 1000) break;
+    from += 1000;
+  }
+  return out;
+}
+$("#btn-export").onclick = async () => {
+  const btn = $("#btn-export"), msg = $("#msg-data");
+  btn.disabled = true; setMsg(msg);
+  try {
+    const convs = await fetchAll("conversations", "*", ["updated_at", "id"]);
+    const msgs = await fetchAll("messages", "conversation_id,role,content,model,created_at", ["created_at", "id"]);
+    const by = {};
+    msgs.forEach(m => { (by[m.conversation_id] = by[m.conversation_id] || []).push({ role: m.role, content: m.content, model: m.model, created_at: m.created_at }); });
+    const out = {
+      exported_at: new Date().toISOString(),
+      account: { name: (profile && profile.display_name) || null, email: user.email || null },
+      conversations: convs.map(c => ({ title: c.title, model: c.model, updated_at: c.updated_at, messages: by[c.id] || [] }))
+    };
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "pnova-chats-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    setMsg(msg, `Exportados ${convs.length} chats.`, "ok");
+  } catch (err) {
+    setMsg(msg, "No se pudieron exportar tus chats.");
+  } finally { btn.disabled = false; }
+};
+$("#btn-delete-all").onclick = async () => {
+  const btn = $("#btn-delete-all"), msg = $("#msg-data");
+  if (!confirm("¿Eliminar TODOS tus chats? Esta acción no se puede deshacer.")) return;
+  btn.disabled = true; setMsg(msg);
+  try {
+    const rows = await fetchAll("conversations", "id", ["id"]);
+    const ids = rows.map(r => r.id);
+    for (let i = 0; i < ids.length; i += 100) {
+      const { error } = await sb.from("conversations").delete().in("id", ids.slice(i, i + 100));
+      if (error) throw error;
+    }
+    conversations = []; newChat();
+    setMsg(msg, ids.length ? "Se eliminaron todos tus chats." : "No tenías chats que eliminar.", "ok");
+  } catch (err) {
+    setMsg(msg, "No se pudieron eliminar todos los chats.");
+  }
+  btn.disabled = false;
+};
 
 /* =====================================================================
    Arranque
