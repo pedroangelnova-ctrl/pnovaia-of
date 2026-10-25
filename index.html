@@ -2071,14 +2071,26 @@ async function sendPhoneCode() {
       markOtpSent(phone); showOtpStep("phone", phone, n);
       return showNotice("Ya te enviamos un código por WhatsApp hace un momento. Escríbelo aquí o espera " + n + " s para pedir otro.", "ok");
     }
-    const hint = m.includes("rate") || m.includes("too many") || m.includes("seconds")
-      ? "Has pedido demasiados códigos. Espera un minuto e inténtalo de nuevo."
-      : m.includes("provider") || m.includes("unsupported") || m.includes("disabled")
-      ? "El acceso con teléfono no está activado en Supabase (Authentication → Providers → Phone)."
-      : m.includes("hook") || m.includes("sending") || m.includes("sms") || m.includes("500") || m.includes("unexpected")
-      ? "No se pudo enviar el código por WhatsApp. Inténtalo de nuevo en unos minutos."
-      : authError(err);
-    showNotice(hint);
+    const c = String((err && (err.code || err.error_code)) || "").toLowerCase();
+    const st = err && err.status;
+    let hint;
+    if (c === "over_sms_send_rate_limit" || c === "over_request_rate_limit" || st === 429 || /rate limit|too many requests/.test(m)) {
+      hint = "Supabase ha alcanzado su límite de envíos de códigos (límite del proyecto, no de tu número). Espera un rato o súbelo en Supabase → Authentication → Rate Limits.";
+    } else if (c.startsWith("hook_timeout") || /hook requires more than|timed? ?out/.test(m)) {
+      hint = "El servidor que envía el WhatsApp tardó demasiado en responder (si está en Render, puede estar dormido). Espera 30 s e inténtalo otra vez.";
+    } else if (c.startsWith("hook_") || /error running hook|hook/.test(m)) {
+      hint = "El Send SMS Hook de Supabase falló al enviar el WhatsApp. Revisa los logs de tu servidor del hook y de Supabase (Logs → Auth).";
+    } else if (c === "phone_provider_disabled" || c === "sms_send_failed" || /provider|unsupported phone|disabled/.test(m)) {
+      hint = "El acceso con teléfono no está activado o el proveedor no pudo enviar (Supabase → Authentication → Providers → Phone).";
+    } else if (c === "validation_failed" || c === "invalid_phone" || /invalid.*phone|phone.*invalid/.test(m)) {
+      hint = "El número no es válido. Escríbelo con prefijo, por ejemplo +34612345678.";
+    } else if (/failed to fetch|network/.test(m)) {
+      hint = "No se pudo conectar con Supabase. Revisa tu conexión.";
+    } else {
+      hint = authError(err);
+    }
+    // Se añade el código técnico real para poder diagnosticar el fallo
+    showNotice(hint + (c || st || raw ? "  [" + [c, st, raw].filter(Boolean).join(" · ") + "]" : ""));
   } finally {
     btn.disabled = false;
   }
