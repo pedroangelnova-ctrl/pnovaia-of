@@ -1446,8 +1446,8 @@ const PAYPAL_CFG = {
   PLAN_ID: "P-3WX98865YT444350YNLPAVLQ",
   MODE: "onetime",            // "onetime" = pago único por meses (nuevo) · "subscription" = respaldo anterior
   ENV: "sandbox",             // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
-  SANDBOX_CLIENT_ID: "",      // Client ID de la app SANDBOX de PayPal
-  PAY_API: ""                 // URL del Worker de pagos, p. ej. "https://pnova-pay.TU-SUBDOMINIO.workers.dev"
+  SANDBOX_CLIENT_ID: "BAAchKxoA0MepTokGabR9Fl7pqa7Op4_Bq8vpaeNA8ht8ipwldG4FbsHbULHumm17qCkKdz0fjZGsecqIA",      // Client ID de la app SANDBOX de PayPal
+  PAY_API: "https://pnova-pay.pedroangelnp-es.workers.dev"                 // URL del Worker de pagos, p. ej. "https://pnova-pay.TU-SUBDOMINIO.workers.dev"
 };
 let paypalLoading = null, paypalRendered = false;
 function loadPayPalSdk() {
