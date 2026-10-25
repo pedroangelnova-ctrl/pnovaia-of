@@ -458,6 +458,19 @@
   .pay-methods { display: grid; gap: 10px; } .pay-methods [hidden] { display: none !important; }
   .card-field { height: 44px; }
   .pay-input { height: 44px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; background: var(--bg); color: var(--text); font: inherit; width: 100%; }
+  #plan-modal { z-index: 75; }
+  .plan-modal { width: min(560px, 100%); max-height: min(760px, calc(100% - 8px)); overflow-y: auto; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 24px 70px rgba(0, 0, 0, .35); padding: 22px 26px 28px; display: grid; gap: 14px; align-content: start; }
+  .pm-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .pm-head h3 { margin: 0; font-size: 22px; font-weight: 600; }
+  .pm-lead { margin: 0; color: var(--muted); font-size: 14px; }
+  .plan-modal #pay-onetime { gap: 14px; }
+  .plan-modal .mo-grid { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 10px; }
+  .plan-modal .mo { padding: 16px 0; border-radius: 14px; gap: 2px; }
+  .plan-modal .mo b { font-size: 26px; }
+  .plan-modal .mo small { font-size: 13px; }
+  .plan-modal .mo .mo-p { color: var(--text); font-weight: 600; margin-top: 4px; }
+  .plan-modal #mo-total { font-size: 34px; }
+  .plan-modal .btn-sm { width: 100%; height: 46px; font-size: 15px; }
   .set-note { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
   @media (max-width: 700px) {
     .modal-overlay { padding: 0; }
@@ -467,6 +480,7 @@
     .set-tab { width: auto; padding: 8px 12px; }
     .set-body { padding: 18px 18px 28px; }
     .plans { grid-template-columns: 1fr; }
+    .plan-modal { height: 100%; max-height: none; border-radius: 0; border: 0; padding: 18px 18px 28px; }
     .set-row { flex-wrap: wrap; }
   }
 
@@ -1019,23 +1033,7 @@
               <li>Acceso a Nova AI</li>
               <li>Respuestas más rápidas</li>
             </ul>
-            <div id="pay-onetime">
-              <div class="mo-grid" id="mo-grid" role="radiogroup" aria-label="Duración del acceso en meses"></div>
-              <div class="mo-total"><span id="mo-total" aria-live="polite">3,99 €</span><small id="mo-dur">Acceso durante 1 mes</small></div>
-              <p class="mo-note">Pago único · Sin renovación automática</p>
-              <p class="mo-access" id="mo-access" hidden></p>
-              <button class="btn-sm primary" id="pay-go" type="button">Continuar al pago</button>
-              <div class="pay-methods" id="pay-methods" hidden>
-                <paypal-button id="pp6-button" type="pay" hidden></paypal-button>
-                <div id="ap-wrap" hidden></div>
-                <div id="card-wrap" hidden>
-                  <b>Tarjeta de crédito o débito</b>
-                  <div class="card-field" id="cf-number"></div><div class="card-field" id="cf-expiry"></div><div class="card-field" id="cf-cvv"></div>
-                  <input class="pay-input" id="cf-zip" type="text" inputmode="text" autocomplete="postal-code" maxlength="12" placeholder="Código postal" aria-label="Código postal de facturación">
-                  <button class="btn-sm primary" id="cf-pay" type="button">Pagar con tarjeta</button>
-                </div>
-              </div>
-            </div>
+            <button class="btn-sm primary" id="plan-choose" type="button">Elegir Plan Basic</button>
             <!-- Respaldo: flujo anterior de suscripción. Se activa con PAYPAL_CFG.MODE = "subscription" -->
             <button class="btn-sm primary" id="pp-open" type="button" hidden>Suscribirme</button>
             <div id="paypal-button-container" hidden></div>
@@ -1068,6 +1066,35 @@
         <div class="notice set-msg" id="msg-data" role="status" hidden></div>
       </div>
     </section>
+  </div>
+</div>
+
+<!-- ================= ELEGIR PLAN BASIC (ventana grande) ================= -->
+<div id="plan-modal" class="modal-overlay" hidden>
+  <div class="plan-modal" role="dialog" aria-modal="true" aria-labelledby="pm-title">
+    <div class="pm-head">
+      <h3 id="pm-title">Plan Basic</h3>
+      <button class="icon-btn" id="pm-close" type="button" aria-label="Cerrar"><span data-icon="x"></span></button>
+    </div>
+    <p class="pm-lead">¿Cuántos meses quieres? Más mensajes e imágenes, acceso a Nova AI y respuestas más rápidas.</p>
+            <div id="pay-onetime">
+              <div class="mo-grid" id="mo-grid" role="radiogroup" aria-label="Duración del acceso en meses"></div>
+              <div class="mo-total"><span id="mo-total" aria-live="polite">3,99 €</span><small id="mo-dur">Acceso durante 1 mes</small></div>
+              <p class="mo-note">Pago único · Sin renovación automática</p>
+              <p class="mo-access" id="mo-access" hidden></p>
+              <button class="btn-sm primary" id="pay-go" type="button">Continuar al pago</button>
+              <div class="pay-methods" id="pay-methods" hidden>
+                <paypal-button id="pp6-button" type="pay" hidden></paypal-button>
+                <div id="ap-wrap" hidden></div>
+                <div id="card-wrap" hidden>
+                  <b>Tarjeta de crédito o débito</b>
+                  <div class="card-field" id="cf-number"></div><div class="card-field" id="cf-expiry"></div><div class="card-field" id="cf-cvv"></div>
+                  <input class="pay-input" id="cf-zip" type="text" inputmode="text" autocomplete="postal-code" maxlength="12" placeholder="Código postal" aria-label="Código postal de facturación">
+                  <button class="btn-sm primary" id="cf-pay" type="button">Pagar con tarjeta</button>
+                </div>
+              </div>
+            </div>
+    <div class="notice set-msg" id="msg-pp-modal" role="status" hidden></div>
   </div>
 </div>
 
@@ -1445,7 +1472,7 @@ const PAYPAL_CFG = {
   CLIENT_ID: "BAASj0qjHI2-n9l1m_rLzhIBOCip3O0i4kgCsu5_FVymSjPGFBOwAxWEDI7wdi4LXSDb-kHxYgTbW06ojw",
   PLAN_ID: "P-3WX98865YT444350YNLPAVLQ",
   MODE: "onetime",            // "onetime" = pago único por meses (nuevo) · "subscription" = respaldo anterior
-  ENV: "sandbox",             // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
+  ENV: "live",                // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
   SANDBOX_CLIENT_ID: "BAAchKxoA0MepTokGabR9Fl7pqa7Op4_Bq8vpaeNA8ht8ipwldG4FbsHbULHumm17qCkKdz0fjZGsecqIA",      // Client ID de la app SANDBOX de PayPal
   PAY_API: "https://pnova-pay.pedroangelnp-es.workers.dev"   // URL del Worker de pagos
 };
@@ -1462,7 +1489,12 @@ function loadPayPalSdk() {
   }).catch(e => { paypalLoading = null; throw e; });
   return paypalLoading;
 }
-const ppMsg = (t, kind = "error") => { const n = $("#msg-pp"); if (!t) { n.hidden = true; return; } n.className = "notice set-msg " + kind; n.textContent = t; n.hidden = false; };
+const ppMsg = (t, kind = "error") => {
+  const c = $("#msg-pp"), m = $("#msg-pp-modal"); c.hidden = true; m.hidden = true;
+  if (!t) return;
+  const n = $("#plan-modal").hidden ? c : m;
+  n.className = "notice set-msg " + kind; n.textContent = t; n.hidden = false;
+};
 $("#pp-open").onclick = async () => {
   if (!user) return;
   const b = $("#pp-open"); b.disabled = true; ppMsg();
@@ -1503,7 +1535,7 @@ function renderMonths() {
   $("#mo-total").textContent = eur(PLAN_CENTS[payMonths]);
   $("#mo-dur").textContent = "Acceso durante " + payMonths + (payMonths === 1 ? " mes" : " meses");
 }
-$("#mo-grid").innerHTML = Object.keys(PLAN_CENTS).map(m => `<button type="button" class="mo" role="radio" aria-checked="false" data-m="${m}"><b>${m}</b><small>${m === "1" ? "mes" : "meses"}</small></button>`).join("");
+$("#mo-grid").innerHTML = Object.keys(PLAN_CENTS).map(m => `<button type="button" class="mo" role="radio" aria-checked="false" data-m="${m}"><b>${m}</b><small>${m === "1" ? "mes" : "meses"}</small><small class="mo-p">${eur(PLAN_CENTS[m])}</small></button>`).join("");
 $("#mo-grid").addEventListener("click", e => { const b = e.target.closest(".mo"); if (b && !payBusy) { payMonths = +b.dataset.m; renderMonths(); } });
 $("#mo-grid").addEventListener("keydown", e => {
   const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!k || payBusy) return;
@@ -1540,6 +1572,7 @@ function renderSubscription() {
   $("#plan-free-btn").textContent = free ? "Plan actual" : "Plan gratuito";
   $("#plan-basic").classList.toggle("current", basic);
   $("#plan-basic-tag").hidden = !basic;
+  $("#plan-choose").textContent = basic ? "Añadir más meses" : "Elegir Plan Basic";
   const n = $("#mo-access"); n.hidden = !basic;
   if (basic) n.textContent = "Tu Plan Basic está activo hasta el " + dateTxt + ". Si compras más meses, se suman a esa fecha.";
 }
@@ -1675,7 +1708,30 @@ $("#pay-go").onclick = async () => {
     $("#pay-methods").hidden = false; b.hidden = true;
   } catch (e) { console.error(e); ppMsg("No se pudo cargar PayPal. Revisa tu conexión (o un bloqueador de anuncios) e inténtalo de nuevo."); b.disabled = false; }
 };
-{ const sub = PAYPAL_CFG.MODE === "subscription"; $("#pp-open").hidden = !sub; $("#pay-onetime").hidden = sub; }
+{ const sub = PAYPAL_CFG.MODE === "subscription"; $("#pp-open").hidden = !sub; $("#pay-onetime").hidden = sub; $("#plan-choose").hidden = sub; }
+
+/* ---------- Ventana grande para elegir los meses del Plan Basic ---------- */
+let planModalFocus = null;
+function openPlanModal() {
+  if (!user) return;
+  ppMsg();
+  planModalFocus = document.activeElement;
+  $("#plan-modal").hidden = false;
+  renderMonths();
+  refreshSubscription();                         // el aviso de vencimiento se pinta desde el estado de suscripción
+  const sel = $("#mo-grid .mo[aria-checked=true]"); if (sel) sel.focus({ preventScroll: true });
+}
+function closePlanModal() {
+  if (payBusy) return;                           // no se cierra mientras se procesa un pago
+  $("#plan-modal").hidden = true;
+  if (planModalFocus && planModalFocus.focus) planModalFocus.focus({ preventScroll: true });
+}
+$("#plan-choose").onclick = openPlanModal;
+$("#pm-close").onclick = closePlanModal;
+$("#plan-modal").addEventListener("mousedown", e => { if (e.target.id === "plan-modal") closePlanModal(); });
+document.addEventListener("keydown", e => {     // Esc cierra primero esta ventana, no los ajustes
+  if (e.key === "Escape" && !$("#plan-modal").hidden) { e.stopPropagation(); closePlanModal(); }
+}, true);
 
 /* ---------- Claves de acceso (passkeys / WebAuthn) vía Supabase Auth ----------
    Requiere supabase-js >= 2.105.0, «Authentication → Passkeys» activado en el panel
@@ -1977,6 +2033,7 @@ function applyConfigWarning() {
 }
 
 function showAuth() {                          // sin sesión: se muestra la pantalla de inicio
+  $("#plan-modal").hidden = true;
   $("#set-overlay").hidden = true;
   closeVoiceMode(); ttsStop(); dictAbort();
   user = null; profile = null; subSeq++; setSubscription("unknown"); conversations = []; messages = []; currentId = null; namePending = null;
@@ -2950,6 +3007,7 @@ function openSettings(tab = "general") {
   $("#set-close").focus({ preventScroll: true });
 }
 function closeSettings() {
+  $("#plan-modal").hidden = true;
   $("#set-overlay").hidden = true;
   if (setLastFocus && setLastFocus.focus) setLastFocus.focus({ preventScroll: true });
 }
