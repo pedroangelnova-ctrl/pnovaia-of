@@ -871,6 +871,7 @@
       <!-- General -->
       <div class="set-pane" id="pane-general" role="tabpanel">
         <h3>General</h3>
+        <div class="set-row"><div class="lbl"><b>Corregir mis mensajes automáticamente</b><small>Arregla abreviaturas, tildes y signos antes de enviarlos a la IA. Tu mensaje se ve igual que lo escribiste.</small></div><label class="switch"><input type="checkbox" id="set-autofix" aria-label="Corregir mis mensajes automáticamente"><i></i></label></div>
         <div class="set-row">
           <div class="lbl"><b>Tema</b><small>Elige cómo se ve PNova IA.</small></div>
           <div class="seg" id="theme-seg" role="group" aria-label="Tema">
@@ -2179,9 +2180,19 @@ async function callBackend(model) {
   if (!res.ok) { const e = new Error("http " + res.status); e.userMessage = `${model.name} respondió con un error (${res.status}).`; throw e; }
   const data = await res.json().catch(() => null);
   const reply = extractReply(data);
+  try { console.debug("[PNova] JSON del backend:", data, "→ campo leído:", replyField(data)); } catch (e) {}   // diagnóstico: no cambia el comportamiento
   if (!reply) { const e = new Error("empty"); e.userMessage = `${model.name} devolvió una respuesta vacía.`; throw e; }
   const flag = data && [data.searched, data.used_search, data.web_search, data.search_used, data.did_search, data.used_web_search].find(v => typeof v === "boolean");
   return { reply, sources: extractApiSources(data), searched: typeof flag === "boolean" ? flag : wantsSearch(lastMsg ? lastMsg.content : last.content) };
+}
+
+/* Diagnóstico: nombre del campo del que extractReply() ha sacado el texto (mismo orden de prioridad) */
+function replyField(d) {
+  if (!d) return null;
+  if (typeof d === "string") return "(texto plano)";
+  for (const k of ["reply", "response", "text", "answer", "output", "message"]) if (d[k] != null) return k;
+  if (d.choices && d.choices[0]) return d.choices[0].message ? "choices[0].message.content" : "choices[0].text";
+  return null;
 }
 
 /* Acepta los formatos de respuesta más habituales */
@@ -2300,9 +2311,73 @@ function attHtml(m) {
 }
 
 // Lo que ve el modelo: texto escrito + contenido de archivos de texto + nombres de los demás adjuntos
+/* ---------------------------------------------------------------------
+   Autocorrección de mensajes (solo lo que se envía al backend; el chat guarda y muestra el original)
+   Conservadora: no toca código, URLs, correos, rutas ni texto entre comillas/backticks.
+   --------------------------------------------------------------------- */
+const autoFixOn = () => store.get("pnova.autofix") !== "0";
+const FIX_WORDS = {
+  q: "que", k: "que", ke: "que", qe: "que", xq: "porque", pq: "porque", porq: "porque", porque_: "porque",
+  tb: "también", tmb: "también", tambien: "también", xfa: "por favor", xfavor: "por favor", porfa: "por favor", pf: "por favor", porfavor: "por favor",
+  pls: "por favor", aver: "a ver", asias: "gracias", grax: "gracias", gracias_: "gracias", ola: "hola", holi: "hola", wenas: "buenas", buenas_: "buenas",
+  dnd: "dónde", cmo: "cómo", cuanto_: "cuánto", mas: "más", tambn: "también", tbn: "también", xk: "porque", pk: "porque", pa: "para", ps: "pues",
+  bn: "bien", mñn: "mañana", mnn: "mañana", hoy_: "hoy", ayr: "ayer", sta: "está", stoy: "estoy", ta: "está", estas_: "estas",
+  nose: "no sé", nosé: "no sé", tngo: "tengo", tgo: "tengo", dime_: "dime", ablar: "hablar", aser: "hacer", haser: "hacer", acer: "hacer",
+  ablame: "háblame", explicame: "explícame", dame_: "dame", ayudame: "ayúdame", escribeme: "escríbeme", cuentame: "cuéntame", dimelo: "dímelo",
+  informacion: "información", cancion: "canción", numero: "número", pagina: "página", codigo: "código", musica: "música", telefono: "teléfono",
+  rapido: "rápido", facil: "fácil", dificil: "difícil", util: "útil", ultimo: "último", ultima: "última", pelicula: "película", ingles: "inglés",
+  espanol: "español", espana: "España", españa: "España"
+};
+const FIX_PHRASES = [
+  [/\bque tal\b(?=\s*[?!.,]|\s*$)/gi, "qué tal"], [/\bcomo estas\b/gi, "cómo estás"], [/\bcomo esta\b(?=\s*[?]|\s*$)/gi, "cómo está"],
+  [/\bque es\b(?=\s)/gi, m => m.replace(/^q/i, c => c === "Q" ? "Q" : "q").replace(/que/i, m2 => m2[0] === "Q" ? "Qué" : "qué")],
+  [/\bcomo se\b/gi, m => (m[0] === "C" ? "Cómo" : "cómo") + " se"], [/\bpor que\b(?=[^?]*\?)/gi, m => (m[0] === "P" ? "Por" : "por") + " qué"],
+  [/(^|[.!?\n]\s*)porque\b(?=[^.!?]*\?)/gi, (m, pre) => pre + (m.trim().slice(-7)[0] === "P" || /P/.test(m.slice(pre.length)[0]) ? "Por qué" : "por qué")],
+  [/\bcuantos\b(?=[^?]*\?)/gi, m => (m[0] === "C" ? "Cuántos" : "cuántos")], [/\bcuantas\b(?=[^?]*\?)/gi, m => (m[0] === "C" ? "Cuántas" : "cuántas")]
+];
+function fixSegment(t) {
+  // 1) alargamientos y signos repetidos: "holaaaa" → "hola", "???" → "?", "!!!" → "!"
+  t = t.replace(/([a-záéíóúñü])\1{2,}/gi, "$1").replace(/([?!¿¡])\1+/g, "$1").replace(/\.{4,}/g, "...");
+  // 2) abreviaturas y faltas típicas (palabra completa, conserva mayúscula inicial)
+  t = t.replace(/(^|[^\p{L}\p{N}_])([\p{L}ñÑ]+)(?![\p{L}\p{N}_])/gu, (m, pre, w) => {
+    const r = FIX_WORDS[w.toLowerCase()];
+    if (!r || w.length === 1 && w !== "q" && w !== "k" && w !== "Q" && w !== "K") return m;
+    return pre + (w[0] !== w[0].toLowerCase() && w.length > 1 && w === w.toUpperCase() ? r.toUpperCase() : (w[0] !== w[0].toLowerCase() ? r[0].toUpperCase() + r.slice(1) : r));
+  });
+  FIX_PHRASES.forEach(([re, rep]) => { t = t.replace(re, rep); });
+  // 3) espacios y puntuación
+  t = t.replace(/[ \t]{2,}/g, " ").replace(/\s+([,;.!?])/g, "$1").replace(/([,;])(?=\p{L})/gu, "$1 ").replace(/([.!?])(?=\p{Lu}\p{Ll})/gu, "$1 ");
+  return t;
+}
+function fixSentences(t) {
+  // 4) mayúscula inicial, signo ¿ de apertura y punto final en cada frase
+  return t.split(/(\n+)/).map(line => {
+    if (!line.trim() || /^\n+$/.test(line)) return line;
+    return line.replace(/(?:[^.!?\n]|[.!?](?![\s]|$))+[.!?]*/g, sent => {
+      const lead = sent.match(/^\s*/)[0]; let x = sent.slice(lead.length); if (!x) return sent;
+      if (/\?$/.test(x) && !/^¿/.test(x) && !/[¿]/.test(x)) x = "¿" + x;
+      if (/!$/.test(x) && !/^¡/.test(x) && !/[¡]/.test(x) && /^\p{L}/u.test(x) && x.length > 1) x = "¡" + x;
+      x = x.replace(/^([¿¡]?)(\p{Ll})/u, (m, a, b) => a + b.toUpperCase());
+      return lead + x;
+    });
+  }).join("");
+}
+function autoFix(text) {
+  if (!autoFixOn() || typeof text !== "string" || !text.trim()) return text;
+  if (text.length > 4000) return text;                           // textos largos (pegados): no se tocan
+  // Protege lo que no hay que corregir: bloques/inline de código, URLs, correos, rutas y texto entre comillas
+  const keep = [];
+  const PROT = /```[\s\S]*?```|`[^`\n]*`|https?:\/\/\S+|www\.\S+|\b[\w.+-]+@[\w-]+\.[\w.-]+\b|(?:[A-Za-z]:)?[\\\/][\w.\-\\\/]+|"[^"\n]*"|«[^»\n]*»|“[^”\n]*”/g;
+  let t = text.replace(PROT, m => { keep.push(m); return "\uE000" + (keep.length - 1) + "\uE001"; });
+  if (/[{};=<>]|\b(?:function|const|let|var|def|class|import|SELECT|INSERT)\b/.test(t) && /[{};]|=>|==|<\/?\w+>/.test(t)) return text;   // parece código
+  const hasLetters = /\p{L}/u.test(t); if (!hasLetters) return text;
+  t = fixSentences(fixSegment(t)).trim();
+  t = t.replace(/\uE000(\d+)\uE001/g, (m, i) => keep[+i]);
+  return t || text;
+}
 function backendContent(m) {
   const md = m.metadata || {};
-  let c = md.auto_text ? "" : m.content;
+  let c = md.auto_text ? "" : (m.role === "user" ? autoFix(m.content) : m.content);
   if (md.attach_text) c += (c ? "\n\n" : "") + md.attach_text;
   const others = (md.attachments || []).filter(a => a.kind !== "text").map(a => a.name);
   if (others.length) c += (c ? "\n\n" : "") + "[Archivos adjuntos: " + others.join(", ") + "]";
@@ -3124,6 +3199,10 @@ $("#vs-test").addEventListener("click", () => {
   unlockTTS(); ttsPlay(VOICE_SAMPLES[voiceCfg.lang.slice(0, 2)] || VOICE_SAMPLES.es);
 });
 if (hasTTS && speechSynthesis.addEventListener) speechSynthesis.addEventListener("voiceschanged", fillVoiceSelect);
+
+/* Autocorrección: interruptor en Ajustes → General */
+$("#set-autofix").checked = autoFixOn();
+$("#set-autofix").addEventListener("change", e => store.set("pnova.autofix", e.target.checked ? "1" : "0"));
 
 /* Estado inicial de los controles de voz */
 setMic(SR && window.isSecureContext ? "idle" : "off");
