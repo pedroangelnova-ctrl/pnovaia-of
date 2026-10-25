@@ -998,10 +998,10 @@
       <!-- Planes -->
       <div class="set-pane" id="pane-plans" role="tabpanel" hidden>
         <h3>Planes</h3>
-        <p class="set-lead">Estás usando el plan Gratis. El Plan Basic ya se puede contratar; Galaxia llegará pronto.</p>
+        <p class="set-lead" id="plan-lead" role="status" aria-live="polite">Comprobando tu plan…</p>
         <div class="plans">
-          <div class="plan current">
-            <h4>Gratis <span class="soon">Tu plan</span></h4>
+          <div class="plan" id="plan-free">
+            <h4>Gratis <span class="soon" id="plan-free-tag" hidden>Tu plan</span></h4>
             <div class="plan-price">0 €</div>
             <ul>
               <li>Chat con PNova 1.5</li>
@@ -1009,10 +1009,10 @@
               <li>Historial de chats en tu cuenta</li>
               <li>Temas y personalización</li>
             </ul>
-            <button class="btn-sm" type="button" disabled>Plan actual</button>
+            <button class="btn-sm" id="plan-free-btn" type="button" disabled>Plan gratuito</button>
           </div>
-          <div class="plan">
-            <h4>Plan Basic</h4>
+          <div class="plan" id="plan-basic">
+            <h4>Plan Basic <span class="soon" id="plan-basic-tag" hidden>Tu plan</span></h4>
             <div class="plan-price muted">Desde 3,99 € · pago único</div>
             <ul>
               <li>Más mensajes e imágenes</li>
@@ -1447,7 +1447,7 @@ const PAYPAL_CFG = {
   MODE: "onetime",            // "onetime" = pago único por meses (nuevo) · "subscription" = respaldo anterior
   ENV: "sandbox",             // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
   SANDBOX_CLIENT_ID: "BAAchKxoA0MepTokGabR9Fl7pqa7Op4_Bq8vpaeNA8ht8ipwldG4FbsHbULHumm17qCkKdz0fjZGsecqIA",      // Client ID de la app SANDBOX de PayPal
-  PAY_API: "https://pnova-pay.pedroangelnp-es.workers.dev"                 // URL del Worker de pagos, p. ej. "https://pnova-pay.TU-SUBDOMINIO.workers.dev"
+  PAY_API: "https://pnova-pay.pedroangelnp-es.workers.dev"   // URL del Worker de pagos
 };
 let paypalLoading = null, paypalRendered = false;
 function loadPayPalSdk() {
@@ -1523,14 +1523,61 @@ async function payApi(path, body) {
   return j;
 }
 const payCreate = async method => (await payApi("/pay/create-order", { months: payMonths, method })).orderId;
-function showAccess(iso) { const n = $("#mo-access"), ok = iso && new Date(iso) > new Date(); n.hidden = !ok; if (ok) n.textContent = "Tu Plan Basic está activo hasta el " + pkDate(iso) + ". Si compras más meses, se suman a esa fecha."; }
-async function loadPlanAccess() {
-  if (!sb || !user || PAYPAL_CFG.MODE !== "onetime") return;
-  try { const { data } = await sb.from("plan_access").select("expires_at").eq("user_id", user.id).maybeSingle(); showAccess(data && data.expires_at); } catch (e) {}
+/* ---------- Estado de suscripción (única fuente de verdad) ----------
+   Estados: "unknown" (sin comprobar) · "free" · "basic" (fila válida en plan_access) · "error" (la consulta falló).
+   La etiqueta de plan, la tarjeta de plan y el mensaje de vencimiento se pintan SIEMPRE desde subState.
+   El acceso de pago solo se concede si Supabase devuelve, para el usuario autenticado, una fila con expires_at futuro. */
+let subState = { status: "unknown", expiresAt: null }, subSeq = 0, subTimer = null;
+function renderSubscription() {
+  const st = subState.status, basic = st === "basic", free = st === "free";
+  const dateTxt = basic ? pkDate(subState.expiresAt) : "";
+  $("#plan-lead").textContent = basic ? "Tu Plan Basic está activo hasta el " + dateTxt + ". Galaxia llegará pronto."
+    : free ? "Estás usando el plan Gratis. El Plan Basic ya se puede contratar; Galaxia llegará pronto."
+    : st === "error" ? "No se pudo comprobar tu plan ahora mismo. Mientras tanto solo se aplica el acceso gratuito. Vuelve a abrir Planes para reintentarlo."
+    : "Comprobando tu plan…";
+  $("#plan-free").classList.toggle("current", free);
+  $("#plan-free-tag").hidden = !free;
+  $("#plan-free-btn").textContent = free ? "Plan actual" : "Plan gratuito";
+  $("#plan-basic").classList.toggle("current", basic);
+  $("#plan-basic-tag").hidden = !basic;
+  const n = $("#mo-access"); n.hidden = !basic;
+  if (basic) n.textContent = "Tu Plan Basic está activo hasta el " + dateTxt + ". Si compras más meses, se suman a esa fecha.";
 }
+function setSubscription(status, expiresAt) {
+  subState = { status, expiresAt: status === "basic" ? expiresAt : null };
+  clearTimeout(subTimer); subTimer = null;
+  if (status === "basic") {                       // al vencer, se vuelve a comprobar solo
+    const ms = Math.min(Math.max(expiresAt.getTime() - Date.now() + 1000, 1000), 2147483647);
+    subTimer = setTimeout(refreshSubscription, ms);
+  }
+  renderSubscription();
+}
+async function refreshSubscription() {
+  const seq = ++subSeq;                           // descarta respuestas antiguas (cambio de usuario, compras seguidas…)
+  if (!sb || !user) { setSubscription("unknown"); return; }
+  const uid = user.id;
+  if (subState.status === "error") setSubscription("unknown");
+  try {
+    const { data: ses } = await sb.auth.getSession();
+    const authId = ses && ses.session && ses.session.user && ses.session.user.id;
+    if (!authId || authId !== uid) throw new Error("auth");          // solo el usuario autenticado actual
+    const { data, error } = await sb.from("plan_access").select("user_id, expires_at").eq("user_id", authId).maybeSingle();
+    if (error) throw error;                                          // supabase-js no lanza: devuelve error
+    if (seq !== subSeq || !user || user.id !== authId) return;
+    const exp = data && data.user_id === authId && data.expires_at ? new Date(data.expires_at) : null;
+    if (exp && Number.isFinite(exp.getTime()) && exp.getTime() > Date.now()) setSubscription("basic", exp);
+    else setSubscription("free");
+  } catch (e) {
+    if (seq !== subSeq) return;
+    console.warn("[PNova] No se pudo comprobar el plan:", e);
+    setSubscription("error");                                        // estado seguro: nunca concede acceso de pago
+  }
+}
+const loadPlanAccess = refreshSubscription;
+renderSubscription();
 async function payCapture(orderId) {
   const j = await payApi("/pay/capture-order", { orderId });
-  if (j.status === "granted") { ppMsg("¡Pago recibido! " + (j.months === 1 ? "Se ha activado 1 mes" : "Se han activado " + j.months + " meses") + " de Plan Basic. Tu acceso vence el " + pkDate(j.expires_at) + ".", "ok"); showAccess(j.expires_at); }
+  if (j.status === "granted") { ppMsg("¡Pago recibido! " + (j.months === 1 ? "Se ha activado 1 mes" : "Se han activado " + j.months + " meses") + " de Plan Basic. Tu acceso vence el " + pkDate(j.expires_at) + ".", "ok"); await refreshSubscription(); }
   else if (j.status === "pending") ppMsg("Tu pago está pendiente de confirmación por PayPal. El acceso se activará solo cuando se confirme; no hace falta que pagues otra vez.", "warn");
   else ppMsg("No se pudo verificar el pago, así que no se ha activado el acceso. Si te han cobrado, contacta con soporte indicando el pedido " + orderId + ".");
   return j;
@@ -1932,7 +1979,7 @@ function applyConfigWarning() {
 function showAuth() {                          // sin sesión: se muestra la pantalla de inicio
   $("#set-overlay").hidden = true;
   closeVoiceMode(); ttsStop(); dictAbort();
-  user = null; profile = null; conversations = []; messages = []; currentId = null; namePending = null;
+  user = null; profile = null; subSeq++; setSubscription("unknown"); conversations = []; messages = []; currentId = null; namePending = null;
   $("#app-view").hidden = true;
   $("#auth-password").value = "";
   $("#btn-google").disabled = false;
@@ -2014,6 +2061,7 @@ async function enterApp(session) {
   $("#app-view").hidden = false;
   setModelLabel();
   await loadProfile();
+  refreshSubscription();                     // plan: se consulta en cada inicio de sesión y recarga
   await loadConversations();
   newChat();
 }
