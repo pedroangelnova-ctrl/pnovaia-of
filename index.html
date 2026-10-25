@@ -371,11 +371,11 @@
   }
 
   /* ---------- Color de acento ---------- */
-  :root[data-accent="green"]  { --accent: #10a37f; --accent-grad: linear-gradient(135deg, #34d399 0%, #10a37f 100%); }
+  :root[data-accent="green"]  { --accent: #16a34a; --accent-grad: linear-gradient(135deg, #4ade80 0%, #16a34a 100%); }
   :root[data-accent="violet"] { --accent: #7c3aed; --accent-grad: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); }
   :root[data-accent="orange"] { --accent: #ea580c; --accent-grad: linear-gradient(135deg, #fdba74 0%, #ea580c 100%); }
   :root[data-accent="pink"]   { --accent: #db2777; --accent-grad: linear-gradient(135deg, #f9a8d4 0%, #db2777 100%); }
-  :root[data-accent="green"][data-theme="dark"]  { --accent: #34c79d; }
+  :root[data-accent="green"][data-theme="dark"]  { --accent: #4ade80; }
   :root[data-accent="violet"][data-theme="dark"] { --accent: #a78bfa; }
   :root[data-accent="orange"][data-theme="dark"] { --accent: #fb923c; }
   :root[data-accent="pink"][data-theme="dark"]   { --accent: #f472b6; }
@@ -460,6 +460,47 @@
   .msg.user { flex-direction: column; align-items: flex-end; gap: 6px; }
   .att-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; max-width: min(85%, 560px); }
   .att-img { max-width: 220px; max-height: 220px; border-radius: 16px; border: 1px solid var(--border); object-fit: cover; display: block; }
+
+  /* ---------- Identidad visual propia de PNova ---------- */
+  :root { --card: #f5f6fb; }
+  :root[data-theme="dark"] { --card: #1c1e26; }
+
+  /* Barra lateral */
+  .sidebar { border-right: 1px solid var(--border); }
+  .brand span { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.02em; }
+  #btn-new { justify-content: center; background: var(--accent-grad); color: #fff; font-weight: 600; border-radius: 12px; box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent); }
+  #btn-new:hover { background: var(--accent-grad); filter: brightness(1.08); }
+  .side-nav { padding: 8px 10px 4px; }
+  .side-label { text-transform: uppercase; letter-spacing: .06em; font-size: 11.5px; }
+  .chat-item { border-radius: 12px; margin: 2px 0; }
+  .chat-item.active { background: color-mix(in srgb, var(--accent) 13%, transparent); box-shadow: inset 3px 0 0 var(--accent); }
+
+  /* Barra superior */
+  .model-btn { border: 1px solid var(--border); border-radius: 999px; font-size: 15px; padding: 6px 14px; color: var(--text); background: var(--card); }
+  .model-btn:hover { background: var(--hover); }
+
+  /* Pantalla vacía */
+  #empty h1 { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.03em; font-weight: 700; }
+  .empty-sub { margin: 8px 0 0; color: var(--muted); }
+  .suggest { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 24px auto 0; max-width: 560px; }
+  .suggest button { padding: 13px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); font-size: 14px; font-weight: 500; text-align: left; transition: border-color .15s, transform .15s; }
+  .suggest button:hover { border-color: var(--accent); transform: translateY(-1px); }
+  @media (max-width: 520px) { .suggest { grid-template-columns: 1fr; } }
+
+  /* Mensajes */
+  .msg.user .bubble { background: var(--accent-grad); color: #fff; border-radius: 20px 20px 6px 20px; box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent); }
+  .msg.assistant { position: relative; padding-left: 46px; }
+  .msg.assistant::before { content: ""; position: absolute; left: 0; top: 2px; width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--border); background: #fff url("logo.png") center / 78% no-repeat; }
+  .msg.assistant .content { background: var(--card); border: 1px solid var(--border); border-radius: 6px 20px 20px 20px; padding: 14px 18px; font-size: 15.5px; }
+  .msg.assistant .typing { padding: 12px 4px; }
+  .msg-actions { margin-left: -4px; }
+
+  /* Cuadro de escritura */
+  .composer { border-radius: 22px; border: 1.5px solid var(--border); background: var(--card); box-shadow: none; }
+  .composer:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent); }
+  .send { border-radius: 14px; width: 40px; height: 40px; }
+  .attach-btn { border-radius: 12px; }
+  .col { max-width: 800px; }
 </style>
 </head>
 <body>
@@ -623,7 +664,7 @@
     <div class="search-box" id="search-box" hidden>
       <input id="search-input" type="search" placeholder="Buscar chats" aria-label="Buscar chats">
     </div>
-    <div class="side-label">Recientes</div>
+    <div class="side-label">Historial</div>
     <nav class="chat-list" id="chat-list" aria-label="Chats recientes"></nav>
     <div class="side-foot">
       <button class="user-btn" id="user-btn" type="button" aria-haspopup="menu">
@@ -646,7 +687,14 @@
         <div class="col">
           <div id="empty">
             <img class="logo" src="logo.png" alt="">
-            <h1>¿En qué puedo ayudarte?</h1>
+            <h1 id="empty-title">¿Qué creamos hoy?</h1>
+            <p class="empty-sub">Pregunta, escribe, programa o analiza archivos con PNova IA.</p>
+            <div class="suggest" id="suggest">
+              <button type="button" data-prompt="Explícame un tema paso a paso: ">Aprender algo nuevo</button>
+              <button type="button" data-prompt="Ayúdame a redactar un correo sobre: ">Redactar un texto</button>
+              <button type="button" data-prompt="Revisa y mejora este código:\n">Revisar código</button>
+              <button type="button" data-prompt="Dame 5 ideas originales para: ">Lluvia de ideas</button>
+            </div>
           </div>
           <div id="messages" aria-live="polite"></div>
         </div>
@@ -707,7 +755,7 @@
           <div class="lbl"><b>Color de acento</b><small>Botones, enlaces y detalles.</small></div>
           <div class="swatches" id="accent-row" role="group" aria-label="Color de acento">
             <button type="button" class="swatch" data-accent="blue" aria-pressed="false" aria-label="Azul" title="Azul" style="background:linear-gradient(135deg,#1fb6ff,#3b5bf5 55%,#8b3cf6)"></button>
-            <button type="button" class="swatch" data-accent="green" aria-pressed="false" aria-label="Verde" title="Verde" style="background:linear-gradient(135deg,#34d399,#10a37f)"></button>
+            <button type="button" class="swatch" data-accent="green" aria-pressed="false" aria-label="Verde" title="Verde" style="background:linear-gradient(135deg,#4ade80,#16a34a)"></button>
             <button type="button" class="swatch" data-accent="violet" aria-pressed="false" aria-label="Violeta" title="Violeta" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)"></button>
             <button type="button" class="swatch" data-accent="orange" aria-pressed="false" aria-label="Naranja" title="Naranja" style="background:linear-gradient(135deg,#fdba74,#ea580c)"></button>
             <button type="button" class="swatch" data-accent="pink" aria-pressed="false" aria-label="Rosa" title="Rosa" style="background:linear-gradient(135deg,#f9a8d4,#db2777)"></button>
@@ -786,7 +834,7 @@
             <button class="btn-sm" type="button" disabled>Plan actual</button>
           </div>
           <div class="plan">
-            <h4>Plus <span class="soon">Próximamente</span></h4>
+            <h4>Estelar <span class="soon">Próximamente</span></h4>
             <div class="plan-price muted">Precio por anunciar</div>
             <ul>
               <li>Más mensajes e imágenes</li>
@@ -796,10 +844,10 @@
             <button class="btn-sm" type="button" disabled>Próximamente</button>
           </div>
           <div class="plan">
-            <h4>Pro <span class="soon">Próximamente</span></h4>
+            <h4>Galaxia <span class="soon">Próximamente</span></h4>
             <div class="plan-price muted">Precio por anunciar</div>
             <ul>
-              <li>Todo lo de Plus</li>
+              <li>Todo lo de Estelar</li>
               <li>Uso ampliado</li>
               <li>Acceso anticipado a novedades</li>
             </ul>
@@ -1523,7 +1571,12 @@ $("#chat-list").addEventListener("click", e => {
   if (e.target.closest(".chat-open")) { openConversation(id); closeSidebarMobile(); }
 });
 
+function setGreeting() {
+  const n = ((profile && profile.display_name) || "").trim().split(/\s+/)[0];
+  $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
+}
 function newChat() {
+  setGreeting();
   currentId = null; messages = []; lastFailed = false;
   renderList(); renderMessages();
   $("#input").focus({ preventScroll: true });
@@ -2114,6 +2167,11 @@ input.addEventListener("paste", e => {
 $("#main").addEventListener("dragover", e => { if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) e.preventDefault(); });
 $("#main").addEventListener("drop", e => {
   if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) { e.preventDefault(); addFiles(e.dataTransfer.files); }
+});
+$("#suggest").addEventListener("click", e => {
+  const b = e.target.closest("[data-prompt]"); if (!b) return;
+  input.value = b.dataset.prompt; autosize(); updateSend(); input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
 });
 $("#img-toggle").hidden = !CONFIG.IMAGE_ENABLED;
 
