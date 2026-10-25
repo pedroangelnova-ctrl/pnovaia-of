@@ -1,0 +1,15 @@
+{
+  "name": "PNova IA",
+  "short_name": "PNova IA",
+  "description": "Chat con inteligencia artificial",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
