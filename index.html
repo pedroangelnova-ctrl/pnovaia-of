@@ -445,6 +445,19 @@
   .plan li { display: flex; gap: 8px; align-items: flex-start; line-height: 1.4; }
   .plan li::before { content: "✓"; color: var(--accent); font-weight: 700; flex: none; }
   .plan .btn-sm { width: 100%; }
+  .mo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); gap: 6px; }
+  .mo { display: flex; flex-direction: column; align-items: center; padding: 8px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); }
+  .mo b { font-size: 16px; } .mo small { font-size: 11px; color: var(--muted); }
+  .mo[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+  .mo:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mo-total { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; }
+  #mo-total { font-size: 26px; font-weight: 700; }
+  .mo-total small, .mo-note, .mo-access { color: var(--muted); font-size: 13px; margin: 0; }
+  .mo-access { color: var(--accent); }
+  #pay-onetime { display: grid; gap: 8px; } #pay-onetime.is-busy { pointer-events: none; opacity: .6; }
+  .pay-methods { display: grid; gap: 10px; } .pay-methods [hidden] { display: none !important; }
+  .card-field { height: 44px; }
+  .pay-input { height: 44px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; background: var(--bg); color: var(--text); font: inherit; width: 100%; }
   .set-note { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
   @media (max-width: 700px) {
     .modal-overlay { padding: 0; }
@@ -1000,13 +1013,31 @@
           </div>
           <div class="plan">
             <h4>Plan Basic</h4>
-            <div class="plan-price muted">Suscripción con PayPal</div>
+            <div class="plan-price muted">Desde 3,99 € · pago único</div>
             <ul>
               <li>Más mensajes e imágenes</li>
               <li>Acceso a Nova AI</li>
               <li>Respuestas más rápidas</li>
             </ul>
-            <button class="btn-sm primary" id="pp-open" type="button">Suscribirme</button>
+            <div id="pay-onetime">
+              <div class="mo-grid" id="mo-grid" role="radiogroup" aria-label="Duración del acceso en meses"></div>
+              <div class="mo-total"><span id="mo-total" aria-live="polite">3,99 €</span><small id="mo-dur">Acceso durante 1 mes</small></div>
+              <p class="mo-note">Pago único · Sin renovación automática</p>
+              <p class="mo-access" id="mo-access" hidden></p>
+              <button class="btn-sm primary" id="pay-go" type="button">Continuar al pago</button>
+              <div class="pay-methods" id="pay-methods" hidden>
+                <paypal-button id="pp6-button" type="pay" hidden></paypal-button>
+                <div id="ap-wrap" hidden></div>
+                <div id="card-wrap" hidden>
+                  <b>Tarjeta de crédito o débito</b>
+                  <div class="card-field" id="cf-number"></div><div class="card-field" id="cf-expiry"></div><div class="card-field" id="cf-cvv"></div>
+                  <input class="pay-input" id="cf-zip" type="text" inputmode="text" autocomplete="postal-code" maxlength="12" placeholder="Código postal" aria-label="Código postal de facturación">
+                  <button class="btn-sm primary" id="cf-pay" type="button">Pagar con tarjeta</button>
+                </div>
+              </div>
+            </div>
+            <!-- Respaldo: flujo anterior de suscripción. Se activa con PAYPAL_CFG.MODE = "subscription" -->
+            <button class="btn-sm primary" id="pp-open" type="button" hidden>Suscribirme</button>
             <div id="paypal-button-container" hidden></div>
             <div class="notice set-msg" id="msg-pp" role="status" hidden></div>
           </div>
@@ -1412,7 +1443,11 @@ $("#btn-google").onclick = async () => {
    El SDK se carga solo cuando el usuario pulsa «Suscribirme». */
 const PAYPAL_CFG = {
   CLIENT_ID: "BAASj0qjHI2-n9l1m_rLzhIBOCip3O0i4kgCsu5_FVymSjPGFBOwAxWEDI7wdi4LXSDb-kHxYgTbW06ojw",
-  PLAN_ID: "P-3WX98865YT444350YNLPAVLQ"
+  PLAN_ID: "P-3WX98865YT444350YNLPAVLQ",
+  MODE: "onetime",            // "onetime" = pago único por meses (nuevo) · "subscription" = respaldo anterior
+  ENV: "sandbox",             // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
+  SANDBOX_CLIENT_ID: "",      // Client ID de la app SANDBOX de PayPal
+  PAY_API: ""                 // URL del Worker de pagos, p. ej. "https://pnova-pay.TU-SUBDOMINIO.workers.dev"
 };
 let paypalLoading = null, paypalRendered = false;
 function loadPayPalSdk() {
@@ -1456,6 +1491,144 @@ $("#pp-open").onclick = async () => {
     ppMsg("No se pudo cargar PayPal. Revisa tu conexión (o si un bloqueador de anuncios lo impide) y vuelve a intentarlo.");
   }
 };
+
+/* ---------- Pago único por meses (PayPal JS SDK v6) ----------
+   El navegador solo elige meses; el SERVIDOR calcula el importe, crea la orden, captura, verifica y concede el acceso. */
+const PLAN_CENTS = { 1: 399, 2: 798, 3: 1197, 6: 2394, 12: 4788 };   // solo para mostrar; el servidor tiene su propia lista
+const eur = c => (c / 100).toLocaleString("es-ES", { style: "currency", currency: "EUR" });
+let payMonths = 1, payBusy = false, payInit = null;
+const payClientId = () => PAYPAL_CFG.ENV === "live" ? PAYPAL_CFG.CLIENT_ID : PAYPAL_CFG.SANDBOX_CLIENT_ID;
+function renderMonths() {
+  document.querySelectorAll("#mo-grid .mo").forEach(b => { const on = +b.dataset.m === payMonths; b.setAttribute("aria-checked", String(on)); b.tabIndex = on ? 0 : -1; });
+  $("#mo-total").textContent = eur(PLAN_CENTS[payMonths]);
+  $("#mo-dur").textContent = "Acceso durante " + payMonths + (payMonths === 1 ? " mes" : " meses");
+}
+$("#mo-grid").innerHTML = Object.keys(PLAN_CENTS).map(m => `<button type="button" class="mo" role="radio" aria-checked="false" data-m="${m}"><b>${m}</b><small>${m === "1" ? "mes" : "meses"}</small></button>`).join("");
+$("#mo-grid").addEventListener("click", e => { const b = e.target.closest(".mo"); if (b && !payBusy) { payMonths = +b.dataset.m; renderMonths(); } });
+$("#mo-grid").addEventListener("keydown", e => {
+  const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!k || payBusy) return;
+  e.preventDefault(); const ms = Object.keys(PLAN_CENTS).map(Number), i = ms.indexOf(payMonths);
+  payMonths = ms[(i + k + ms.length) % ms.length]; renderMonths(); $("#mo-grid .mo[aria-checked=true]").focus();
+});
+renderMonths();
+
+const setPayUI = () => $("#pay-onetime").classList.toggle("is-busy", payBusy);
+const loadScript = src => new Promise((ok, ko) => { const s = document.createElement("script"); s.src = src; s.async = true; s.onload = ok; s.onerror = () => ko(new Error("script")); document.head.appendChild(s); });
+async function payApi(path, body) {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) throw new Error("auth");
+  const res = await fetch(PAYPAL_CFG.PAY_API.replace(/\/$/, "") + path, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + data.session.access_token }, body: JSON.stringify(body) });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) { const e = new Error(j.error || "http_" + res.status); e.payload = j; throw e; }
+  return j;
+}
+const payCreate = async method => (await payApi("/pay/create-order", { months: payMonths, method })).orderId;
+function showAccess(iso) { const n = $("#mo-access"), ok = iso && new Date(iso) > new Date(); n.hidden = !ok; if (ok) n.textContent = "Tu Plan Basic está activo hasta el " + pkDate(iso) + ". Si compras más meses, se suman a esa fecha."; }
+async function loadPlanAccess() {
+  if (!sb || !user || PAYPAL_CFG.MODE !== "onetime") return;
+  try { const { data } = await sb.from("plan_access").select("expires_at").eq("user_id", user.id).maybeSingle(); showAccess(data && data.expires_at); } catch (e) {}
+}
+async function payCapture(orderId) {
+  const j = await payApi("/pay/capture-order", { orderId });
+  if (j.status === "granted") { ppMsg("¡Pago recibido! " + (j.months === 1 ? "Se ha activado 1 mes" : "Se han activado " + j.months + " meses") + " de Plan Basic. Tu acceso vence el " + pkDate(j.expires_at) + ".", "ok"); showAccess(j.expires_at); }
+  else if (j.status === "pending") ppMsg("Tu pago está pendiente de confirmación por PayPal. El acceso se activará solo cuando se confirme; no hace falta que pagues otra vez.", "warn");
+  else ppMsg("No se pudo verificar el pago, así que no se ha activado el acceso. Si te han cobrado, contacta con soporte indicando el pedido " + orderId + ".");
+  return j;
+}
+const payErrText = e => e && e.message === "auth" ? "Inicia sesión de nuevo para pagar." : e && e.message === "anonymous_not_allowed" ? "Necesitas una cuenta con correo o teléfono para pagar." : "No se pudo completar el pago. No se ha activado el acceso. Inténtalo de nuevo en unos minutos.";
+async function payRun(fn, force) {
+  if (payBusy && !force) return;
+  payBusy = true; ppMsg(); setPayUI();
+  try { await fn(); } catch (e) { console.error("Pago:", e); ppMsg(payErrText(e)); } finally { payBusy = false; setPayUI(); }
+}
+
+async function initPay() {
+  if (payInit) return payInit;
+  payInit = (async () => {
+    const live = PAYPAL_CFG.ENV === "live", clientId = payClientId();
+    await loadScript(live ? "https://www.paypal.com/web-sdk/v6/core" : "https://www.sandbox.paypal.com/web-sdk/v6/core");
+    let sdk;
+    try { sdk = await paypal.createInstance({ clientId, components: ["paypal-payments", "card-fields", "applepay-payments"], pageType: "checkout" }); }
+    catch (e) { console.warn("[PNova] v6 no admitió todos los componentes; solo PayPal", e); sdk = await paypal.createInstance({ clientId, components: ["paypal-payments"], pageType: "checkout" }); }
+    const methods = await sdk.findEligibleMethods({ currencyCode: "EUR" });
+    let shown = 0;
+    try {                                                    // PayPal
+      if (methods.isEligible("paypal")) {
+        const session = sdk.createPayPalOneTimePaymentSession({
+          onApprove: ({ orderId }) => payRun(() => payCapture(orderId), true),
+          onCancel: () => ppMsg("Has cancelado el pago. No se ha hecho ningún cargo.", "warn"),
+          onError: err => { console.error("PayPal:", err); ppMsg("PayPal no pudo completar el pago. No se ha activado el acceso."); }
+        });
+        const btn = $("#pp6-button"); btn.hidden = false; shown++;
+        btn.addEventListener("click", async () => {
+          if (payBusy) return; ppMsg();
+          try { await session.start({ presentationMode: "auto" }, payCreate("paypal").then(orderId => ({ orderId }))); }
+          catch (e) { console.error("PayPal:", e); ppMsg(payErrText(e)); }
+        });
+      }
+    } catch (e) { console.warn("[PNova] PayPal no disponible", e); }
+    try {                                                    // Tarjeta de crédito / débito
+      if (methods.isEligible("advanced_cards")) {
+        const cs = sdk.createCardFieldsOneTimePaymentSession();
+        [["number", "Número de tarjeta", "#cf-number"], ["expiry", "MM/AA", "#cf-expiry"], ["cvv", "CVV", "#cf-cvv"]]
+          .forEach(([type, placeholder, sel]) => $(sel).appendChild(cs.createCardFieldsComponent({ type, placeholder })));
+        $("#card-wrap").hidden = false; shown++;
+        $("#cf-pay").onclick = () => payRun(async () => {
+          const zip = $("#cf-zip").value.trim(); if (!zip) { ppMsg("Escribe el código postal de facturación."); return; }
+          const orderId = await payCreate("card");
+          const { data, state } = await cs.submit(orderId, { billingAddress: { postalCode: zip } });
+          if (state === "succeeded") await payCapture((data && data.orderId) || orderId);
+          else if (state === "canceled") ppMsg("Has cancelado la verificación de la tarjeta. No se ha hecho ningún cargo.", "warn");
+          else ppMsg((data && data.message) || "La tarjeta no se pudo procesar. Revisa los datos e inténtalo de nuevo.");
+        });
+      }
+    } catch (e) { console.warn("[PNova] Tarjetas no disponibles", e); }
+    try {                                                    // Apple Pay (solo Safari/Apple y si PayPal lo reporta elegible)
+      if (methods.isEligible("applepay") && window.ApplePaySession && ApplePaySession.canMakePayments()) {
+        await loadScript("https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js");
+        const ap = await sdk.createApplePayOneTimePaymentSession();
+        const { merchantCapabilities, supportedNetworks } = await ap.config();
+        $("#ap-wrap").innerHTML = '<apple-pay-button id="ap-btn" buttonstyle="black" type="buy" locale="es-ES"></apple-pay-button>';
+        $("#ap-btn").addEventListener("click", () => applePayStart(ap, merchantCapabilities, supportedNetworks));
+        $("#ap-wrap").hidden = false; shown++;
+      }
+    } catch (e) { console.warn("[PNova] Apple Pay no disponible", e); }
+    return shown;
+  })().catch(e => { payInit = null; throw e; });
+  return payInit;
+}
+function applePayStart(ap, merchantCapabilities, supportedNetworks) {      // begin() debe ejecutarse dentro del clic
+  if (payBusy) return;
+  const total = { label: "PNova IA · Plan Basic (" + payMonths + (payMonths === 1 ? " mes)" : " meses)"), amount: (PLAN_CENTS[payMonths] / 100).toFixed(2), type: "final" };
+  const s = new ApplePaySession(4, { countryCode: "ES", currencyCode: "EUR", merchantCapabilities, supportedNetworks, requiredBillingContactFields: ["name", "phone", "email", "postalAddress"], requiredShippingContactFields: [], total });
+  s.onvalidatemerchant = ev => ap.validateMerchant({ validationUrl: ev.validationURL })
+    .then(p => s.completeMerchantValidation(p.merchantSession))
+    .catch(e => { console.error("Apple Pay:", e); s.abort(); ppMsg("Apple Pay no está activo todavía para este dominio (falta registrarlo en PayPal)."); });
+  s.onpaymentmethodselected = () => s.completePaymentMethodSelection({ newTotal: total });
+  s.onpaymentauthorized = async ev => {
+    payBusy = true; setPayUI(); let ok = false;
+    try {
+      const orderId = await payCreate("applepay");
+      await ap.confirmOrder({ orderId, token: ev.payment.token, billingContact: ev.payment.billingContact, shippingContact: ev.payment.shippingContact });
+      const j = await payCapture(orderId); ok = j.status === "granted" || j.status === "pending";
+    } catch (e) { console.error("Apple Pay:", e); ppMsg(payErrText(e)); }
+    s.completePayment({ status: ok ? ApplePaySession.STATUS_SUCCESS : ApplePaySession.STATUS_FAILURE });
+    payBusy = false; setPayUI();
+  };
+  s.oncancel = () => ppMsg("Has cancelado el pago. No se ha hecho ningún cargo.", "warn");
+  s.begin();
+}
+$("#pay-go").onclick = async () => {
+  if (!user) return;
+  if (!PAYPAL_CFG.PAY_API || !payClientId()) { ppMsg("Los pagos todavía no están configurados (falta el servidor de pagos o el Client ID de " + PAYPAL_CFG.ENV + "). Todavía no se puede comprar.", "warn"); return; }
+  const b = $("#pay-go"); b.disabled = true; ppMsg();
+  try {
+    const shown = await initPay();
+    if (!shown) { ppMsg("Ahora mismo PayPal no ofrece ningún método de pago disponible para esta cuenta o dispositivo.", "warn"); b.disabled = false; return; }
+    $("#pay-methods").hidden = false; b.hidden = true;
+  } catch (e) { console.error(e); ppMsg("No se pudo cargar PayPal. Revisa tu conexión (o un bloqueador de anuncios) e inténtalo de nuevo."); b.disabled = false; }
+};
+{ const sub = PAYPAL_CFG.MODE === "subscription"; $("#pp-open").hidden = !sub; $("#pay-onetime").hidden = sub; }
 
 /* ---------- Claves de acceso (passkeys / WebAuthn) vía Supabase Auth ----------
    Requiere supabase-js >= 2.105.0, «Authentication → Passkeys» activado en el panel
@@ -2725,7 +2898,7 @@ function openSettings(tab = "general") {
   ["#pw-current", "#pw-new", "#pw-new2"].forEach(s => { $(s).value = ""; });
   $("#set-overlay").hidden = false;
   showSetTab(tab);
-  syncPasskeyUI(); loadPasskeys();
+  syncPasskeyUI(); loadPasskeys(); loadPlanAccess();
   $("#set-close").focus({ preventScroll: true });
 }
 function closeSettings() {
