@@ -783,9 +783,8 @@
         <span>Número de teléfono</span>
         <input id="phone-number" type="tel" inputmode="tel" autocomplete="tel" placeholder="+34 612 345 678" required>
       </label>
-      <p class="hint">Con prefijo internacional. Si escribes un móvil español de 9 cifras, añadiremos +34. Si no tienes cuenta, se crea al verificar el código.</p>
+      <p class="hint">Con prefijo internacional. Si escribes un móvil español de 9 cifras, añadiremos +34. Te enviaremos el código únicamente por WhatsApp. Si no tienes cuenta, se crea al verificar el código.</p>
       <button class="btn-primary" id="phone-submit" type="submit">Recibir código por WhatsApp</button>
-      <button class="link-btn" id="phone-sms" type="button">Recibir por SMS</button>
       <button class="link-btn" id="phone-back" type="button">Volver</button>
     </form>
     <form id="otp-form" novalidate hidden>
@@ -1147,12 +1146,10 @@
    CONFIGURACIÓN — edita solo este bloque
    ===================================================================== */
 const CONFIG = {
+  // true = acceso con teléfono activo. El código se envía SOLO por WhatsApp: lo envía tu Send SMS Hook de
+  // Supabase Auth (Authentication → Hooks → Send SMS). La web no ofrece SMS ni manda "channel" a Supabase.
   // false = el botón "Continuar con teléfono" aparece como "Próximamente" y no se puede pulsar.
-  PHONE_ENABLED: false,
-
-  // true = el código lo envía tu Send SMS Hook (WhatsApp, etc.): no se manda "channel" a Supabase.
-  // false = Supabase envía por Twilio / Twilio Verify y se puede elegir WhatsApp o SMS.
-  PHONE_VIA_HOOK: true,
+  PHONE_ENABLED: true,
 
   // Supabase > Project Settings > API
   SUPABASE_URL: "https://tbhcgenucgiwnqgfizud.supabase.co",
@@ -1876,7 +1873,7 @@ $("#pk-list").addEventListener("click", async e => {
 });
 
 /* ---------- Paneles de acceso, código OTP (correo o teléfono) ---------- */
-let pending = null, resendTimer = null;   // pending = { kind: "email" | "phone", value, channel }
+let pending = null, resendTimer = null;   // pending = { kind: "email" | "phone", value }
 
 function showPanel(name) {                 // "main" | "phone" | "otp" | "name"
   const main = name === "main";
@@ -1891,8 +1888,8 @@ function showPanel(name) {                 // "main" | "phone" | "otp" | "name"
   if (main) { $("#auth-sub").textContent = "Tus chats se guardan en tu cuenta."; setAuthMode(authMode); }
   else showNotice();
   if (name === "phone") {
-    $("#auth-title").textContent = "Continúa con tu teléfono";
-    $("#auth-sub").textContent = "Te enviaremos un código de verificación.";
+    $("#auth-title").textContent = "Inicia sesión o regístrate con tu teléfono";
+    $("#auth-sub").textContent = "Te enviaremos un código de verificación por WhatsApp.";
     $("#phone-number").focus();
   }
   if (name === "name") {
@@ -1951,13 +1948,13 @@ $("#name-cancel").onclick = async () => {
   await sb.auth.signOut();                   // onAuthStateChange vuelve a la pantalla de acceso
 };
 
-function showOtpStep(kind, value, channel) {
-  pending = { kind, value, channel };
+function showOtpStep(kind, value) {
+  pending = { kind, value };
   showPanel("otp");
   const phone = kind === "phone";
   $("#auth-title").textContent = phone ? "Verifica tu teléfono" : "Verifica tu correo";
   $("#auth-sub").textContent = phone
-    ? "Introduce el código que hemos enviado " + (channel === "whatsapp" ? "por WhatsApp" : "por SMS") + " a " + value + "."
+    ? "Introduce el código que te hemos enviado por WhatsApp al " + value + "."
     : "Introduce el código que hemos enviado a " + value + ".";
   $("#otp-submit").textContent = phone ? "Verificar teléfono" : "Verificar correo";
   $("#otp-back").textContent = phone ? "Cambiar número" : "Cambiar correo";
@@ -1992,7 +1989,7 @@ $("#otp-form").addEventListener("submit", async e => {
   const btn = $("#otp-submit"); btn.disabled = true; showNotice();
   try {
     const { error } = pending.kind === "phone"
-      ? await sb.auth.verifyOtp({ phone: pending.value, token, type: "sms" })   // WhatsApp y SMS se verifican con type "sms"
+      ? await sb.auth.verifyOtp({ phone: pending.value, token, type: "sms" })   // el código del hook (WhatsApp) se verifica con type "sms"
       : await sb.auth.verifyOtp({ email: pending.value, token, type: "signup" });
     if (error) throw error;
     // Éxito: onAuthStateChange recibe SIGNED_IN y entra en la app.
@@ -2010,14 +2007,14 @@ $("#otp-resend").onclick = async () => {
   if (!sb || !pending) return;
   showNotice();
   const { error } = pending.kind === "phone"
-    ? await sb.auth.signInWithOtp(otpOptions(pending.value, pending.channel))
+    ? await sb.auth.signInWithOtp(otpOptions(pending.value))
     : await sb.auth.resend({ type: "signup", email: pending.value });
   if (error) return showNotice(authError(error));
   showNotice("Te hemos enviado un nuevo código.", "ok");
   startResendCooldown(60);
 };
 
-/* ---------- Teléfono (WhatsApp o SMS) ---------- */
+/* ---------- Teléfono (solo WhatsApp, vía Send SMS Hook de Supabase Auth) ---------- */
 function normalizePhone(raw) {
   let v = String(raw).trim().replace(/[\s().-]/g, "");
   if (v.startsWith("00")) v = "+" + v.slice(2);
@@ -2028,43 +2025,40 @@ function normalizePhone(raw) {
   return /^\+[1-9]\d{7,14}$/.test(v) ? v : null;
 }
 
-// Con Send SMS Hook, Supabase solo entrega el código a tu hook; el canal lo decide el hook.
-function otpOptions(phone, channel) {
-  return CONFIG.PHONE_VIA_HOOK ? { phone } : { phone, options: { channel } };
-}
+// Supabase solo entrega el código (y el teléfono) a tu Send SMS Hook, que lo manda por WhatsApp.
+// No se envía "channel": la web no puede pedir SMS. Iniciar sesión y registrarse es el mismo paso:
+// si el número no tiene cuenta, se crea al verificar el código.
+const otpOptions = phone => ({ phone });
 
-async function sendPhoneCode(channel) {
+async function sendPhoneCode() {
   if (!sb) return;
   const phone = normalizePhone($("#phone-number").value);
   if (!phone) return showNotice("Escribe tu número con prefijo internacional, por ejemplo +34612345678.");
-  const btns = ["#phone-submit", "#phone-sms"].map($);
-  btns.forEach(b => b.disabled = true); showNotice();
+  const btn = $("#phone-submit");
+  btn.disabled = true; showNotice();
   try {
-    // Sin "channel" Supabase envía SMS; para WhatsApp hay que indicarlo (requiere Twilio / Twilio Verify)
-    const { error } = await sb.auth.signInWithOtp(otpOptions(phone, channel));
+    const { error } = await sb.auth.signInWithOtp(otpOptions(phone));
     if (error) throw error;
-    showOtpStep("phone", phone, channel);
+    showOtpStep("phone", phone);
   } catch (err) {
     console.error("[teléfono] signInWithOtp:", err);
     const raw = (err && (err.message || err.error_description) || "").trim();
     const m = raw.toLowerCase();
-    const hint = CONFIG.PHONE_VIA_HOOK && (m.includes("hook") || m.includes("sending") || m.includes("sms") || m.includes("500") || m.includes("unexpected"))
-      ? "Tu Send SMS Hook ha fallado al enviar el código. Revisa sus logs en Supabase (Logs → Auth / Edge Functions)."
+    const hint = m.includes("rate") || m.includes("too many") || m.includes("seconds")
+      ? "Has pedido demasiados códigos. Espera un minuto e inténtalo de nuevo."
       : m.includes("provider") || m.includes("unsupported") || m.includes("disabled")
       ? "El acceso con teléfono no está activado en Supabase (Authentication → Providers → Phone)."
-      : channel === "whatsapp" && (m.includes("whatsapp") || m.includes("sending") || m.includes("sms") || m.includes("twilio") || m.includes("channel"))
-        ? "No se pudo enviar por WhatsApp. Revisa Twilio en Supabase o prueba por SMS."
-        : authError(err);
-    showNotice(raw && !hint.includes(raw) ? `${hint} (Detalle: ${raw})` : hint);
+      : m.includes("hook") || m.includes("sending") || m.includes("sms") || m.includes("500") || m.includes("unexpected")
+      ? "No se pudo enviar el código por WhatsApp. Inténtalo de nuevo en unos minutos."
+      : authError(err);
+    showNotice(hint);
   } finally {
-    btns.forEach(b => b.disabled = false);
+    btn.disabled = false;
   }
 }
 $("#btn-phone").onclick = () => showPanel("phone");
 $("#phone-back").onclick = () => showPanel("main");
-$("#phone-form").addEventListener("submit", e => { e.preventDefault(); sendPhoneCode("whatsapp"); });
-$("#phone-sms").onclick = () => sendPhoneCode("sms");
-$("#phone-sms").hidden = !!CONFIG.PHONE_VIA_HOOK;   // con hook no hay alternativa por SMS
+$("#phone-form").addEventListener("submit", e => { e.preventDefault(); sendPhoneCode(); });
 
 async function logout() {
   closePopover();
