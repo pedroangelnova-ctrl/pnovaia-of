@@ -2721,7 +2721,7 @@ const voiceCfg = (() => {
 })();
 const saveVoiceCfg = () => store.set("pnova.voice", JSON.stringify(voiceCfg));
 
-const voice = { active: false, state: "idle", rec: null, heard: "", err: null, silent: 0, manualStop: false };
+const voice = { active: false, state: "idle", rec: null, heard: "", err: null, silent: 0, manualStop: false, micOk: false, started: false, wd: 0 };
 const dict = { rec: null, state: "idle", base: "", heard: "", err: null };
 const tts = { q: [], i: 0, active: false, paused: false, cur: null, msgId: null, onDone: null, unlocked: false, tok: 0 };
 
@@ -2984,36 +2984,66 @@ function vcFail(msg) {
 }
 function vcResume() { if (!voice.active) return; $("#vc-user").textContent = ""; vcListen(); }
 
-function vcListen() {
+/* Pide acceso al micrófono de forma explícita (así Chrome muestra el permiso y detectamos si no hay micro) */
+async function vcEnsureMic() {
+  if (voice.micOk) return "";
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return "";   // sin API: dejamos que lo gestione SpeechRecognition
+  try {
+    const st = await navigator.mediaDevices.getUserMedia({ audio: true });
+    st.getTracks().forEach(t => t.stop());
+    voice.micOk = true; return "";
+  } catch (e) {
+    if (e && (e.name === "NotAllowedError" || e.name === "SecurityError")) return srErrorMessage("not-allowed");
+    if (e && (e.name === "NotFoundError" || e.name === "OverconstrainedError")) return srErrorMessage("audio-capture");
+    if (e && e.name === "NotReadableError") return "El micrófono está siendo usado por otra aplicación o pestaña. Ciérrala y toca el círculo para reintentar.";
+    return "No se pudo acceder al micrófono. Toca el círculo para reintentar.";
+  }
+}
+let vcSeq = 0;
+async function vcListen() {
   if (!voice.active) return;
+  const seq = ++vcSeq;
   if (tts.active) ttsHalt();
+  try { if (hasTTS) speechSynthesis.cancel(); } catch (e) {}      // Chrome no reconoce bien mientras hay síntesis en curso
   const old = voice.rec; voice.rec = null;
   if (old) { try { old.abort(); } catch (e) {} }
+  vcSetState("idle"); $("#vc-state").textContent = "Activando micrófono…";
+  const bad = await vcEnsureMic();
+  if (!voice.active || seq !== vcSeq) return;
+  if (bad) { vcFail(bad); return; }
+  await new Promise(r => setTimeout(r, 250));                    // Chrome necesita un respiro tras abort()/cancel()
+  if (!voice.active || seq !== vcSeq) return;
   const rec = new SR();
-  voice.rec = rec; voice.heard = ""; voice.err = null; voice.manualStop = false;
+  voice.rec = rec; voice.heard = ""; voice.err = null; voice.manualStop = false; voice.started = false;
   rec.lang = voiceCfg.lang; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
-  rec.onstart = () => { if (voice.rec === rec) vcSetState("listening"); };
+  rec.onstart = () => { if (voice.rec === rec) { voice.started = true; vcSetState("listening"); } };
+  rec.onaudiostart = () => { if (voice.rec === rec) { voice.started = true; if (voice.state !== "listening") vcSetState("listening"); } };
   rec.onresult = e => {
     if (voice.rec !== rec) return;
-    voice.heard = Array.from(e.results).map(r => r[0].transcript).join("").replace(/\s+/g, " ").trim();
+    voice.started = true;
+    voice.heard = Array.from(e.results).map(r => r[0].transcript).join(" ").replace(/\s+/g, " ").trim();
     $("#vc-user").textContent = voice.heard;
   };
   rec.onerror = e => { if (voice.rec === rec) voice.err = e.error; };
-  rec.onend = () => { if (voice.rec !== rec) return; voice.rec = null; vcAfterListen(); };
-  try { rec.start(); vcSetState("listening"); }
-  catch (err) { voice.rec = null; vcFail("No se pudo activar el micrófono. Toca el círculo para reintentar."); }
+  rec.onend = () => { if (voice.rec !== rec) return; clearTimeout(voice.wd); voice.rec = null; vcAfterListen(); };
+  try { rec.start(); }
+  catch (err) { voice.rec = null; vcFail("No se pudo activar el reconocimiento de voz. Toca el círculo para reintentar."); return; }
+  clearTimeout(voice.wd);
+  voice.wd = setTimeout(() => {                                   // si Chrome nunca arranca, avisamos en vez de quedarnos en «Te escucho»
+    if (voice.rec === rec && !voice.started) vcFail("El navegador no pudo iniciar el reconocimiento de voz. Revisa el permiso del micrófono (icono del candado) y toca el círculo para reintentar.");
+  }, 5000);
 }
 function vcAfterListen() {
   if (!voice.active) return;
   const err = voice.err, text = voice.heard.trim();
+  if (text && err !== "not-allowed" && err !== "service-not-allowed") { voice.silent = 0; vcSubmit(text); return; }
   if (err && err !== "no-speech" && err !== "aborted") {
     vcFail(err === "not-allowed" || err === "service-not-allowed" ? srErrorMessage(err) + " Si ya lo habías activado, toca el círculo para reintentar." : srErrorMessage(err));
     return;
   }
-  if (text) { voice.silent = 0; vcSubmit(text); return; }
   if (voice.manualStop || err === "aborted") { vcSetState("idle"); return; }
-  if (++voice.silent >= 3) { voice.silent = 0; vcSetState("idle"); return; }   // tras 3 silencios espera a que toques
-  vcListen();
+  if (++voice.silent >= 3) { voice.silent = 0; vcSetState("idle"); $("#vc-state").textContent = "No te he oído. Toca el círculo para hablar"; return; }
+  setTimeout(() => { if (voice.active && !voice.rec) vcListen(); }, 300);
 }
 async function vcSubmit(text) {
   vcSetState("thinking");
@@ -3040,7 +3070,7 @@ function openVoiceMode() {
 }
 function closeVoiceMode() {
   if (!voice.active && $("#voice-view").hidden) return;
-  voice.active = false;
+  voice.active = false; vcSeq++; clearTimeout(voice.wd);
   const r = voice.rec; voice.rec = null;
   if (r) { try { r.abort(); } catch (e) {} }
   ttsStop();
