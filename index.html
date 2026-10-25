@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PNova IA</title>
 <link rel="icon" type="image/png" href="logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PNova IA">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -501,6 +508,20 @@
   .send { border-radius: 14px; width: 40px; height: 40px; }
   .attach-btn { border-radius: 12px; }
   .col { max-width: 800px; }
+
+  /* ---------- Aviso de instalación (PWA) ---------- */
+  .pwa { position: fixed; z-index: 90; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); max-width: 420px; margin: 0 auto; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 16px 48px rgba(0, 0, 0, .3); padding: 16px; animation: pwa-in .28s ease-out; }
+  @keyframes pwa-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .pwa-top { display: flex; gap: 12px; align-items: flex-start; }
+  .pwa-top > img { width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--border); background: #fff; object-fit: contain; flex: none; }
+  .pwa-top b { display: block; font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+  .pwa-top p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .pwa-steps { margin: 12px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 8px; font-size: 14px; }
+  .pwa-steps li { counter-increment: s; display: flex; gap: 10px; align-items: center; line-height: 1.4; }
+  .pwa-steps li::before { content: counter(s); width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: grid; place-items: center; flex: none; }
+  .pwa-steps .i { width: 18px; height: 18px; vertical-align: -4px; }
+  .pwa-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
+  .pwa-actions .btn-sm { flex: 1; max-width: 160px; }
 </style>
 </head>
 <body>
@@ -872,6 +893,8 @@
     </section>
   </div>
 </div>
+
+<div id="pwa" class="pwa" role="dialog" aria-live="polite" hidden></div>
 
 <div id="toast" role="alert" hidden></div>
 
@@ -2263,6 +2286,8 @@ function applyTheme() {
   const dark = t === "dark" || (t === "system" && darkMQ.matches);
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document.documentElement.dataset.accent = store.get("pnova.accent") || "blue";
+  const tc = document.querySelector('meta[name="theme-color"]');
+  if (tc) tc.content = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#ffffff";
 }
 if (darkMQ.addEventListener) darkMQ.addEventListener("change", applyTheme);
 
@@ -2455,6 +2480,77 @@ $("#btn-delete-all").onclick = async () => {
   }
   btn.disabled = false;
 };
+
+/* =====================================================================
+   Instalar como app (PWA) en iPhone y Android
+   Paso 1: «¿Quieres instalarla?»  →  Paso 2: «¿Añadir a la pantalla de inicio?»
+   Para probarlo en el ordenador añade ?pwa=1 al final de la dirección.
+   ===================================================================== */
+ICONS.share = '<path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>';
+const UA = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/i.test(UA);
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const forcePwa = new URLSearchParams(location.search).has("pwa");
+let deferredInstall = null;
+
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
+window.addEventListener("appinstalled", () => {
+  store.set("pnova.pwa", "installed"); deferredInstall = null; hidePwa(); toast("¡PNova IA instalada!");
+});
+
+const pwaBox = $("#pwa");
+function hidePwa() { pwaBox.hidden = true; pwaBox.innerHTML = ""; }
+function dismissPwa(days) { store.set("pnova.pwa", String(Date.now() - (7 - days) * 864e5)); hidePwa(); }
+function pwaShouldShow() {
+  if (forcePwa) return true;
+  if (!(isIOS || isAndroid) || isStandalone()) return false;
+  const v = store.get("pnova.pwa");
+  if (v === "installed") return false;
+  return !(v && Date.now() - Number(v) < 7 * 864e5);
+}
+function pwaCard(title, text, extra, buttons) {
+  pwaBox.innerHTML = `<div class="pwa-top"><img src="logo.png" alt=""><div><b>${title}</b><p>${text}</p></div></div>${extra || ""}<div class="pwa-actions">${buttons}</div>`;
+  pwaBox.hidden = false;
+}
+function pwaStep1() {
+  pwaCard("Instala PNova IA", "¿Quieres usar PNova IA como una app en tu móvil? Se abre más rápido y a pantalla completa.", "",
+    `<button type="button" class="btn-sm" data-a="no">Ahora no</button><button type="button" class="btn-sm primary" data-a="yes">Sí, quiero</button>`);
+}
+function pwaStep2() {
+  if (deferredInstall) {
+    pwaCard("¿Añadir a la pantalla de inicio?", "Se creará un icono de PNova IA junto a tus otras apps.", "",
+      `<button type="button" class="btn-sm" data-a="cancel">Cancelar</button><button type="button" class="btn-sm primary" data-a="add">Añadir</button>`);
+  } else if (isIOS) {
+    pwaCard("Añadir a la pantalla de inicio", "En iPhone se hace desde el menú de Safari:",
+      `<ol class="pwa-steps"><li><span>Toca el botón <b>Compartir</b> ${icon("share")} de la barra del navegador.</span></li><li><span>Desliza y toca <b>«Añadir a pantalla de inicio»</b>.</span></li><li><span>Toca <b>«Añadir»</b> arriba a la derecha.</span></li></ol>`,
+      `<button type="button" class="btn-sm primary" data-a="ok">Entendido</button>`);
+  } else {
+    pwaCard("Añadir a la pantalla de inicio", "Desde tu navegador:",
+      `<ol class="pwa-steps"><li><span>Abre el menú <b>⋮</b> del navegador.</span></li><li><span>Toca <b>«Instalar aplicación»</b> o <b>«Añadir a la pantalla de inicio»</b>.</span></li><li><span>Confirma con <b>«Instalar»</b>.</span></li></ol>`,
+      `<button type="button" class="btn-sm primary" data-a="ok">Entendido</button>`);
+  }
+}
+pwaBox.addEventListener("click", async e => {
+  const b = e.target.closest("[data-a]"); if (!b) return;
+  const a = b.dataset.a;
+  if (a === "no") dismissPwa(0);                 // no vuelve a preguntar en 7 días
+  else if (a === "yes") pwaStep2();
+  else if (a === "cancel") dismissPwa(3);        // vuelve a preguntar en 3 días
+  else if (a === "ok") dismissPwa(0);
+  else if (a === "add") {
+    try {
+      deferredInstall.prompt();
+      const r = await deferredInstall.userChoice;
+      deferredInstall = null;
+      if (r.outcome === "accepted") hidePwa(); else dismissPwa(3);
+    } catch (err) { deferredInstall = null; pwaStep2(); }
+  }
+});
+setTimeout(() => { if (pwaShouldShow()) pwaStep1(); }, 4000);
 
 /* =====================================================================
    Arranque
