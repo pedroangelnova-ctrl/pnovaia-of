@@ -14,12 +14,6 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const req = e.request;
-
-  // EXCLUSIÓN PARA APPLE PAY Y PAYPAL: No interceptar la carpeta de verificación
-  if (req.url.includes(".well-known")) {
-    return; // Pasa de largo e internet responde de manera normal
-  }
-
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
   if (req.mode === "navigate") {
     e.respondWith(
