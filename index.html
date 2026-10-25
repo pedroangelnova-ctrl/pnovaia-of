@@ -113,6 +113,13 @@
   .btn-google:disabled { opacity: .55; cursor: default; }
   .btn-google svg { width: 18px; height: 18px; flex: none; }
   .btn-google + .btn-google { margin-top: 10px; }
+  .pk-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+  .pk-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; }
+  .pk-item .pk-info { flex: 1; min-width: 0; }
+  .pk-item b { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pk-item small { color: var(--muted); font-size: 12.5px; }
+  .pk-item .btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
+  .pk-empty { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
   .soon { margin-left: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
   .hint { margin: -4px 2px 12px; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
   .legal-note { margin: 16px 0 0; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
@@ -708,6 +715,10 @@
         <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
         Continuar con Google
       </button>
+      <button class="btn-google" id="btn-passkey" type="button" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-1a6 6 0 0 1 6-6h2"/><circle cx="18" cy="15" r="2.5"/><path d="M18 17.5V22l1.5-1.2L18 19.6"/></svg>
+        Continuar con clave de acceso
+      </button>
       <button class="btn-google" id="btn-phone" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         Continuar con teléfono<span class="soon" id="phone-soon" hidden>Próximamente</span>
@@ -955,6 +966,14 @@
           </form>
         </div>
 
+        <div class="set-sec" id="sec-passkeys" hidden>
+          <h4>Claves de acceso</h4>
+          <p class="pk-empty" id="pk-lead">Inicia sesión sin contraseña con tu huella, tu cara, el PIN del dispositivo o una llave de seguridad.</p>
+          <ul class="pk-list" id="pk-list"></ul>
+          <div class="set-actions"><button class="btn-sm primary" id="pk-add" type="button">Añadir clave de acceso</button></div>
+          <div class="notice set-msg" id="msg-pk" role="status" hidden></div>
+        </div>
+
         <div class="set-sec">
           <h4>Sesión</h4>
           <div class="set-row"><div class="lbl"><b>Método de acceso</b><small id="acc-provider">—</small></div></div>
@@ -1023,7 +1042,8 @@
 
 <div id="toast" role="alert" hidden></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js"></script>
+<script>window.supabase || document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"><\/script>');</script>
 <script>
 /* =====================================================================
    CONFIGURACIÓN — edita solo este bloque
@@ -1385,6 +1405,86 @@ $("#btn-google").onclick = async () => {
   }
 };
 
+/* ---------- Claves de acceso (passkeys / WebAuthn) vía Supabase Auth ----------
+   Requiere supabase-js >= 2.105.0, «Authentication → Passkeys» activado en el panel
+   y el ID de la parte confiable = dominio donde se sirve esta página. */
+const passkeyReady = () => !!(sb && window.PublicKeyCredential && window.isSecureContext && sb.auth && typeof sb.auth.signInWithPasskey === "function" && typeof sb.auth.registerPasskey === "function");
+function passkeyError(err) {
+  const code = (err && (err.code || err.name) || "").toString().toLowerCase();
+  const m = (err && err.message || "").toLowerCase();
+  if (code === "notallowederror" || m.includes("cancel") || m.includes("not allowed") || m.includes("timed out")) return "Operación cancelada o sin respuesta del dispositivo.";
+  if (code === "passkey_disabled") return "Las claves de acceso no están activadas en Supabase (Authentication → Passkeys).";
+  if (code === "webauthn_credential_not_found") return "Esta clave de acceso no está registrada en ninguna cuenta. Inicia sesión de otra forma y añádela en Ajustes → Cuenta.";
+  if (code === "webauthn_credential_exists" || code === "invalidstateerror") return "Este dispositivo ya tiene una clave de acceso registrada en tu cuenta.";
+  if (code === "too_many_passkeys") return "Has alcanzado el máximo de claves de acceso. Elimina alguna para añadir otra.";
+  if (code === "webauthn_challenge_expired" || code === "webauthn_challenge_not_found") return "La solicitud caducó. Inténtalo de nuevo.";
+  if (code === "webauthn_verification_failed") return "No se pudo verificar la clave. Comprueba que el ID de la parte confiable en Supabase coincide con el dominio (" + location.hostname + ").";
+  if (code === "email_not_confirmed" || code === "phone_not_confirmed") return "Confirma tu correo o teléfono antes de iniciar sesión.";
+  if (code === "user_banned") return "Esta cuenta está suspendida.";
+  if (code === "securityerror") return "El dominio (" + location.hostname + ") no coincide con el ID de la parte confiable configurado en Supabase.";
+  return authError(err);
+}
+function syncPasskeyUI() {
+  const ok = passkeyReady();
+  $("#btn-passkey").hidden = !ok;
+  $("#sec-passkeys").hidden = !(ok && user);
+}
+$("#btn-passkey").onclick = async () => {
+  if (!passkeyReady()) return;
+  const btn = $("#btn-passkey"); btn.disabled = true; showNotice();
+  try {
+    const { error } = await sb.auth.signInWithPasskey();   // el evento SIGNED_IN lo recoge onAuthStateChange
+    if (error) throw error;
+  } catch (err) { showNotice(passkeyError(err)); }
+  finally { btn.disabled = false; }
+};
+
+const pkMsg = (t, kind = "error") => { const n = $("#msg-pk"); if (!t) { n.hidden = true; return; } n.className = "notice set-msg " + kind; n.textContent = t; n.hidden = false; };
+const pkDate = d => { try { return new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } };
+async function loadPasskeys() {
+  if (!passkeyReady() || !sb.auth.passkey || typeof sb.auth.passkey.list !== "function") return;
+  const ul = $("#pk-list");
+  try {
+    const { data, error } = await sb.auth.passkey.list();
+    if (error) throw error;
+    const list = Array.isArray(data) ? data : (data && data.passkeys) || [];
+    $("#pk-lead").hidden = list.length > 0;
+    ul.innerHTML = list.map(k => `<li class="pk-item" data-id="${attr(k.id)}">
+      <div class="pk-info"><b>${esc(k.friendly_name || "Clave de acceso")}</b><small>Añadida el ${esc(pkDate(k.created_at))}${k.last_used_at ? " · usada el " + esc(pkDate(k.last_used_at)) : ""}</small></div>
+      <button class="btn-sm" type="button" data-pk="rename" data-name="${attr(k.friendly_name || "")}">Renombrar</button>
+      <button class="btn-sm danger" type="button" data-pk="delete">Eliminar</button></li>`).join("");
+  } catch (err) { ul.innerHTML = ""; pkMsg(passkeyError(err)); }
+}
+$("#pk-add").onclick = async () => {
+  if (!passkeyReady()) return;
+  const b = $("#pk-add"); b.disabled = true; pkMsg();
+  try {
+    const { error } = await sb.auth.registerPasskey();
+    if (error) throw error;
+    pkMsg("Clave de acceso añadida. Ya puedes usarla para iniciar sesión.", "ok");
+    await loadPasskeys();
+  } catch (err) { pkMsg(passkeyError(err)); }
+  finally { b.disabled = false; }
+};
+$("#pk-list").addEventListener("click", async e => {
+  const btn = e.target.closest("[data-pk]"); if (!btn) return;
+  const id = btn.closest(".pk-item").dataset.id; pkMsg();
+  try {
+    if (btn.dataset.pk === "rename") {
+      const name = prompt("Nombre de la clave de acceso:", btn.dataset.name || "");
+      if (name === null) return;
+      const friendlyName = name.trim().slice(0, 120); if (!friendlyName) return;
+      const { error } = await sb.auth.passkey.update({ passkeyId: id, friendlyName });
+      if (error) throw error;
+    } else {
+      if (!confirm("¿Eliminar esta clave de acceso? Ya no podrás iniciar sesión con ella.")) return;
+      const { error } = await sb.auth.passkey.delete({ passkeyId: id });
+      if (error) throw error;
+    }
+    await loadPasskeys();
+  } catch (err) { pkMsg(passkeyError(err)); }
+});
+
 /* ---------- Paneles de acceso, código OTP (correo o teléfono) ---------- */
 let pending = null, resendTimer = null;   // pending = { kind: "email" | "phone", value, channel }
 
@@ -1602,6 +1702,7 @@ function showAuth() {                          // sin sesión: se muestra la pan
   $("#auth-password").value = "";
   $("#btn-google").disabled = false;
   $("#btn-phone").disabled = !CONFIG.PHONE_ENABLED;
+  if (typeof syncPasskeyUI === "function") syncPasskeyUI();
   pending = null; showPanel("main");
   applyConfigWarning();
   showLanding();
@@ -2562,6 +2663,7 @@ function openSettings(tab = "general") {
   ["#pw-current", "#pw-new", "#pw-new2"].forEach(s => { $(s).value = ""; });
   $("#set-overlay").hidden = false;
   showSetTab(tab);
+  syncPasskeyUI(); loadPasskeys();
   $("#set-close").focus({ preventScroll: true });
 }
 function closeSettings() {
@@ -3217,8 +3319,10 @@ syncAutoReadUI(); vcSyncLang(); ttsUI();
   if (!configured) { showAuth(); return; }
 
   sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, experimental: { passkey: true } }
   });
+
+  syncPasskeyUI();
 
   // No hacer llamadas a Supabase dentro del callback: se difieren con setTimeout
   sb.auth.onAuthStateChange((event, session) => {
