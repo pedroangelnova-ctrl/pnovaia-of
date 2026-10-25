@@ -1948,7 +1948,7 @@ $("#name-cancel").onclick = async () => {
   await sb.auth.signOut();                   // onAuthStateChange vuelve a la pantalla de acceso
 };
 
-function showOtpStep(kind, value) {
+function showOtpStep(kind, value, cooldown = 60) {
   pending = { kind, value };
   showPanel("otp");
   const phone = kind === "phone";
@@ -1959,7 +1959,7 @@ function showOtpStep(kind, value) {
   $("#otp-submit").textContent = phone ? "Verificar teléfono" : "Verificar correo";
   $("#otp-back").textContent = phone ? "Cambiar número" : "Cambiar correo";
   $("#otp-code").value = "";
-  startResendCooldown(60);
+  startResendCooldown(cooldown);
   $("#otp-code").focus();
 }
 function startResendCooldown(sec) {
@@ -2010,6 +2010,7 @@ $("#otp-resend").onclick = async () => {
     ? await sb.auth.signInWithOtp(otpOptions(pending.value))
     : await sb.auth.resend({ type: "signup", email: pending.value });
   if (error) return showNotice(authError(error));
+  if (pending.kind === "phone") markOtpSent(pending.value);
   showNotice("Te hemos enviado un nuevo código.", "ok");
   startResendCooldown(60);
 };
@@ -2030,20 +2031,46 @@ function normalizePhone(raw) {
 // si el número no tiene cuenta, se crea al verificar el código.
 const otpOptions = phone => ({ phone });
 
+// Supabase solo deja pedir un código por número cada 60 s. Se recuerda cuándo se envió el último para no
+// volver a pedirlo (y chocar con el límite) si el usuario vuelve atrás y reintenta el mismo número.
+const OTP_COOLDOWN_S = 60;
+const otpSentMem = {};
+function markOtpSent(phone) {
+  otpSentMem[phone] = Date.now();
+  try { sessionStorage.setItem("pnova.otpSent." + phone, String(Date.now())); } catch (e) {}
+}
+function otpCooldownLeft(phone) {
+  let t = otpSentMem[phone] || 0;
+  try { t = Math.max(t, +sessionStorage.getItem("pnova.otpSent." + phone) || 0); } catch (e) {}
+  return Math.max(0, Math.ceil(OTP_COOLDOWN_S - (Date.now() - t) / 1000));
+}
+
 async function sendPhoneCode() {
   if (!sb) return;
   const phone = normalizePhone($("#phone-number").value);
   if (!phone) return showNotice("Escribe tu número con prefijo internacional, por ejemplo +34612345678.");
+  const left = otpCooldownLeft(phone);
+  if (left > 0) {      // ya se envió un código hace menos de 60 s: no se pide otro, se pasa a escribirlo
+    showOtpStep("phone", phone, left);
+    return showNotice("Ya te enviamos un código por WhatsApp hace un momento. Escríbelo aquí o espera " + left + " s para pedir otro.", "ok");
+  }
   const btn = $("#phone-submit");
   btn.disabled = true; showNotice();
   try {
     const { error } = await sb.auth.signInWithOtp(otpOptions(phone));
     if (error) throw error;
+    markOtpSent(phone);
     showOtpStep("phone", phone);
   } catch (err) {
     console.error("[teléfono] signInWithOtp:", err);
     const raw = (err && (err.message || err.error_description) || "").trim();
     const m = raw.toLowerCase();
+    const wait = /only request[^0-9]*(\d+)\s*second/.exec(m);   // "…solo puedes pedirlo tras N segundos": ya hay un código reciente
+    if (wait) {
+      const n = Math.min(Math.max(+wait[1], 1), OTP_COOLDOWN_S);
+      markOtpSent(phone); showOtpStep("phone", phone, n);
+      return showNotice("Ya te enviamos un código por WhatsApp hace un momento. Escríbelo aquí o espera " + n + " s para pedir otro.", "ok");
+    }
     const hint = m.includes("rate") || m.includes("too many") || m.includes("seconds")
       ? "Has pedido demasiados códigos. Espera un minuto e inténtalo de nuevo."
       : m.includes("provider") || m.includes("unsupported") || m.includes("disabled")
