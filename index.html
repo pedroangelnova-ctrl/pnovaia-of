@@ -967,10 +967,10 @@
         </div>
 
         <div class="set-sec" id="sec-passkeys" hidden>
-          <h4>Claves de acceso</h4>
-          <p class="pk-empty" id="pk-lead">Inicia sesión sin contraseña con tu huella, tu cara, el PIN del dispositivo o una llave de seguridad.</p>
+          <h4>Acceso rápido con clave de acceso</h4>
+          <p class="pk-empty" id="pk-lead"></p>
           <ul class="pk-list" id="pk-list"></ul>
-          <div class="set-actions"><button class="btn-sm primary" id="pk-add" type="button">Añadir clave de acceso</button></div>
+          <div class="set-actions"><button class="btn-sm primary" id="pk-add" type="button">Crear clave de acceso</button></div>
           <div class="notice set-msg" id="msg-pk" role="status" hidden></div>
         </div>
 
@@ -985,7 +985,7 @@
       <!-- Planes -->
       <div class="set-pane" id="pane-plans" role="tabpanel" hidden>
         <h3>Planes</h3>
-        <p class="set-lead">Estás usando el plan Gratis. Los planes de pago llegarán pronto.</p>
+        <p class="set-lead">Estás usando el plan Gratis. El Plan Basic ya se puede contratar; Galaxia llegará pronto.</p>
         <div class="plans">
           <div class="plan current">
             <h4>Gratis <span class="soon">Tu plan</span></h4>
@@ -999,20 +999,22 @@
             <button class="btn-sm" type="button" disabled>Plan actual</button>
           </div>
           <div class="plan">
-            <h4>Estelar <span class="soon">Próximamente</span></h4>
-            <div class="plan-price muted">Precio por anunciar</div>
+            <h4>Plan Basic</h4>
+            <div class="plan-price muted">Suscripción con PayPal</div>
             <ul>
               <li>Más mensajes e imágenes</li>
               <li>Acceso a Nova AI</li>
               <li>Respuestas más rápidas</li>
             </ul>
-            <button class="btn-sm" type="button" disabled>Próximamente</button>
+            <button class="btn-sm primary" id="pp-open" type="button">Suscribirme</button>
+            <div id="paypal-button-container" hidden></div>
+            <div class="notice set-msg" id="msg-pp" role="status" hidden></div>
           </div>
           <div class="plan">
             <h4>Galaxia <span class="soon">Próximamente</span></h4>
             <div class="plan-price muted">Precio por anunciar</div>
             <ul>
-              <li>Todo lo de Estelar</li>
+              <li>Todo lo del Plan Basic</li>
               <li>Uso ampliado</li>
               <li>Acceso anticipado a novedades</li>
             </ul>
@@ -1405,6 +1407,56 @@ $("#btn-google").onclick = async () => {
   }
 };
 
+/* ---------- Suscripción con PayPal (Plan Basic) ----------
+   El Client ID de PayPal es público (va en el navegador). El Secret NUNCA debe ponerse aquí.
+   El SDK se carga solo cuando el usuario pulsa «Suscribirme». */
+const PAYPAL_CFG = {
+  CLIENT_ID: "BAASj0qjHI2-n9l1m_rLzhIBOCip3O0i4kgCsu5_FVymSjPGFBOwAxWEDI7wdi4LXSDb-kHxYgTbW06ojw",
+  PLAN_ID: "P-3WX98865YT444350YNLPAVLQ"
+};
+let paypalLoading = null, paypalRendered = false;
+function loadPayPalSdk() {
+  if (window.paypal && window.paypal.Buttons) return Promise.resolve();
+  if (paypalLoading) return paypalLoading;
+  paypalLoading = new Promise((resolve, reject) => {
+    const sc = document.createElement("script");
+    sc.src = "https://www.paypal.com/sdk/js?client-id=" + encodeURIComponent(PAYPAL_CFG.CLIENT_ID) + "&components=buttons&vault=true&intent=subscription";
+    sc.onload = () => (window.paypal && window.paypal.Buttons) ? resolve() : reject(new Error("sdk"));
+    sc.onerror = () => reject(new Error("sdk"));
+    document.head.appendChild(sc);
+  }).catch(e => { paypalLoading = null; throw e; });
+  return paypalLoading;
+}
+const ppMsg = (t, kind = "error") => { const n = $("#msg-pp"); if (!t) { n.hidden = true; return; } n.className = "notice set-msg " + kind; n.textContent = t; n.hidden = false; };
+$("#pp-open").onclick = async () => {
+  if (!user) return;
+  const b = $("#pp-open"); b.disabled = true; ppMsg();
+  try {
+    await loadPayPalSdk();
+    if (!paypalRendered) {
+      paypalRendered = true;
+      await paypal.Buttons({
+        style: { layout: "vertical", label: "subscribe", shape: "rect" },
+        createSubscription: (data, actions) => actions.subscription.create({
+          plan_id: PAYPAL_CFG.PLAN_ID,
+          custom_id: user.id                      // permite al servidor saber a qué usuario pertenece la suscripción
+        }),
+        onApprove: data => {
+          ppMsg("¡Gracias por suscribirte! Tu suscripción (" + data.subscriptionID + ") se está confirmando. Si en unos minutos no ves tu plan activo, contacta con soporte indicando ese código.", "ok");
+          toast("Suscripción recibida. Gracias.");
+        },
+        onCancel: () => ppMsg("Has cancelado el pago. No se ha hecho ningún cargo.", "warn"),
+        onError: err => { console.error("PayPal:", err); ppMsg("PayPal no pudo completar la suscripción. Inténtalo de nuevo en unos minutos."); }
+      }).render("#paypal-button-container");
+    }
+    $("#paypal-button-container").hidden = false;
+    b.hidden = true;
+  } catch (err) {
+    paypalRendered = false; b.disabled = false;
+    ppMsg("No se pudo cargar PayPal. Revisa tu conexión (o si un bloqueador de anuncios lo impide) y vuelve a intentarlo.");
+  }
+};
+
 /* ---------- Claves de acceso (passkeys / WebAuthn) vía Supabase Auth ----------
    Requiere supabase-js >= 2.105.0, «Authentication → Passkeys» activado en el panel
    y el ID de la parte confiable = dominio donde se sirve esta página. */
@@ -1424,10 +1476,21 @@ function passkeyError(err) {
   if (code === "securityerror") return "El dominio (" + location.hostname + ") no coincide con el ID de la parte confiable configurado en Supabase.";
   return authError(err);
 }
+function passkeyReason() {                      // por qué no se pueden usar las claves de acceso (vacío = disponibles)
+  if (!window.isSecureContext) return "Las claves de acceso solo funcionan en una conexión segura (HTTPS).";
+  if (!window.PublicKeyCredential) return "Tu navegador o dispositivo no admite claves de acceso.";
+  if (!sb || !sb.auth || typeof sb.auth.registerPasskey !== "function") return "No se pudo cargar el módulo de claves de acceso. Recarga la página.";
+  return "";
+}
 function syncPasskeyUI() {
-  const ok = passkeyReady();
+  const ok = passkeyReady(), why = passkeyReason();
   $("#btn-passkey").hidden = !ok;
-  $("#sec-passkeys").hidden = !(ok && user);
+  $("#sec-passkeys").hidden = !user;               // en Ajustes → Cuenta siempre se ve la opción
+  $("#pk-add").disabled = !ok;
+  const lead = $("#pk-lead");
+  lead.textContent = ok ? "Crea una clave de acceso para entrar más rápido: inicia sesión con tu huella, tu cara, el PIN del dispositivo o una llave de seguridad, sin escribir contraseña."
+                        : why;
+  lead.hidden = false;
 }
 $("#btn-passkey").onclick = async () => {
   if (!passkeyReady()) return;
@@ -1448,7 +1511,6 @@ async function loadPasskeys() {
     const { data, error } = await sb.auth.passkey.list();
     if (error) throw error;
     const list = Array.isArray(data) ? data : (data && data.passkeys) || [];
-    $("#pk-lead").hidden = list.length > 0;
     ul.innerHTML = list.map(k => `<li class="pk-item" data-id="${attr(k.id)}">
       <div class="pk-info"><b>${esc(k.friendly_name || "Clave de acceso")}</b><small>Añadida el ${esc(pkDate(k.created_at))}${k.last_used_at ? " · usada el " + esc(pkDate(k.last_used_at)) : ""}</small></div>
       <button class="btn-sm" type="button" data-pk="rename" data-name="${attr(k.friendly_name || "")}">Renombrar</button>
