@@ -1526,7 +1526,7 @@ $("#pp-open").onclick = async () => {
 
 /* ---------- Pago único por meses (PayPal JS SDK v6) ----------
    El navegador solo elige meses; el SERVIDOR calcula el importe, crea la orden, captura, verifica y concede el acceso. */
-const PLAN_CENTS = { 1: 399, 2: 798, 3: 1197, 6: 2394, 12: 4788 };   // solo para mostrar; el servidor tiene su propia lista
+const PLAN_CENTS = { 1: 6, 2: 798, 3: 1197, 6: 2394, 12: 4788 };   // solo para mostrar; el servidor tiene su propia lista · TEMPORAL PRUEBA: 1 mes = 6 céntimos (restaurar a 399)
 const eur = c => (c / 100).toLocaleString("es-ES", { style: "currency", currency: "EUR" });
 let payMonths = 1, payBusy = false, payInit = null;
 const payClientId = () => PAYPAL_CFG.ENV === "live" ? PAYPAL_CFG.CLIENT_ID : PAYPAL_CFG.SANDBOX_CLIENT_ID;
