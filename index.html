@@ -522,6 +522,80 @@
   .pwa-steps .i { width: 18px; height: 18px; vertical-align: -4px; }
   .pwa-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
   .pwa-actions .btn-sm { flex: 1; max-width: 160px; }
+
+  /* ---------- Voz ---------- */
+  #toast { z-index: 95; }
+  .mic-btn { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: var(--muted); flex: none; position: relative; }
+  .mic-btn:hover { background: var(--hover); color: var(--text); }
+  .mic-btn[data-state="off"] { opacity: .45; }
+  .mic-btn[data-state="listening"] { background: var(--accent); color: #fff; }
+  .mic-btn[data-state="listening"]::after { content: ""; position: absolute; inset: -3px; border-radius: 15px; border: 2px solid var(--accent); animation: mic-pulse 1.3s ease-out infinite; pointer-events: none; }
+  .mic-btn[data-state="processing"] { color: var(--accent); }
+  .mic-btn[data-state="error"] { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); animation: mic-shake .4s; }
+  @keyframes mic-pulse { from { opacity: .8; transform: scale(1); } to { opacity: 0; transform: scale(1.55); } }
+  @keyframes mic-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+  .mic-spin { display: block; width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid var(--border); border-top-color: var(--accent); animation: gen-spin .8s linear infinite; }
+
+  .tts-toggle { margin-left: auto; }
+  .tts-toggle[aria-pressed="true"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .tts-toggle[data-off="1"] { opacity: .45; }
+  .voice-open { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; font-weight: 600; font-size: 14px; color: #fff; background: var(--accent-grad); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 30%, transparent); flex: none; }
+  .voice-open:hover { filter: brightness(1.08); }
+  .voice-open[data-off="1"] { opacity: .5; }
+  .voice-open .i { width: 18px; height: 18px; }
+  @media (max-width: 520px) { .voice-open { width: 36px; padding: 0; justify-content: center; } .voice-open-label { display: none; } }
+
+  .tts-bar { display: flex; align-items: center; gap: 10px; max-width: 520px; margin: 0 auto 8px; padding: 4px 6px 4px 16px; border: 1px solid var(--border); border-radius: 999px; background: var(--card); box-shadow: var(--shadow); animation: pwa-in .2s ease-out; }
+  .tts-eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 16px; flex: none; }
+  .tts-eq i { width: 3px; height: 4px; border-radius: 2px; background: var(--accent); animation: tts-eq 1s ease-in-out infinite; }
+  .tts-eq i:nth-child(2) { animation-delay: .15s; } .tts-eq i:nth-child(3) { animation-delay: .3s; } .tts-eq i:nth-child(4) { animation-delay: .45s; }
+  .tts-bar.paused .tts-eq i { animation-play-state: paused; }
+  @keyframes tts-eq { 0%, 100% { height: 4px; } 50% { height: 16px; } }
+  #tts-label { flex: 1; min-width: 0; font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tts-bar .icon-btn .i { width: 18px; height: 18px; }
+
+  .vc { position: fixed; inset: 0; z-index: 85; display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding: max(12px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); color: var(--text); background: radial-gradient(120% 80% at 50% 36%, color-mix(in srgb, var(--accent) 22%, var(--bg)) 0%, var(--bg) 62%); }
+  .vc-top { display: flex; align-items: center; justify-content: space-between; }
+  .vc-title { font-weight: 600; letter-spacing: -.01em; }
+  .vc-lang { min-width: 36px; text-align: right; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .vc-main { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 8px 0; }
+  .vc-orb { position: relative; width: min(46vw, 200px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; color: #fff; flex: none; }
+  .vc-core { position: relative; z-index: 1; width: 100%; height: 100%; border-radius: 50%; background: var(--accent-grad); display: grid; place-items: center; box-shadow: 0 18px 60px color-mix(in srgb, var(--accent) 45%, transparent); }
+  .vc-core .i { width: 46px; height: 46px; stroke-width: 1.7; }
+  .vc-core .mic-spin { width: 46px; height: 46px; border-width: 4px; border-color: rgba(255, 255, 255, .35); border-top-color: #fff; }
+  .vc-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
+  .vc-orb[data-state="listening"] .vc-ring { animation: vc-ring 1.8s ease-out infinite; }
+  .vc-orb[data-state="listening"] .vc-ring.r2 { animation-delay: .9s; }
+  .vc-orb[data-state="thinking"] .vc-core { animation: vc-breathe 1.4s ease-in-out infinite; }
+  .vc-orb[data-state="speaking"] .vc-core { animation: vc-speak .9s ease-in-out infinite; }
+  .vc-orb[data-state="error"] .vc-core { background: var(--danger); box-shadow: 0 18px 60px color-mix(in srgb, var(--danger) 40%, transparent); }
+  @keyframes vc-ring { from { opacity: .55; transform: scale(1); } to { opacity: 0; transform: scale(1.65); } }
+  @keyframes vc-breathe { 50% { transform: scale(.94); } }
+  @keyframes vc-speak { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.07); } 60% { transform: scale(.97); } }
+  .vc-state { margin: 8px 0 0; font-size: 18px; font-weight: 600; max-width: 24em; }
+  .vc-user { margin: 0; min-height: 1.5em; max-width: 34em; color: var(--muted); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+  .vc-reply { width: 100%; max-width: 34em; max-height: 26vh; overflow-y: auto; padding: 12px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--card); text-align: left; font-size: 15px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .vc-controls { display: flex; justify-content: center; gap: 16px; }
+  .vc-btn { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--border); background: var(--card); }
+  .vc-btn:hover:not(:disabled) { background: var(--hover); }
+  .vc-btn:disabled { opacity: .4; cursor: default; }
+  .vc-btn.end { background: var(--danger); border-color: transparent; color: #fff; }
+  .vc-btn .i { width: 22px; height: 22px; }
+
+  .switch { position: relative; width: 44px; height: 26px; flex: none; }
+  .switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+  .switch i { position: absolute; inset: 0; border-radius: 999px; background: var(--active); transition: background .2s; }
+  .switch i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); transition: transform .2s; }
+  .switch input:checked + i { background: var(--accent); }
+  .switch input:checked + i::after { transform: translateX(18px); }
+  .switch input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .sel { height: 38px; max-width: 230px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; }
+  #vs-rate { width: 160px; accent-color: var(--accent); }
+  .vs-status { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 14px; }
+  .vs-status li { display: flex; align-items: center; gap: 10px; }
+  .vs-status b { margin-left: auto; font-weight: 500; color: var(--muted); }
+  .vs-status .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .vs-status .dot.ok { background: #22c55e; } .vs-status .dot.no { background: var(--danger); }
 </style>
 </head>
 <body>
@@ -701,6 +775,8 @@
       <button class="icon-btn only-collapsed" id="btn-open" type="button" aria-label="Abrir barra lateral"><span data-icon="panel"></span></button>
       <button class="icon-btn only-collapsed" id="btn-new2" type="button" aria-label="Nuevo chat"><span data-icon="newchat"></span></button>
       <button class="model-btn" id="model-btn" type="button" aria-haspopup="menu"><span id="model-name">PNova</span><span data-icon="chevron"></span></button>
+      <button class="icon-btn tts-toggle" id="tts-toggle" type="button" aria-pressed="false" aria-label="Leer respuestas en voz alta" title="Leer respuestas en voz alta"><span data-icon="volume"></span></button>
+      <button class="voice-open" id="voice-open" type="button" aria-label="Iniciar conversación por voz" title="Conversación por voz"><span data-icon="wave"></span><span class="voice-open-label">Voz</span></button>
     </header>
 
     <div id="body">
@@ -720,12 +796,19 @@
           <div id="messages" aria-live="polite"></div>
         </div>
       </div>
+      <div class="col"><div class="tts-bar" id="tts-bar" role="group" aria-label="Lectura en voz alta" hidden>
+        <span class="tts-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span id="tts-label">Leyendo respuesta…</span>
+        <button class="icon-btn" id="tts-pause" type="button" aria-label="Pausar lectura"></button>
+        <button class="icon-btn" id="tts-stop" type="button" aria-label="Detener lectura"></button>
+      </div></div>
       <div id="composer-wrap">
         <div class="col">
           <form class="composer" id="composer">
             <div class="attach-row" id="attach-row" hidden></div>
             <button class="attach-btn" id="attach-btn" type="button" aria-haspopup="menu" aria-label="Adjuntar archivos" title="Adjuntar archivos"><span data-icon="paperclip"></span></button>
             <textarea id="input" rows="1" placeholder="Pregunta a PNova IA" aria-label="Mensaje"></textarea>
+            <button class="mic-btn" id="mic-btn" type="button" data-state="idle" aria-label="Dictar mensaje por voz" title="Dictar con la voz"><span data-icon="mic"></span></button>
             <button class="img-toggle" id="img-toggle" type="button" hidden aria-pressed="false" title="Crear imagen"><span data-icon="image"></span><span class="img-toggle-label">Crear imagen</span></button>
             <button class="send" id="send" type="submit" aria-label="Enviar mensaje" disabled><span data-icon="send"></span></button>
           </form>
@@ -737,6 +820,29 @@
     </div>
   </main>
 </div>
+
+<!-- ================= CONVERSACIÓN POR VOZ ================= -->
+<section id="voice-view" class="vc" role="dialog" aria-modal="true" aria-label="Conversación por voz" hidden>
+  <div class="vc-top">
+    <button class="icon-btn" id="vc-close" type="button" aria-label="Salir del modo voz"><span data-icon="x"></span></button>
+    <div class="vc-title">PNova IA · Voz</div>
+    <span class="vc-lang" id="vc-lang" aria-hidden="true">ES</span>
+  </div>
+  <div class="vc-main">
+    <button class="vc-orb" id="vc-orb" type="button" data-state="idle" aria-label="Toca para hablar">
+      <span class="vc-ring"></span><span class="vc-ring r2"></span>
+      <span class="vc-core" id="vc-core"></span>
+    </button>
+    <p class="vc-state" id="vc-state" role="status" aria-live="polite">Toca el círculo para hablar</p>
+    <p class="vc-user" id="vc-user"></p>
+    <div class="vc-reply" id="vc-reply" hidden></div>
+  </div>
+  <div class="vc-controls">
+    <button class="vc-btn" id="vc-pause" type="button" aria-label="Pausar lectura" disabled></button>
+    <button class="vc-btn" id="vc-stop" type="button" aria-label="Detener voz" disabled></button>
+    <button class="vc-btn end" id="vc-end" type="button" aria-label="Terminar conversación por voz"><span data-icon="x"></span></button>
+  </div>
+</section>
 
 <div id="src-overlay" hidden></div>
 <aside id="src-panel" role="dialog" aria-label="Fuentes" hidden>
@@ -754,6 +860,7 @@
       </div>
       <div class="set-tabs" role="tablist" aria-orientation="vertical">
         <button class="set-tab" type="button" role="tab" data-tab="general" aria-selected="true"><span data-icon="settings"></span>General</button>
+        <button class="set-tab" type="button" role="tab" data-tab="voice" aria-selected="false"><span data-icon="mic"></span>Voz</button>
         <button class="set-tab" type="button" role="tab" data-tab="account" aria-selected="false"><span data-icon="user"></span>Cuenta</button>
         <button class="set-tab" type="button" role="tab" data-tab="plans" aria-selected="false"><span data-icon="zap"></span>Planes</button>
         <button class="set-tab" type="button" role="tab" data-tab="data" aria-selected="false"><span data-icon="database"></span>Datos</button>
@@ -786,6 +893,23 @@
           <div class="lbl"><b>Idioma</b><small>Español</small></div>
           <span class="soon">Próximamente</span>
         </div>
+      </div>
+
+      <!-- Voz -->
+      <div class="set-pane" id="pane-voice" role="tabpanel" hidden>
+        <h3>Voz</h3>
+        <p class="set-lead">Habla con PNova IA y escucha sus respuestas con las funciones de voz de tu navegador.</p>
+        <div class="set-sec">
+          <h4>Compatibilidad de este navegador</h4>
+          <ul class="vs-status" id="vs-status"></ul>
+        </div>
+        <div class="set-row"><div class="lbl"><b>Idioma</b><small>Para dictar y para leer en voz alta.</small></div><select class="sel" id="vs-lang" aria-label="Idioma de voz"></select></div>
+        <div class="set-row"><div class="lbl"><b>Leer respuestas automáticamente</b><small>PNova IA dirá en voz alta cada respuesta nueva.</small></div><label class="switch"><input type="checkbox" id="vs-auto" aria-label="Leer respuestas automáticamente"><i></i></label></div>
+        <div class="set-row"><div class="lbl"><b>Voz</b><small>Las voces disponibles dependen de tu dispositivo.</small></div><select class="sel" id="vs-voice" aria-label="Voz de lectura"></select></div>
+        <div class="set-row"><div class="lbl"><b>Velocidad</b><small id="vs-rate-val">1.0×</small></div><input type="range" id="vs-rate" min="0.7" max="1.5" step="0.1" value="1" aria-label="Velocidad de lectura"></div>
+        <div class="set-row"><div class="lbl"><b>Enviar al terminar de dictar</b><small>Con el micrófono del cuadro de texto.</small></div><label class="switch"><input type="checkbox" id="vs-autosend" aria-label="Enviar al terminar de dictar"><i></i></label></div>
+        <div class="set-row"><div class="lbl"><b>Probar voz</b><small>Escucha cómo suena la lectura.</small></div><button class="btn-sm" id="vs-test" type="button">Probar</button></div>
+        <p class="set-note">El audio del micrófono lo procesa el servicio de voz de tu navegador (por ejemplo, Google en Chrome o Apple en Safari). PNova IA solo recibe el texto reconocido y no guarda el audio.</p>
       </div>
 
       <!-- Cuenta -->
@@ -978,7 +1102,15 @@ Object.assign(ICONS, {
   database: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>',
   x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   paperclip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
-  file: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/>'
+  file: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/>',
+  mic: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>',
+  volume: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/>',
+  volumeoff: '<path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>',
+  pause: '<rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/>',
+  play: '<path d="M7 4v16l13-8Z" fill="currentColor"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>',
+  wave: '<path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>'
 });
 const icon = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 document.querySelectorAll("[data-icon]").forEach(el => { el.outerHTML = icon(el.dataset.icon); });
@@ -1158,6 +1290,9 @@ const attPreviews = {}, attData = {};          // por id de mensaje: miniaturas 
 let modelId = store.get("pnova.model") || CONFIG.DEFAULT_MODEL;
 if (!CONFIG.MODELS.some(m => m.id === modelId && m.endpoint)) modelId = CONFIG.DEFAULT_MODEL;
 const getModel = () => CONFIG.MODELS.find(m => m.id === modelId) || CONFIG.MODELS[0];
+// Voz del navegador: reconocimiento (SpeechRecognition) y lectura (speechSynthesis)
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+const hasTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
 
 /* =====================================================================
    Autenticación
@@ -1460,6 +1595,7 @@ function applyConfigWarning() {
 
 function showAuth() {                          // sin sesión: se muestra la pantalla de inicio
   $("#set-overlay").hidden = true;
+  closeVoiceMode(); ttsStop(); dictAbort();
   user = null; profile = null; conversations = []; messages = []; currentId = null; namePending = null;
   $("#app-view").hidden = true;
   $("#auth-password").value = "";
@@ -1599,6 +1735,7 @@ function setGreeting() {
   $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
 }
 function newChat() {
+  ttsStop();
   setGreeting();
   currentId = null; messages = []; lastFailed = false;
   renderList(); renderMessages();
@@ -1612,6 +1749,7 @@ async function openConversation(id) {
     .select("id,role,content,model,created_at,metadata").eq("conversation_id", id).order("created_at", { ascending: true });
   loadingConv = false;
   if (error) { toast("No se pudo abrir el chat."); return; }
+  ttsStop();
   currentId = id; messages = data || []; lastFailed = false;
   renderList(); renderMessages(); scrollDown(true);
 }
@@ -1682,7 +1820,7 @@ function renderMessages(typing = false) {
     : isImageMsg(m) ? imageMsgHtml(m, i)
     : `<div class="msg assistant"><div class="content">${renderMd(partsOf(m).text)}</div>
          ${sourcesChip(i, partsOf(m).sources)}
-         <div class="msg-actions"><button class="icon-btn" type="button" data-copy="${i}" aria-label="Copiar respuesta" title="Copiar">${icon("copy")}</button></div></div>`
+         <div class="msg-actions"><button class="icon-btn" type="button" data-copy="${i}" aria-label="Copiar respuesta" title="Copiar">${icon("copy")}</button>${hasTTS ? `<button class="icon-btn" type="button" data-speak="${i}" aria-label="Escuchar respuesta" title="Escuchar">${icon("volume")}</button>` : ""}</div></div>`
   ).join("")
   + (typing && imgPending ? `<div class="msg assistant"><div class="gen-img gen-img--loading" role="status" aria-label="Generando imagen"><div class="gen-spin"></div><span>Generando imagen… puede tardar unos segundos</span></div></div>`
     : typing ? `<div class="msg assistant" aria-label="PNova IA está escribiendo"><div class="typing"><i></i><i></i><i></i></div></div>` : "")
@@ -1790,6 +1928,7 @@ async function requestReply() {
     renderList();
     renderMessages();
     typeReply(partsOf(data).text);
+    voiceAfterReply(data);
   } catch (err) {
     lastFailed = err.name === "AbortError"
       ? `${model.name} tardó demasiado en responder. Si el servidor estaba dormido, vuelve a intentarlo.`
@@ -2091,6 +2230,7 @@ $("#composer").addEventListener("submit", e => {
     if (text.trim().length > CONFIG.IMAGE_PROMPT_MAX) return toast(`La descripción es demasiado larga (máximo ${CONFIG.IMAGE_PROMPT_MAX} caracteres).`);
     setImageMode(false);                      // el modo se apaga tras cada imagen para no gastar saldo sin querer
   }
+  dictAbort(); ttsStop(); unlockTTS();
   input.value = ""; autosize();
   pendingFiles = []; renderChips();
   sendMessage(text, { image: asImage, files });
@@ -2342,7 +2482,7 @@ function openSettings(tab = "general") {
   if (!user) return;
   closePopover();
   setLastFocus = document.activeElement;
-  fillAccount(); refreshAppearance();
+  fillAccount(); refreshAppearance(); fillVoiceSettings();
   document.querySelectorAll(".set-msg").forEach(m => { m.hidden = true; });
   ["#pw-current", "#pw-new", "#pw-new2"].forEach(s => { $(s).value = ""; });
   $("#set-overlay").hidden = false;
@@ -2551,6 +2691,414 @@ pwaBox.addEventListener("click", async e => {
   }
 });
 setTimeout(() => { if (pwaShouldShow()) pwaStep1(); }, 4000);
+
+/* =====================================================================
+   Voz: dictado, lectura en voz alta y conversación por voz
+   - Reconocimiento: SpeechRecognition del navegador (Chrome, Edge, Safari).
+   - Lectura: speechSynthesis del navegador.
+   - Los textos reconocidos se envían con sendMessage(), igual que los escritos.
+   ===================================================================== */
+const VOICE_LANGS = [["es-ES", "Español (España)"], ["es-MX", "Español (México)"], ["ca-ES", "Català"], ["en-US", "English (US)"], ["en-GB", "English (UK)"], ["fr-FR", "Français"], ["de-DE", "Deutsch"], ["it-IT", "Italiano"], ["pt-PT", "Português (Portugal)"], ["pt-BR", "Português (Brasil)"]];
+const VOICE_SAMPLES = {
+  es: "Hola, soy PNova IA. Así sonará la lectura de mis respuestas.", ca: "Hola, sóc PNova IA. Així sonarà la lectura de les meves respostes.",
+  en: "Hi, I'm PNova IA. This is how my answers will sound.", fr: "Bonjour, je suis PNova IA. Voici comment mes réponses seront lues.",
+  de: "Hallo, ich bin PNova IA. So klingen meine Antworten.", it: "Ciao, sono PNova IA. Ecco come suoneranno le mie risposte.", pt: "Olá, eu sou a PNova IA. É assim que as minhas respostas vão soar."
+};
+function defaultVoiceLang() {
+  const n = (navigator.language || "es-ES").toLowerCase();
+  const exact = VOICE_LANGS.find(l => l[0].toLowerCase() === n);
+  if (exact) return exact[0];
+  const pre = VOICE_LANGS.find(l => l[0].slice(0, 2) === n.slice(0, 2));
+  return pre ? pre[0] : "es-ES";
+}
+const voiceCfg = (() => {
+  let c = {}; try { c = JSON.parse(store.get("pnova.voice") || "{}") || {}; } catch (e) {}
+  return {
+    lang: VOICE_LANGS.some(l => l[0] === c.lang) ? c.lang : defaultVoiceLang(),
+    auto: !!c.auto, autosend: !!c.autosend, voice: typeof c.voice === "string" ? c.voice : "",
+    rate: Math.min(1.5, Math.max(0.7, Number(c.rate) || 1))
+  };
+})();
+const saveVoiceCfg = () => store.set("pnova.voice", JSON.stringify(voiceCfg));
+
+const voice = { active: false, state: "idle", rec: null, heard: "", err: null, silent: 0, manualStop: false };
+const dict = { rec: null, state: "idle", base: "", heard: "", err: null };
+const tts = { q: [], i: 0, active: false, paused: false, cur: null, msgId: null, onDone: null, unlocked: false, tok: 0 };
+
+function sttReason() {
+  if (!window.isSecureContext) return "El micrófono solo funciona en una conexión segura (HTTPS).";
+  if (!SR) return /firefox/i.test(navigator.userAgent)
+    ? "Firefox no admite el reconocimiento de voz. Usa Chrome, Edge o Safari."
+    : "Tu navegador no admite el reconocimiento de voz. Usa Chrome o Edge (Android y ordenador) o Safari (iPhone y iPad).";
+  return "";
+}
+const ttsReason = () => hasTTS ? "" : "Tu navegador no admite la lectura en voz alta.";
+function srErrorMessage(code) {
+  const host = location.hostname || "este sitio";
+  switch (code) {
+    case "not-allowed": return `Permiso de micrófono denegado. Actívalo para ${host} en los ajustes del navegador y vuelve a intentarlo.`;
+    case "service-not-allowed": return "El navegador no permite el reconocimiento de voz. En iPhone activa Dictado y Siri en Ajustes; en otros dispositivos revisa los permisos del micrófono.";
+    case "audio-capture": return "No se detecta ningún micrófono. Conecta uno o revisa los permisos.";
+    case "network": return "El reconocimiento de voz necesita conexión a internet.";
+    case "language-not-supported": return "Tu navegador no admite el reconocimiento de voz en este idioma. Cámbialo en Ajustes → Voz.";
+    case "no-speech": return "No te he oído.";
+    default: return `Error de reconocimiento de voz (${code}).`;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Lectura en voz alta
+   Se lee frase a frase (evita el corte de los textos largos en Chrome) y la pausa
+   se hace recordando la frase actual, así funciona igual en todos los navegadores.
+   --------------------------------------------------------------------- */
+function unlockTTS() {                       // iOS exige un primer speak() dentro de un gesto del usuario
+  if (!hasTTS || tts.unlocked) return;
+  try { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); tts.unlocked = true; } catch (e) {}
+}
+function htmlToSpeech(html) {
+  const d = document.createElement("div"); d.innerHTML = html;
+  d.querySelectorAll("pre").forEach(el => el.replaceWith(document.createTextNode(" Aquí hay un bloque de código.\n")));
+  d.querySelectorAll("p,li,h1,h2,h3,h4,h5,h6,blockquote,th,td,tr").forEach(el => el.append(document.createTextNode("\n")));
+  return (d.textContent || "").replace(URL_RE, "enlace").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim();
+}
+const ttsTextOf = m => htmlToSpeech(renderMd(partsOf(m).text));
+function ttsChunks(text) {
+  const out = [];
+  text.split("\n").forEach(line => {
+    (line.match(/(?:[^.!?…:;]|\.(?=\d)|:(?=\d))+[.!?…:;]*\s*/g) || []).forEach(raw => {
+      let s = raw.trim();
+      while (s.length > 200) {
+        let cut = s.lastIndexOf(",", 190);
+        if (cut < 80) cut = s.lastIndexOf(" ", 190);
+        if (cut < 40) cut = 190;
+        out.push(s.slice(0, cut + 1).trim()); s = s.slice(cut + 1).trim();
+      }
+      if (s) out.push(s);
+    });
+  });
+  const merged = [];
+  out.forEach(s => {
+    const last = merged[merged.length - 1];
+    if (last && last.length < 40 && (last + " " + s).length <= 200) merged[merged.length - 1] = last + " " + s; else merged.push(s);
+  });
+  return merged;
+}
+function pickVoice() {
+  if (!hasTTS) return null;
+  const vs = speechSynthesis.getVoices(); if (!vs.length) return null;
+  const pre = voiceCfg.lang.slice(0, 2).toLowerCase();
+  const sameLang = vs.filter(v => v.lang.replace("_", "-").toLowerCase().startsWith(pre));
+  const saved = voiceCfg.voice && sameLang.find(v => v.voiceURI === voiceCfg.voice);
+  if (saved) return saved;
+  const exact = sameLang.filter(v => v.lang.replace("_", "-").toLowerCase() === voiceCfg.lang.toLowerCase());
+  const pool = exact.length ? exact : sameLang;
+  return pool.find(v => /natural|neural|google|online|premium|enhanced/i.test(v.name)) || pool[0] || null;
+}
+function ttsHalt() {
+  tts.tok++; tts.cur = null; tts.active = false; tts.paused = false; tts.onDone = null; tts.q = []; tts.msgId = null;
+  if (hasTTS) { try { speechSynthesis.cancel(); } catch (e) {} }
+}
+function ttsPlay(text, opts = {}) {
+  if (!hasTTS) return false;
+  ttsHalt();
+  const chunks = ttsChunks(text);
+  if (!chunks.length) { ttsUI(); return false; }
+  Object.assign(tts, { q: chunks, i: 0, active: true, paused: false, msgId: opts.msgId || null, onDone: opts.onDone || null });
+  const tok = tts.tok;
+  ttsUI();
+  setTimeout(() => { if (tok === tts.tok && tts.active && !tts.paused) ttsSpeakCurrent(); }, 40);   // da tiempo a que cancel() termine
+  return true;
+}
+function ttsSpeakCurrent() {
+  if (tts.i >= tts.q.length) { ttsFinish(true); return; }
+  const u = new SpeechSynthesisUtterance(tts.q[tts.i]);
+  u.lang = voiceCfg.lang; u.rate = voiceCfg.rate;
+  const v = pickVoice(); if (v) u.voice = v;
+  tts.cur = u;
+  u.onend = () => { if (tts.cur !== u) return; tts.i++; ttsSpeakCurrent(); };
+  u.onerror = e => {
+    if (tts.cur !== u) return;
+    if (e.error === "interrupted" || e.error === "canceled") return;
+    if (e.error === "not-allowed") { toast("El navegador bloqueó el audio. Pulsa «Escuchar» o el micrófono e inténtalo de nuevo."); ttsFinish(false); return; }
+    tts.i++; ttsSpeakCurrent();
+  };
+  try { speechSynthesis.speak(u); } catch (e) { ttsFinish(false); }
+}
+function ttsFinish(completed) {
+  const cb = tts.onDone;
+  tts.tok++; tts.cur = null; tts.active = false; tts.paused = false; tts.onDone = null; tts.msgId = null;
+  ttsUI();
+  if (cb) cb(completed);
+}
+function ttsStop() {
+  const cb = tts.onDone, was = tts.active;
+  ttsHalt(); ttsUI();
+  if (was && cb) cb(false);
+}
+function ttsPause() {
+  if (!tts.active || tts.paused) return;
+  tts.paused = true; tts.cur = null; tts.tok++;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  ttsUI();
+}
+function ttsResume() {
+  if (!tts.active || !tts.paused) return;
+  tts.paused = false; ttsUI();
+  const tok = ++tts.tok;
+  setTimeout(() => { if (tok === tts.tok && tts.active && !tts.paused) ttsSpeakCurrent(); }, 60);
+}
+const ttsTogglePause = () => tts.paused ? ttsResume() : ttsPause();
+
+function ttsUI() {
+  const bar = $("#tts-bar");
+  bar.hidden = !(tts.active && !voice.active);
+  bar.classList.toggle("paused", tts.paused);
+  $("#tts-label").textContent = tts.paused ? "En pausa" : "Leyendo respuesta…";
+  $("#tts-pause").innerHTML = icon(tts.paused ? "play" : "pause");
+  $("#tts-pause").setAttribute("aria-label", tts.paused ? "Reanudar lectura" : "Pausar lectura");
+  $("#tts-stop").innerHTML = icon("stop");
+  vcSyncControls();
+}
+$("#tts-pause").onclick = ttsTogglePause;
+$("#tts-stop").onclick = ttsStop;
+
+$("#messages").addEventListener("click", e => {
+  const b = e.target.closest("[data-speak]"); if (!b) return;
+  const m = messages[+b.dataset.speak]; if (!m) return;
+  if (!hasTTS) return toast(ttsReason());
+  unlockTTS();
+  if (tts.active && tts.msgId === m.id) { ttsStop(); return; }      // segundo toque = detener
+  ttsPlay(ttsTextOf(m), { msgId: m.id });
+});
+
+function syncAutoReadUI() {
+  const b = $("#tts-toggle");
+  b.setAttribute("aria-pressed", String(voiceCfg.auto));
+  b.dataset.off = hasTTS ? "" : "1";
+  b.title = voiceCfg.auto ? "Lectura automática activada (toca para desactivar)" : "Leer respuestas en voz alta";
+  b.innerHTML = icon(voiceCfg.auto ? "volume" : "volumeoff");
+  const c = $("#vs-auto"); if (c) c.checked = voiceCfg.auto;
+}
+function setAutoRead(on) {
+  if (on && !hasTTS) { toast(ttsReason()); on = false; }
+  voiceCfg.auto = !!on; saveVoiceCfg(); syncAutoReadUI();
+  if (on) unlockTTS(); else if (tts.active && !voice.active) ttsStop();
+}
+$("#tts-toggle").onclick = () => { if (!hasTTS) return toast(ttsReason()); setAutoRead(!voiceCfg.auto); };
+
+/* Se llama desde requestReply() cada vez que llega una respuesta nueva */
+function voiceAfterReply(m) {
+  if (!m || isImageMsg(m)) return;
+  if (!voice.active && !(voiceCfg.auto && hasTTS)) return;
+  const text = ttsTextOf(m);
+  if (voice.active) { vcShowReply(text); vcSetState("speaking"); }
+  const started = ttsPlay(text, { msgId: m.id, onDone: voice.active ? () => vcResume() : null });
+  if (!started && voice.active) vcResume();
+}
+
+/* ---------------------------------------------------------------------
+   Dictado desde el cuadro de texto (botón del micrófono)
+   --------------------------------------------------------------------- */
+const MIC_LABEL = { idle: "Dictar mensaje por voz", off: "Dictar mensaje por voz", listening: "Detener dictado", processing: "Procesando voz", error: "Error de micrófono. Toca para reintentar" };
+function setMic(state) {
+  dict.state = state;
+  const b = $("#mic-btn");
+  b.dataset.state = state;
+  b.innerHTML = state === "listening" ? icon("stop") : state === "processing" ? '<span class="mic-spin"></span>' : state === "error" ? icon("alert") : icon("mic");
+  b.setAttribute("aria-label", MIC_LABEL[state]); b.title = MIC_LABEL[state];
+  b.setAttribute("aria-pressed", String(state === "listening"));
+  input.placeholder = state === "listening" ? "Escuchando… habla ahora" : (imageMode ? "Describe la imagen que quieres crear" : "Pregunta a PNova IA");
+}
+function dictAbort() {
+  if (!dict.rec) return;
+  const r = dict.rec; dict.rec = null;
+  try { r.abort(); } catch (e) {}
+  setMic("idle");
+}
+function startDictation() {
+  ttsStop(); unlockTTS();
+  const rec = new SR();
+  dict.rec = rec; dict.base = input.value.trim(); dict.heard = ""; dict.err = null;
+  rec.lang = voiceCfg.lang; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  rec.onstart = () => { if (dict.rec === rec) setMic("listening"); };
+  rec.onresult = e => {
+    if (dict.rec !== rec) return;
+    dict.heard = Array.from(e.results).map(r => r[0].transcript).join("").replace(/\s+/g, " ").trim();
+    input.value = (dict.base ? dict.base + " " : "") + dict.heard;
+    autosize();
+  };
+  rec.onerror = e => { if (dict.rec === rec) dict.err = e.error; };
+  rec.onend = () => {
+    if (dict.rec !== rec) return;
+    dict.rec = null;
+    const err = dict.err;
+    if (err && err !== "aborted" && err !== "no-speech") {
+      setMic("error"); toast(srErrorMessage(err));
+      setTimeout(() => { if (dict.state === "error") setMic("idle"); }, 3500);
+      return;
+    }
+    setMic("idle");
+    if (!dict.heard) { toast("No te he oído. Pulsa el micrófono y vuelve a intentarlo."); return; }
+    if (voiceCfg.autosend) $("#composer").requestSubmit(); else input.focus();
+  };
+  try { rec.start(); setMic("listening"); }
+  catch (err) { dict.rec = null; setMic("error"); toast("No se pudo iniciar el micrófono."); setTimeout(() => { if (dict.state === "error") setMic("idle"); }, 3500); }
+}
+$("#mic-btn").onclick = () => {
+  const why = sttReason(); if (why) return toast(why);
+  if (voice.active || dict.state === "processing") return;
+  if (dict.state === "listening") { setMic("processing"); try { dict.rec.stop(); } catch (e) { dictAbort(); } return; }   // stop() entrega el texto ya oído
+  startDictation();
+};
+
+/* ---------------------------------------------------------------------
+   Modo conversación por voz (pantalla completa)
+   escuchar → enviar con sendMessage() → leer la respuesta → volver a escuchar
+   --------------------------------------------------------------------- */
+const VC_TEXT = { idle: "Toca el círculo para hablar", listening: "Te escucho…", thinking: "Pensando…", speaking: "Hablando… toca para interrumpir" };
+const VC_ICON = { idle: "mic", listening: "mic", speaking: "wave", error: "alert" };
+function vcSyncLang() { $("#vc-lang").textContent = voiceCfg.lang.slice(0, 2).toUpperCase(); }
+function vcSetState(state, msg) {
+  voice.state = state;
+  const orb = $("#vc-orb"); orb.dataset.state = state;
+  const label = state === "error" ? (msg || "Ha ocurrido un error. Toca el círculo para reintentar.") : VC_TEXT[state];
+  $("#vc-state").textContent = label;
+  orb.setAttribute("aria-label", state === "listening" ? "Terminar de hablar" : state === "speaking" ? "Interrumpir y hablar" : state === "thinking" ? "Pensando" : "Toca para hablar");
+  $("#vc-core").innerHTML = state === "thinking" ? '<span class="mic-spin"></span>' : icon(VC_ICON[state]);
+  vcSyncControls();
+}
+function vcSyncControls() {
+  const on = voice.active && tts.active;
+  const p = $("#vc-pause"), s = $("#vc-stop");
+  p.disabled = !on; s.disabled = !on;
+  p.innerHTML = icon(tts.paused ? "play" : "pause");
+  p.setAttribute("aria-label", tts.paused ? "Reanudar lectura" : "Pausar lectura");
+  s.innerHTML = icon("stop");
+  if (voice.active && voice.state === "speaking") $("#vc-state").textContent = tts.paused ? "En pausa" : VC_TEXT.speaking;
+}
+function vcShowReply(text) { const r = $("#vc-reply"); r.textContent = text; r.hidden = !text; r.scrollTop = 0; }
+function vcFail(msg) {
+  const r = voice.rec; voice.rec = null;
+  if (r) { try { r.abort(); } catch (e) {} }
+  vcSetState("error", msg);
+}
+function vcResume() { if (!voice.active) return; $("#vc-user").textContent = ""; vcListen(); }
+
+function vcListen() {
+  if (!voice.active) return;
+  if (tts.active) ttsHalt();
+  const old = voice.rec; voice.rec = null;
+  if (old) { try { old.abort(); } catch (e) {} }
+  const rec = new SR();
+  voice.rec = rec; voice.heard = ""; voice.err = null; voice.manualStop = false;
+  rec.lang = voiceCfg.lang; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  rec.onstart = () => { if (voice.rec === rec) vcSetState("listening"); };
+  rec.onresult = e => {
+    if (voice.rec !== rec) return;
+    voice.heard = Array.from(e.results).map(r => r[0].transcript).join("").replace(/\s+/g, " ").trim();
+    $("#vc-user").textContent = voice.heard;
+  };
+  rec.onerror = e => { if (voice.rec === rec) voice.err = e.error; };
+  rec.onend = () => { if (voice.rec !== rec) return; voice.rec = null; vcAfterListen(); };
+  try { rec.start(); vcSetState("listening"); }
+  catch (err) { voice.rec = null; vcFail("No se pudo activar el micrófono. Toca el círculo para reintentar."); }
+}
+function vcAfterListen() {
+  if (!voice.active) return;
+  const err = voice.err, text = voice.heard.trim();
+  if (err && err !== "no-speech" && err !== "aborted") {
+    vcFail(err === "not-allowed" || err === "service-not-allowed" ? srErrorMessage(err) + " Si ya lo habías activado, toca el círculo para reintentar." : srErrorMessage(err));
+    return;
+  }
+  if (text) { voice.silent = 0; vcSubmit(text); return; }
+  if (voice.manualStop || err === "aborted") { vcSetState("idle"); return; }
+  if (++voice.silent >= 3) { voice.silent = 0; vcSetState("idle"); return; }   // tras 3 silencios espera a que toques
+  vcListen();
+}
+async function vcSubmit(text) {
+  vcSetState("thinking");
+  $("#vc-user").textContent = "“" + text + "”";
+  if (sending) { vcSetState("idle"); return; }
+  await sendMessage(text);                       // mismo flujo que el chat escrito: guarda, llama al Worker y responde
+  if (!voice.active) return;
+  if (voice.state === "thinking") {              // no se llegó a leer ninguna respuesta
+    if (lastFailed) vcFail(lastFailed); else vcSetState("idle");
+  }
+}
+function openVoiceMode() {
+  const why = sttReason() || ttsReason();
+  if (why) return toast(why);
+  if (!getModel().endpoint) return toast(`${getModel().name} aún no está disponible.`);
+  if (voice.active) return;
+  closePopover(); closeSidebarMobile(); dictAbort(); ttsStop();
+  voice.active = true; voice.silent = 0;
+  $("#voice-view").hidden = false;
+  $("#vc-user").textContent = ""; $("#vc-reply").hidden = true;
+  vcSyncLang(); unlockTTS(); ttsUI();
+  vcListen();
+  $("#vc-end").focus({ preventScroll: true });
+}
+function closeVoiceMode() {
+  if (!voice.active && $("#voice-view").hidden) return;
+  voice.active = false;
+  const r = voice.rec; voice.rec = null;
+  if (r) { try { r.abort(); } catch (e) {} }
+  ttsStop();
+  $("#voice-view").hidden = true;
+  voice.state = "idle"; ttsUI();
+}
+$("#voice-open").onclick = openVoiceMode;
+$("#vc-close").onclick = closeVoiceMode;
+$("#vc-end").onclick = closeVoiceMode;
+$("#vc-pause").onclick = ttsTogglePause;
+$("#vc-stop").onclick = () => ttsStop();          // detiene la voz y vuelve a escuchar
+$("#vc-orb").addEventListener("click", () => {
+  if (!voice.active) return;
+  unlockTTS();
+  if (voice.state === "listening") { voice.manualStop = true; try { voice.rec && voice.rec.stop(); } catch (e) {} }   // termina y envía lo oído
+  else if (voice.state === "speaking") ttsStop();                                                               // interrumpe y escucha
+  else if (voice.state === "idle" || voice.state === "error") { voice.silent = 0; vcListen(); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && voice.active) closeVoiceMode(); });
+
+/* ---------------------------------------------------------------------
+   Ajustes → Voz
+   --------------------------------------------------------------------- */
+function fillVoiceSelect() {
+  const sel = $("#vs-voice");
+  if (!hasTTS) { sel.innerHTML = "<option>No disponible</option>"; sel.disabled = true; return; }
+  const pre = voiceCfg.lang.slice(0, 2).toLowerCase();
+  const vs = speechSynthesis.getVoices().filter(v => v.lang.replace("_", "-").toLowerCase().startsWith(pre));
+  sel.innerHTML = '<option value="">Automática (recomendada)</option>' + vs.map(v => `<option value="${attr(v.voiceURI)}">${esc(v.name)} (${esc(v.lang)})</option>`).join("");
+  sel.value = vs.some(v => v.voiceURI === voiceCfg.voice) ? voiceCfg.voice : "";
+  sel.disabled = false;
+}
+function fillVoiceSettings() {
+  $("#vs-lang").innerHTML = VOICE_LANGS.map(([c, n]) => `<option value="${c}">${esc(n)}</option>`).join("");
+  $("#vs-lang").value = voiceCfg.lang;
+  $("#vs-auto").checked = voiceCfg.auto; $("#vs-autosend").checked = voiceCfg.autosend;
+  $("#vs-rate").value = voiceCfg.rate; $("#vs-rate-val").textContent = voiceCfg.rate.toFixed(1) + "×";
+  $("#vs-auto").disabled = !hasTTS; $("#vs-rate").disabled = !hasTTS; $("#vs-test").disabled = !hasTTS;
+  $("#vs-autosend").disabled = !SR;
+  fillVoiceSelect();
+  const rows = [["Conexión segura (HTTPS)", window.isSecureContext], ["Reconocimiento de voz (micrófono)", !!SR], ["Lectura en voz alta", hasTTS]];
+  $("#vs-status").innerHTML = rows.map(([n, ok]) => `<li><span class="dot ${ok ? "ok" : "no"}"></span>${n}<b>${ok ? "Disponible" : "No disponible"}</b></li>`).join("");
+}
+$("#vs-lang").addEventListener("change", e => { voiceCfg.lang = e.target.value; voiceCfg.voice = ""; saveVoiceCfg(); fillVoiceSelect(); vcSyncLang(); });
+$("#vs-voice").addEventListener("change", e => { voiceCfg.voice = e.target.value; saveVoiceCfg(); });
+$("#vs-rate").addEventListener("input", e => { voiceCfg.rate = Number(e.target.value); $("#vs-rate-val").textContent = voiceCfg.rate.toFixed(1) + "×"; saveVoiceCfg(); });
+$("#vs-auto").addEventListener("change", e => setAutoRead(e.target.checked));
+$("#vs-autosend").addEventListener("change", e => { voiceCfg.autosend = e.target.checked; saveVoiceCfg(); });
+$("#vs-test").addEventListener("click", () => {
+  if (!hasTTS) return toast(ttsReason());
+  unlockTTS(); ttsPlay(VOICE_SAMPLES[voiceCfg.lang.slice(0, 2)] || VOICE_SAMPLES.es);
+});
+if (hasTTS && speechSynthesis.addEventListener) speechSynthesis.addEventListener("voiceschanged", fillVoiceSelect);
+
+/* Estado inicial de los controles de voz */
+setMic(SR && window.isSecureContext ? "idle" : "off");
+$("#voice-open").dataset.off = (SR && hasTTS && window.isSecureContext) ? "" : "1";
+syncAutoReadUI(); vcSyncLang(); ttsUI();
 
 /* =====================================================================
    Arranque
