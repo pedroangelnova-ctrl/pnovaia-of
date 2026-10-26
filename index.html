@@ -456,8 +456,6 @@
   .mo-access { color: var(--accent); }
   #pay-onetime { display: grid; gap: 8px; } #pay-onetime.is-busy { pointer-events: none; opacity: .6; }
   .pay-methods { display: grid; gap: 10px; } .pay-methods [hidden] { display: none !important; }
-  .card-field { height: 44px; }
-  .pay-input { height: 44px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; background: var(--bg); color: var(--text); font: inherit; width: 100%; }
   #plan-modal { z-index: 75; }
   .plan-modal { width: min(560px, 100%); max-height: min(760px, calc(100% - 8px)); overflow-y: auto; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 24px 70px rgba(0, 0, 0, .35); padding: 22px 26px 28px; display: grid; gap: 14px; align-content: start; }
   .pm-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -509,6 +507,168 @@
     .plans { grid-template-columns: 1fr; }
     .plan-modal { height: 100%; max-height: none; border-radius: 0; border: 0; padding: 18px 18px 28px; }
     .set-row { flex-wrap: wrap; }
+  }
+
+  /* =====================================================================
+     PASARELA DE PAGO
+     ===================================================================== */
+  #checkout-modal { z-index: 76; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  #checkout-modal.is-busy .checkout { cursor: progress; }
+  #checkout-modal.is-busy .co-pay { pointer-events: none; }
+  #checkout-modal.is-busy .pay-methods { opacity: .55; }
+  .checkout { width: min(900px, 100%); max-height: min(660px, calc(100vh - 32px)); max-height: min(660px, calc(100dvh - 32px)); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 26px; overflow: hidden; box-shadow: 0 34px 100px rgba(0, 0, 0, .45); animation: co-in .3s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes co-in { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: none; } }
+  .co-summary { position: relative; display: flex; flex-direction: column; gap: 18px; padding: 26px 28px; color: #fff; overflow-y: auto; background: radial-gradient(110% 80% at 0% 0%, rgba(255,255,255,.22), rgba(255,255,255,0) 55%), radial-gradient(90% 70% at 100% 100%, rgba(0,0,0,.28), rgba(0,0,0,0) 60%), var(--accent-grad); }
+  .co-back { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; margin: -4px 0 0 -8px; padding: 7px 12px 7px 6px; border-radius: 999px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,.9); }
+  .co-back:hover { background: rgba(255,255,255,.16); }
+  .co-back .i { width: 18px; height: 18px; }
+  .co-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; }
+  .co-brand .logo { width: 30px; height: 30px; }
+  .co-kicker { margin: 0 0 4px; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; opacity: .8; font-weight: 600; }
+  .co-summary h3 { margin: 0; font-size: 22px; font-weight: 600; }
+  .co-total { margin-top: 6px; font-size: clamp(38px, 6vw, 52px); line-height: 1.05; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .co-dur { margin: 4px 0 0; opacity: .9; font-size: 15px; }
+  .co-lines { list-style: none; margin: auto 0 0; padding: 14px 0 0; border-top: 1px solid rgba(255,255,255,.28); display: grid; gap: 10px; font-size: 14px; }
+  .co-lines li { display: flex; justify-content: space-between; gap: 14px; }
+  .co-lines li span { opacity: .85; } .co-lines li b { font-weight: 600; text-align: right; }
+  .co-lines .co-sum-total { margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.28); font-size: 16px; }
+  .co-lines .co-sum-total span { opacity: 1; font-weight: 600; } .co-lines .co-sum-total b { font-size: 18px; }
+  .co-secure { display: flex; gap: 9px; align-items: flex-start; margin: 0; font-size: 12.5px; line-height: 1.45; opacity: .88; }
+  .co-secure .i { width: 17px; height: 17px; margin-top: 1px; }
+  .co-pay { display: flex; flex-direction: column; gap: 16px; padding: 24px 28px 26px; overflow-y: auto; min-width: 0; }
+  .co-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .co-head h3 { margin: 0; font-size: 22px; font-weight: 600; }
+  .co-head p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+  .co-loading { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 170px; color: var(--muted); font-size: 15px; }
+  .co-loading[hidden] { display: none; }
+  .pay-methods { display: grid; gap: 12px; }
+  .pay-slot { display: block; min-height: 0; }
+  .pay-slot:empty { display: none; }
+  .pay-slot paypal-button { display: block; width: 100%; min-height: 56px; }
+  .pay-slot paypal-button[hidden] { display: none; }
+  apple-pay-button { display: block; width: 100%; --apple-pay-button-width: 100%; --apple-pay-button-height: 56px; --apple-pay-button-border-radius: 14px; --apple-pay-button-padding: 0; --apple-pay-button-box-sizing: border-box; }
+  .pay-ap-fallback { width: 100%; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 4px; background: #000; color: #fff; font-size: 24px; font-weight: 500; letter-spacing: -.01em; transition: transform .12s, opacity .15s; }
+  :root[data-theme="dark"] .pay-ap-fallback { background: #fff; color: #000; }
+  .pay-ap-fallback svg { width: 22px; height: 22px; margin-top: -3px; }
+  .pay-ap-fallback span { font-family: -apple-system, "SF Pro Display", "Inter", sans-serif; }
+  .pay-ap-fallback:hover { opacity: .88; } .pay-ap-fallback:active { transform: scale(.985); }
+  .pay-card-btn { width: 100%; min-height: 56px; padding: 8px 18px; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 14px; text-align: left; color: #fff; background: var(--accent-grad); box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 32%, transparent), inset 0 1px 0 rgba(255,255,255,.3); transition: transform .12s, filter .15s; }
+  .pay-card-btn[hidden] { display: none; }
+  .pay-card-btn:hover { filter: brightness(1.07); } .pay-card-btn:active { transform: scale(.985); }
+  .pay-card-btn .i { width: 26px; height: 26px; stroke-width: 1.7; }
+  .pay-card-btn span { display: flex; flex-direction: column; line-height: 1.25; }
+  .pay-card-btn b { font-size: 16px; font-weight: 600; } .pay-card-btn small { font-size: 12.5px; opacity: .88; }
+  #co-retry { align-self: flex-start; }
+  .co-fine { margin: auto 0 0; padding-top: 4px; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+
+  /* =====================================================================
+     ADAPTACIÓN A MÓVILES, TABLETS Y ESCRITORIO
+     ===================================================================== */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  * { -webkit-tap-highlight-color: transparent; }
+  button, .nav-item, .chat-open, .mo, .set-tab { touch-action: manipulation; }
+  img, video, canvas { max-width: 100%; }
+  @supports (height: 100dvh) { html, body, #app-view, #auth-view, #landing-view, .sidebar, main { height: 100dvh; } }
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  .topbar { padding-top: env(safe-area-inset-top); height: calc(56px + env(safe-area-inset-top)); }
+  .sidebar { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  #auth-view { padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom)); }
+  #toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  .plans { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .settings { height: min(620px, calc(100vh - 8px)); height: min(620px, calc(100dvh - 8px)); }
+  .plan-modal { max-height: min(760px, calc(100vh - 8px)); max-height: min(760px, calc(100dvh - 8px)); }
+  .mo-grid, .plan-modal .mo-grid { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
+
+  /* Pantallas grandes */
+  @media (min-width: 1400px) { .col { max-width: 840px; } :root { --sidebar-w: 280px; } }
+
+  /* Tablets (768–1024) */
+  @media (max-width: 1024px) {
+    :root { --sidebar-w: 248px; }
+    .col { padding: 0 24px; }
+    .settings { width: min(760px, 100%); grid-template-columns: 190px 1fr; }
+    .set-body { padding: 20px 22px 28px; }
+  }
+
+  /* Móvil y tablet pequeña */
+  @media (max-width: 800px) {
+    :root { --sidebar-w: min(300px, 84vw); }
+    .col { padding: 0 16px; }
+    .msg.user .bubble { max-width: 90%; }
+    .msg.assistant .content { font-size: 16px; }
+  }
+
+  /* Pasarela: una columna */
+  @media (max-width: 760px) {
+    #checkout-modal { padding: 0; align-items: stretch; }
+    .checkout { width: 100%; height: 100vh; height: 100dvh; max-height: none; border-radius: 0; border: 0; grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); animation-name: co-up; }
+    @keyframes co-up { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+    .co-summary { gap: 8px; padding: max(14px, env(safe-area-inset-top)) 20px 18px; overflow: visible; }
+    .co-brand, .co-lines, .co-secure, .co-kicker { display: none; }
+    .co-back { margin-bottom: 2px; }
+    .co-summary h3 { font-size: 16px; font-weight: 600; opacity: .92; }
+    .co-total { font-size: 40px; margin-top: 0; }
+    .co-pay { padding: 20px 20px max(24px, env(safe-area-inset-bottom)); gap: 14px; }
+    .co-head h3 { font-size: 20px; }
+    .co-head .icon-btn { display: none; }
+  }
+  @media (min-width: 761px) and (max-width: 900px) { .co-summary, .co-pay { padding-left: 22px; padding-right: 22px; } }
+
+  /* Ajustes y modal de meses en móvil */
+  @media (max-width: 700px) {
+    .settings { height: 100vh; height: 100dvh; padding-top: env(safe-area-inset-top); }
+    .plan-modal { height: 100vh; height: 100dvh; max-height: none; padding: max(18px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom)); }
+    .set-nav { padding-top: 10px; }
+    .set-row { align-items: flex-start; }
+    .seg { max-width: 100%; }
+    .seg button { padding: 7px 11px; }
+    .set-actions .btn-sm { flex: 1 1 auto; }
+    .plan-modal .mo b { font-size: 24px; }
+    .ps-badge { width: 112px; height: 112px; } .ps-check { width: 88px; height: 88px; }
+    #pay-success h2 { font-size: 24px; }
+  }
+
+  /* Móviles pequeños (≤380) */
+  @media (max-width: 380px) {
+    .auth-card h1 { font-size: 23px; }
+    .field input { height: 48px; }
+    .set-body { padding: 16px 14px 24px; }
+    .plan-modal .mo-grid { grid-template-columns: repeat(2, 1fr); }
+    .co-total { font-size: 34px; }
+    .pay-card-btn b { font-size: 15px; }
+    .topbar .model-btn { font-size: 16px; padding: 6px 10px; }
+  }
+
+  /* Móvil en horizontal / pantallas muy bajas */
+  @media (max-height: 520px) and (orientation: landscape) {
+    .ld-hero { padding-top: 64px; padding-bottom: 24px; }
+    .ld-logo-wrap { width: clamp(100px, 26vh, 190px); }
+    .ld-title { font-size: clamp(28px, 6vh, 44px); }
+    .ld-cta { margin-top: 18px; }
+    #empty .logo { display: none; }
+    .is-empty #body { padding-bottom: 0; }
+    .checkout { grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); grid-template-rows: none; height: 100dvh; }
+    .co-brand, .co-lines, .co-secure, .co-kicker { display: none; }
+    .co-total { font-size: 34px; }
+    .co-head .icon-btn { display: grid; }
+    .vc-orb { width: min(30vh, 160px); } .vc-reply { max-height: 32vh; }
+  }
+
+  /* Pantallas táctiles: objetivos más grandes y sin depender de :hover */
+  @media (hover: none) {
+    .chat-more { display: grid; }
+    .msg-actions { opacity: 1; }
+  }
+  @media (pointer: coarse) {
+    .icon-btn { width: 44px; height: 44px; }
+    .nav-item, .set-tab, .popover button { min-height: 44px; }
+    .chat-open { padding-top: 11px; padding-bottom: 11px; }
+    .btn-sm { height: 44px; }
+    .pk-item .btn-sm { height: 40px; }
+    .swatch { width: 32px; height: 32px; }
+    .swatches { gap: 14px; }
+    input, textarea, select { font-size: 16px !important; }   /* evita el zoom automático de iOS al escribir */
+    .mo { min-height: 84px; }
   }
 
   /* ---------- Adjuntos ---------- */
@@ -1109,18 +1269,50 @@
               <p class="mo-note">Pago único · Sin renovación automática</p>
               <p class="mo-access" id="mo-access" hidden></p>
               <button class="btn-sm primary" id="pay-go" type="button">Continuar al pago</button>
-              <div class="pay-methods" id="pay-methods" hidden>
-                <paypal-button id="pp6-button" type="pay" hidden></paypal-button>
-                <div id="ap-wrap" hidden></div>
-                <div id="card-wrap" hidden>
-                  <b>Tarjeta de crédito o débito</b>
-                  <div class="card-field" id="cf-number"></div><div class="card-field" id="cf-expiry"></div><div class="card-field" id="cf-cvv"></div>
-                  <input class="pay-input" id="cf-zip" type="text" inputmode="text" autocomplete="postal-code" maxlength="12" placeholder="Código postal" aria-label="Código postal de facturación">
-                  <button class="btn-sm primary" id="cf-pay" type="button">Pagar con tarjeta</button>
-                </div>
-              </div>
             </div>
     <div class="notice set-msg" id="msg-pp-modal" role="status" hidden></div>
+  </div>
+</div>
+
+
+<!-- ================= PASARELA DE PAGO ================= -->
+<div id="checkout-modal" class="modal-overlay" hidden>
+  <div class="checkout" role="dialog" aria-modal="true" aria-labelledby="co-title">
+    <aside class="co-summary">
+      <button class="co-back" id="co-back" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Cambiar meses</button>
+      <div class="co-brand"><img class="logo" src="logo.png" alt=""><span>PNova IA</span></div>
+      <div class="co-sum-main">
+        <p class="co-kicker">Resumen del pedido</p>
+        <h3 id="co-title">Plan Basic</h3>
+        <div class="co-total" id="co-total" aria-live="polite">3,99 €</div>
+        <p class="co-dur" id="co-dur">Acceso durante 1 mes</p>
+      </div>
+      <ul class="co-lines">
+        <li><span>Plan Basic</span><b id="co-unit">3,99 € / mes</b></li>
+        <li><span>Duración</span><b id="co-months">1 mes</b></li>
+        <li><span>Renovación</span><b>Sin renovación automática</b></li>
+        <li class="co-sum-total"><span>Total a pagar hoy</span><b id="co-total2">3,99 €</b></li>
+      </ul>
+      <p class="co-secure"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>Pago cifrado y procesado de forma segura por PayPal. PNova IA nunca ve los datos de tu tarjeta.</p>
+    </aside>
+    <section class="co-pay">
+      <div class="co-head">
+        <div><h3>Elige cómo pagar</h3><p>Pago único · se activa al instante</p></div>
+        <button class="icon-btn" id="co-close" type="button" aria-label="Cerrar"><span data-icon="x"></span></button>
+      </div>
+      <div class="co-loading" id="co-loading" role="status"><span class="gen-spin" aria-hidden="true"></span><span>Preparando el pago seguro…</span></div>
+      <div class="pay-methods" id="pay-methods" hidden>
+        <div class="pay-slot"><paypal-button id="pp6-button" type="pay" hidden></paypal-button></div>
+        <div class="pay-slot" id="ap-wrap"></div>
+        <button class="pay-card-btn" id="card-btn" type="button" hidden>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19M6.5 15h4"/></svg>
+          <span><b>Pagar con tarjeta</b><small>Crédito o débito · con PayPal</small></span>
+        </button>
+      </div>
+      <button class="btn-sm" id="co-retry" type="button" hidden>Reintentar</button>
+      <div class="notice set-msg" id="msg-pp-checkout" role="status" hidden></div>
+      <p class="co-fine">Al pagar aceptas que el acceso es de pago único y no se renueva solo. Puedes volver a comprar meses cuando quieras y se suman a tu fecha de vencimiento.</p>
+    </section>
   </div>
 </div>
 
@@ -1525,9 +1717,9 @@ function loadPayPalSdk() {
   return paypalLoading;
 }
 const ppMsg = (t, kind = "error") => {
-  const c = $("#msg-pp"), m = $("#msg-pp-modal"); c.hidden = true; m.hidden = true;
+  const c = $("#msg-pp"), m = $("#msg-pp-modal"), k = $("#msg-pp-checkout"); c.hidden = true; m.hidden = true; k.hidden = true;
   if (!t) return;
-  const n = $("#plan-modal").hidden ? c : m;
+  const n = !$("#checkout-modal").hidden ? k : !$("#plan-modal").hidden ? m : c;
   n.className = "notice set-msg " + kind; n.textContent = t; n.hidden = false;
 };
 $("#pp-open").onclick = async () => {
@@ -1579,7 +1771,7 @@ $("#mo-grid").addEventListener("keydown", e => {
 });
 renderMonths();
 
-const setPayUI = () => $("#pay-onetime").classList.toggle("is-busy", payBusy);
+const setPayUI = () => { $("#pay-onetime").classList.toggle("is-busy", payBusy); $("#checkout-modal").classList.toggle("is-busy", payBusy); };
 const loadScript = src => new Promise((ok, ko) => { const s = document.createElement("script"); s.src = src; s.async = true; s.onload = ok; s.onerror = () => ko(new Error("script")); document.head.appendChild(s); });
 async function payApi(path, body) {
   const { data } = await sb.auth.getSession();
@@ -1663,41 +1855,28 @@ async function initPay() {
     const live = PAYPAL_CFG.ENV === "live", clientId = payClientId();
     await loadScript(live ? "https://www.paypal.com/web-sdk/v6/core" : "https://www.sandbox.paypal.com/web-sdk/v6/core");
     let sdk;
-    try { sdk = await paypal.createInstance({ clientId, components: ["paypal-payments", "card-fields", "applepay-payments"], pageType: "checkout" }); }
+    try { sdk = await paypal.createInstance({ clientId, components: ["paypal-payments", "applepay-payments"], pageType: "checkout" }); }
     catch (e) { console.warn("[PNova] v6 no admitió todos los componentes; solo PayPal", e); sdk = await paypal.createInstance({ clientId, components: ["paypal-payments"], pageType: "checkout" }); }
     const methods = await sdk.findEligibleMethods({ currencyCode: "EUR" });
-    let shown = 0;
-    try {                                                    // PayPal
+    let real = 0;
+    try {                                                    // PayPal + «Pagar con tarjeta» (ventana segura de PayPal)
       if (methods.isEligible("paypal")) {
         const session = sdk.createPayPalOneTimePaymentSession({
           onApprove: ({ orderId }) => payRun(() => payCapture(orderId), true),
           onCancel: () => ppMsg("Has cancelado el pago. No se ha hecho ningún cargo.", "warn"),
           onError: err => { console.error("PayPal:", err); ppMsg("PayPal no pudo completar el pago. No se ha activado el acceso."); }
         });
-        const btn = $("#pp6-button"); btn.hidden = false; shown++;
-        btn.addEventListener("click", async () => {
+        const start = async () => {
           if (payBusy) return; ppMsg();
           try { await session.start({ presentationMode: "auto" }, payCreate("paypal").then(orderId => ({ orderId }))); }
           catch (e) { console.error("PayPal:", e); ppMsg(payErrText(e)); }
-        });
+        };
+        $("#pp6-button").hidden = false; $("#pp6-button").addEventListener("click", start);
+        $("#card-btn").hidden = false; $("#card-btn").addEventListener("click", start);
+        real++;
       }
     } catch (e) { console.warn("[PNova] PayPal no disponible", e); }
-    try {                                                    // Tarjeta de crédito / débito
-      if (methods.isEligible("advanced_cards")) {
-        const cs = sdk.createCardFieldsOneTimePaymentSession();
-        [["number", "Número de tarjeta", "#cf-number"], ["expiry", "MM/AA", "#cf-expiry"], ["cvv", "CVV", "#cf-cvv"]]
-          .forEach(([type, placeholder, sel]) => $(sel).appendChild(cs.createCardFieldsComponent({ type, placeholder })));
-        $("#card-wrap").hidden = false; shown++;
-        $("#cf-pay").onclick = () => payRun(async () => {
-          const zip = $("#cf-zip").value.trim(); if (!zip) { ppMsg("Escribe el código postal de facturación."); return; }
-          const orderId = await payCreate("card");
-          const { data, state } = await cs.submit(orderId, { billingAddress: { postalCode: zip } });
-          if (state === "succeeded") await payCapture((data && data.orderId) || orderId);
-          else if (state === "canceled") ppMsg("Has cancelado la verificación de la tarjeta. No se ha hecho ningún cargo.", "warn");
-          else ppMsg((data && data.message) || "La tarjeta no se pudo procesar. Revisa los datos e inténtalo de nuevo.");
-        });
-      }
-    } catch (e) { console.warn("[PNova] Tarjetas no disponibles", e); }
+    let apOk = false;
     try {                                                    // Apple Pay (solo Safari/Apple y si PayPal lo reporta elegible)
       if (methods.isEligible("applepay") && window.ApplePaySession && ApplePaySession.canMakePayments()) {
         await loadScript("https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js");
@@ -1705,10 +1884,14 @@ async function initPay() {
         const { merchantCapabilities, supportedNetworks } = await ap.config();
         $("#ap-wrap").innerHTML = '<apple-pay-button id="ap-btn" buttonstyle="black" type="buy" locale="es-ES"></apple-pay-button>';
         $("#ap-btn").addEventListener("click", () => applePayStart(ap, merchantCapabilities, supportedNetworks));
-        $("#ap-wrap").hidden = false; shown++;
+        apOk = true; real++;
       }
     } catch (e) { console.warn("[PNova] Apple Pay no disponible", e); }
-    return shown;
+    if (!apOk) {                                             // Botón grande siempre visible; explica por qué no está disponible aquí
+      $("#ap-wrap").innerHTML = '<button type="button" class="pay-ap-fallback" id="ap-fallback"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span>Pay</span></button>';
+      $("#ap-fallback").addEventListener("click", () => ppMsg("Apple Pay solo está disponible en Safari, en un dispositivo Apple con una tarjeta guardada en Wallet. Puedes pagar con PayPal o con tarjeta.", "warn"));
+    }
+    return real;
   })().catch(e => { payInit = null; throw e; });
   return payInit;
 }
@@ -1733,16 +1916,42 @@ function applePayStart(ap, merchantCapabilities, supportedNetworks) {      // be
   s.oncancel = () => ppMsg("Has cancelado el pago. No se ha hecho ningún cargo.", "warn");
   s.begin();
 }
-$("#pay-go").onclick = async () => {
-  if (!user) return;
-  if (!PAYPAL_CFG.PAY_API || !payClientId()) { ppMsg("Los pagos todavía no están configurados (falta el servidor de pagos o el Client ID de " + PAYPAL_CFG.ENV + "). Todavía no se puede comprar.", "warn"); return; }
-  const b = $("#pay-go"); b.disabled = true; ppMsg();
+/* ---------- Pasarela de pago (ventana profesional tras elegir los meses) ---------- */
+function renderCheckout() {
+  const t = eur(PLAN_CENTS[payMonths]), mt = payMonths + (payMonths === 1 ? " mes" : " meses");
+  $("#co-total").textContent = t; $("#co-total2").textContent = t;
+  $("#co-dur").textContent = "Acceso durante " + mt; $("#co-months").textContent = mt;
+  $("#co-unit").textContent = eur(PLAN_CENTS[1]) + " / mes";
+}
+async function loadCheckout() {
+  $("#co-loading").hidden = false; $("#pay-methods").hidden = true; $("#co-retry").hidden = true; ppMsg();
+  if (!PAYPAL_CFG.PAY_API || !payClientId()) {
+    $("#co-loading").hidden = true;
+    ppMsg("Los pagos todavía no están configurados (falta el servidor de pagos o el Client ID de " + PAYPAL_CFG.ENV + "). Todavía no se puede comprar.", "warn"); return;
+  }
   try {
-    const shown = await initPay();
-    if (!shown) { ppMsg("Ahora mismo PayPal no ofrece ningún método de pago disponible para esta cuenta o dispositivo.", "warn"); b.disabled = false; return; }
-    $("#pay-methods").hidden = false; b.hidden = true;
-  } catch (e) { console.error(e); ppMsg("No se pudo cargar PayPal. Revisa tu conexión (o un bloqueador de anuncios) e inténtalo de nuevo."); b.disabled = false; }
-};
+    const real = await initPay();
+    $("#co-loading").hidden = true; $("#pay-methods").hidden = false;
+    if (!real) ppMsg("Ahora mismo PayPal no ofrece ningún método de pago disponible para esta cuenta o dispositivo.", "warn");
+  } catch (e) {
+    console.error(e); $("#co-loading").hidden = true; $("#co-retry").hidden = false;
+    ppMsg("No se pudo cargar PayPal. Revisa tu conexión (o un bloqueador de anuncios) e inténtalo de nuevo.");
+  }
+}
+function openCheckout() {
+  if (!user) return;
+  renderCheckout();
+  $("#plan-modal").hidden = true; $("#checkout-modal").hidden = false;
+  loadCheckout();
+}
+function backToMonths() { if (payBusy) return; $("#checkout-modal").hidden = true; ppMsg(); openPlanModal(); }
+function closeCheckout() { if (payBusy) return; $("#checkout-modal").hidden = true; ppMsg(); if (planModalFocus && planModalFocus.focus) planModalFocus.focus({ preventScroll: true }); }
+$("#pay-go").onclick = openCheckout;
+$("#co-back").onclick = backToMonths;
+$("#co-close").onclick = closeCheckout;
+$("#co-retry").onclick = loadCheckout;
+$("#checkout-modal").addEventListener("mousedown", e => { if (e.target.id === "checkout-modal") closeCheckout(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#checkout-modal").hidden) { e.stopPropagation(); closeCheckout(); } }, true);
 { const sub = PAYPAL_CFG.MODE === "subscription"; $("#pp-open").hidden = !sub; $("#pay-onetime").hidden = sub; $("#plan-choose").hidden = sub; }
 
 /* ---------- Ventana grande para elegir los meses del Plan Basic ---------- */
@@ -1769,7 +1978,7 @@ function showPaySuccess(j) {
   const months = Number(j && j.months) || 0;
   const exp = (subState.status === "basic" && subState.expiresAt) ? subState.expiresAt : (j && j.expires_at);
   $("#ps-text").textContent = (months ? (months === 1 ? "Se ha activado 1 mes" : "Se han activado " + months + " meses") + " de Plan Basic." : "Tu Plan Basic ya está activo.") + (exp ? " Tu acceso vence el " + pkDate(exp) + "." : "");
-  $("#plan-modal").hidden = true; $("#set-overlay").hidden = true;
+  $("#plan-modal").hidden = true; $("#checkout-modal").hidden = true; $("#set-overlay").hidden = true;
   const ov = $("#pay-success"); ov.hidden = false;
   ov.querySelectorAll(".ps-circle, .ps-tick, .ps-badge, h2, p, .btn-sm, .ps-dot").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });   // reinicia la animación
   $("#ps-home").focus({ preventScroll: true });
