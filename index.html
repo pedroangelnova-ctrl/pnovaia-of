@@ -558,6 +558,16 @@
   .pay-card-btn .i { width: 26px; height: 26px; stroke-width: 1.7; }
   .pay-card-btn span { display: flex; flex-direction: column; line-height: 1.25; }
   .pay-card-btn b { font-size: 16px; font-weight: 600; } .pay-card-btn small { font-size: 12.5px; opacity: .88; }
+  .card-wrap { display: grid; gap: 10px; }
+  .card-wrap[hidden], .pay-or[hidden] { display: none; }
+  .card-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+  .card-title .i { width: 20px; height: 20px; color: var(--accent); }
+  .card-field { height: 50px; }
+  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pay-input { height: 50px; border: 1px solid var(--border); border-radius: 10px; padding: 0 14px; background: var(--bg); color: var(--text); font: inherit; width: 100%; }
+  .pay-input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+  .pay-or { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 2px 0; }
+  .pay-or::before, .pay-or::after { content: ""; flex: 1; height: 1px; background: var(--border); }
   #co-retry { align-self: flex-start; }
   .co-fine { margin: auto 0 0; padding-top: 4px; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
 
@@ -1302,12 +1312,16 @@
       </div>
       <div class="co-loading" id="co-loading" role="status"><span class="gen-spin" aria-hidden="true"></span><span>Preparando el pago seguro…</span></div>
       <div class="pay-methods" id="pay-methods" hidden>
-        <div class="pay-slot"><paypal-button id="pp6-button" type="pay" hidden></paypal-button></div>
+        <div class="card-wrap" id="card-wrap" hidden>
+          <b class="card-title"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19M6.5 15h4"/></svg>Tarjeta de crédito o débito</b>
+          <div class="card-field" id="cf-number"></div>
+          <div class="card-row"><div class="card-field" id="cf-expiry"></div><div class="card-field" id="cf-cvv"></div></div>
+          <input class="pay-input" id="cf-zip" type="text" inputmode="text" autocomplete="postal-code" maxlength="12" placeholder="Código postal" aria-label="Código postal de facturación">
+          <button class="pay-card-btn" id="cf-pay" type="button"><b>Pagar con tarjeta</b></button>
+        </div>
+        <div class="pay-or" id="pay-or" hidden><span>o paga con</span></div>
         <div class="pay-slot" id="ap-wrap"></div>
-        <button class="pay-card-btn" id="card-btn" type="button" hidden>
-          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 10h19M6.5 15h4"/></svg>
-          <span><b>Pagar con tarjeta</b><small>Crédito o débito · con PayPal</small></span>
-        </button>
+        <div class="pay-slot"><paypal-button id="pp6-button" type="pay" hidden></paypal-button></div>
       </div>
       <button class="btn-sm" id="co-retry" type="button" hidden>Reintentar</button>
       <div class="notice set-msg" id="msg-pp-checkout" role="status" hidden></div>
@@ -1855,7 +1869,7 @@ async function initPay() {
     const live = PAYPAL_CFG.ENV === "live", clientId = payClientId();
     await loadScript(live ? "https://www.paypal.com/web-sdk/v6/core" : "https://www.sandbox.paypal.com/web-sdk/v6/core");
     let sdk;
-    try { sdk = await paypal.createInstance({ clientId, components: ["paypal-payments", "applepay-payments"], pageType: "checkout" }); }
+    try { sdk = await paypal.createInstance({ clientId, components: ["paypal-payments", "card-fields", "applepay-payments"], pageType: "checkout" }); }
     catch (e) { console.warn("[PNova] v6 no admitió todos los componentes; solo PayPal", e); sdk = await paypal.createInstance({ clientId, components: ["paypal-payments"], pageType: "checkout" }); }
     const methods = await sdk.findEligibleMethods({ currencyCode: "EUR" });
     let real = 0;
@@ -1872,10 +1886,25 @@ async function initPay() {
           catch (e) { console.error("PayPal:", e); ppMsg(payErrText(e)); }
         };
         $("#pp6-button").hidden = false; $("#pp6-button").addEventListener("click", start);
-        $("#card-btn").hidden = false; $("#card-btn").addEventListener("click", start);
         real++;
       }
     } catch (e) { console.warn("[PNova] PayPal no disponible", e); }
+    try {                                                    // Tarjeta de crédito / débito (campos seguros de PayPal)
+      if (methods.isEligible("advanced_cards")) {
+        const cs = sdk.createCardFieldsOneTimePaymentSession();
+        [["number", "Número de tarjeta", "#cf-number"], ["expiry", "MM/AA", "#cf-expiry"], ["cvv", "CVV", "#cf-cvv"]]
+          .forEach(([type, placeholder, sel]) => $(sel).appendChild(cs.createCardFieldsComponent({ type, placeholder })));
+        $("#card-wrap").hidden = false; real++;
+        $("#cf-pay").onclick = () => payRun(async () => {
+          const zip = $("#cf-zip").value.trim(); if (!zip) { ppMsg("Escribe el código postal de facturación."); return; }
+          const orderId = await payCreate("card");
+          const { data, state } = await cs.submit(orderId, { billingAddress: { postalCode: zip } });
+          if (state === "succeeded") await payCapture((data && data.orderId) || orderId);
+          else if (state === "canceled") ppMsg("Has cancelado la verificación de la tarjeta. No se ha hecho ningún cargo.", "warn");
+          else ppMsg((data && data.message) || "La tarjeta no se pudo procesar. Revisa los datos e inténtalo de nuevo.");
+        });
+      }
+    } catch (e) { console.warn("[PNova] Tarjetas no disponibles", e); }
     let apOk = false;
     try {                                                    // Apple Pay (solo Safari/Apple y si PayPal lo reporta elegible)
       if (methods.isEligible("applepay") && window.ApplePaySession && ApplePaySession.canMakePayments()) {
@@ -1891,6 +1920,7 @@ async function initPay() {
       $("#ap-wrap").innerHTML = '<button type="button" class="pay-ap-fallback" id="ap-fallback"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span>Pay</span></button>';
       $("#ap-fallback").addEventListener("click", () => ppMsg("Apple Pay solo está disponible en Safari, en un dispositivo Apple con una tarjeta guardada en Wallet. Puedes pagar con PayPal o con tarjeta.", "warn"));
     }
+    $("#pay-or").hidden = $("#card-wrap").hidden;
     return real;
   })().catch(e => { payInit = null; throw e; });
   return payInit;
