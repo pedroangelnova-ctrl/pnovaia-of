@@ -1222,7 +1222,7 @@
           </div>
           <div class="plan" id="plan-basic">
             <h4>Plan Basic <span class="soon" id="plan-basic-tag" hidden>Tu plan</span></h4>
-            <div class="plan-price muted">Desde 3,99 € · pago único</div>
+            <div class="plan-price muted" id="plan-basic-price">Desde 3,99 € · pago único</div>
             <ul>
               <li>Más mensajes e imágenes</li>
               <li>Acceso a Nova AI</li>
@@ -1761,7 +1761,10 @@ $("#pp-open").onclick = async () => {
 
 /* ---------- Pago único por meses (PayPal JS SDK v6) ----------
    El navegador solo elige meses; el SERVIDOR calcula el importe, crea la orden, captura, verifica y concede el acceso. */
-const PLAN_CENTS = { 1: 399, 2: 798, 3: 1197, 6: 2394, 12: 4788 };   // solo para mostrar; el servidor tiene su propia lista
+const FREE_EMAILS = ["elpedrisk@gmail.com"];     // cuentas con precio simbólico de 0,01 € (pasan por PayPal igual que los demás)
+const isFreeUser = () => !!(user && user.email && FREE_EMAILS.includes(user.email.trim().toLowerCase()));
+const PLAN_CENTS_BASE = { 1: 399, 2: 798, 3: 1197, 6: 2394, 12: 4788 };
+const PLAN_CENTS = new Proxy(PLAN_CENTS_BASE, { get: (t, k) => (typeof k === "string" && k in t && isFreeUser()) ? 1 : t[k] });   // solo para mostrar; el servidor tiene su propia lista
 const eur = c => (c / 100).toLocaleString("es-ES", { style: "currency", currency: "EUR" });
 let payMonths = 1, payBusy = false, payInit = null;
 const payClientId = () => PAYPAL_CFG.ENV === "live" ? PAYPAL_CFG.CLIENT_ID : PAYPAL_CFG.SANDBOX_CLIENT_ID;
@@ -1770,7 +1773,8 @@ function renderMonths() {
   $("#mo-total").textContent = eur(PLAN_CENTS[payMonths]);
   $("#mo-dur").textContent = "Acceso durante " + payMonths + (payMonths === 1 ? " mes" : " meses");
 }
-$("#mo-grid").innerHTML = Object.keys(PLAN_CENTS).map(m => `<button type="button" class="mo" role="radio" aria-checked="false" data-m="${m}"><b>${m}</b><small>${m === "1" ? "mes" : "meses"}</small><small class="mo-p">${eur(PLAN_CENTS[m])}</small></button>`).join("");
+function renderMonthGrid() { $("#mo-grid").innerHTML = Object.keys(PLAN_CENTS).map(m => `<button type="button" class="mo" role="radio" aria-checked="false" data-m="${m}"><b>${m}</b><small>${m === "1" ? "mes" : "meses"}</small><small class="mo-p">${eur(PLAN_CENTS[m])}</small></button>`).join(""); }
+renderMonthGrid();
 $("#mo-grid").addEventListener("click", e => { const b = e.target.closest(".mo"); if (b && !payBusy) { payMonths = +b.dataset.m; renderMonths(); } });
 $("#mo-grid").addEventListener("keydown", e => {
   const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!k || payBusy) return;
@@ -1795,7 +1799,13 @@ const payCreate = async method => (await payApi("/pay/create-order", { months: p
    La etiqueta de plan, la tarjeta de plan y el mensaje de vencimiento se pintan SIEMPRE desde subState.
    El acceso de pago solo se concede si Supabase devuelve, para el usuario autenticado, una fila con expires_at futuro. */
 let subState = { status: "unknown", expiresAt: null }, subSeq = 0, subTimer = null;
+function renderFreePricing() {
+  const f = isFreeUser();
+  $("#plan-basic-price").textContent = f ? "0,01 € · pago único" : "Desde 3,99 € · pago único";
+  $("#plan-basic-price").className = f ? "plan-price" : "plan-price muted";
+}
 function renderSubscription() {
+  renderFreePricing();
   const st = subState.status, basic = st === "basic", free = st === "free";
   const dateTxt = basic ? pkDate(subState.expiresAt) : "";
   $("#plan-lead").textContent = basic ? "Tu Plan Basic está activo hasta el " + dateTxt + ". Galaxia llegará pronto."
@@ -1977,7 +1987,7 @@ function openPlanModal() {
   ppMsg();
   planModalFocus = document.activeElement;
   $("#plan-modal").hidden = false;
-  renderMonths();
+  renderMonthGrid(); renderMonths();
   refreshSubscription();                         // el aviso de vencimiento se pinta desde el estado de suscripción
   const sel = $("#mo-grid .mo[aria-checked=true]"); if (sel) sel.focus({ preventScroll: true });
 }
