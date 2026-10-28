@@ -1,55 +1,316 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080b1b">
-<meta name="description" content="Tu privacidad importa. Aquí explicamos qué datos pueden tratarse cuando utilizas PNova IA, para qué se usan y qué opciones tienes.">
-<title>Política de privacidad · PNova IA</title>
-<link rel="stylesheet" href="legal.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Política de privacidad de PNova IA. Información sobre el tratamiento de datos personales y el ejercicio de derechos.">
+  <title>Política de privacidad · PNova IA</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --ink: #172033;
+      --muted: #68738a;
+      --line: #e4e9f2;
+      --accent: #6657e8;
+      --accent-dark: #4d40c4;
+      --soft: #eeecff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+    }
+    .topbar {
+      height: 5px;
+      background: linear-gradient(90deg, #6657e8, #8b5cf6, #36b9c8);
+    }
+    header {
+      padding: 56px 22px 42px;
+      background: radial-gradient(ellipse at 85% 0%, rgba(139,92,246,.22), transparent 35%),
+                  linear-gradient(135deg, #171b35 0%, #25264d 62%, #39316e 100%);
+      color: white;
+    }
+    .hero { max-width: 1080px; margin: 0 auto; }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: .95rem; font-weight: 750; letter-spacing: .02em;
+      margin-bottom: 34px;
+    }
+    .brand-mark {
+      display: grid; place-items: center; width: 36px; height: 36px;
+      border-radius: 12px; background: linear-gradient(135deg, #8b7bff, #4dd3d0);
+      color: #171b35; font-weight: 900;
+    }
+    .eyebrow {
+      color: #b9b4ff; text-transform: uppercase; letter-spacing: .14em;
+      font-size: .75rem; font-weight: 800; margin: 0 0 10px;
+    }
+    h1 {
+      font-size: clamp(2.1rem, 5vw, 3.5rem); line-height: 1.12;
+      letter-spacing: -.045em; margin: 0; max-width: 780px;
+    }
+    .intro { color: #d9dbee; max-width: 720px; margin: 20px 0 0; font-size: 1.06rem; }
+    .updated {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 25px; padding: 8px 13px; border: 1px solid #ffffff30;
+      border-radius: 999px; color: #f1f0ff; font-size: .86rem;
+      background: #ffffff0d;
+    }
+    .layout {
+      width: min(1080px, calc(100% - 32px)); margin: -20px auto 64px;
+      display: grid; grid-template-columns: 245px minmax(0, 1fr); gap: 24px;
+      align-items: start;
+    }
+    nav {
+      position: sticky; top: 20px; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 18px;
+      padding: 20px 16px; box-shadow: 0 12px 35px #202a4510;
+    }
+    nav h2 { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin: 0 10px 12px; }
+    nav a {
+      display: block; text-decoration: none; color: #4c5870;
+      font-size: .87rem; line-height: 1.4; padding: 8px 10px;
+      border-radius: 9px; margin: 2px 0;
+    }
+    nav a:hover, nav a:focus { color: var(--accent-dark); background: var(--soft); outline: none; }
+    main {
+      min-width: 0; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 20px; padding: clamp(24px, 4.4vw, 52px);
+      box-shadow: 0 12px 35px #202a450b;
+    }
+    main h1 { display: none; }
+    main h2 {
+      font-size: 1.45rem; line-height: 1.3; letter-spacing: -.025em;
+      margin: 42px 0 14px; padding-top: 22px; border-top: 1px solid var(--line);
+      scroll-margin-top: 20px;
+    }
+    main h2:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+    main h3 { font-size: 1.08rem; margin: 28px 0 10px; scroll-margin-top: 20px; }
+    p { margin: 0 0 17px; color: #465168; }
+    strong { color: #202a40; font-weight: 750; }
+    ul, ol { padding-left: 1.35rem; margin: 10px 0 22px; color: #465168; }
+    li { padding-left: 4px; margin: 7px 0; }
+    li::marker { color: var(--accent); }
+    a { color: var(--accent-dark); text-underline-offset: 3px; overflow-wrap: anywhere; }
+    a:hover { color: #33259e; }
+    main p a { font-weight: 550; }
+    footer {
+      text-align: center; color: var(--muted); font-size: .85rem;
+      padding: 0 20px 34px;
+    }
+    .backtop {
+      display: inline-block; margin-top: 8px; text-decoration: none;
+      background: var(--soft); border-radius: 999px; padding: 8px 14px;
+      font-weight: 650;
+    }
+    @media (max-width: 800px) {
+      header { padding: 38px 20px 36px; }
+      .layout { grid-template-columns: 1fr; margin-top: -12px; width: min(100% - 22px, 720px); }
+      nav { position: static; }
+      nav .navlinks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 6px; }
+      main { padding: 25px 22px; }
+      main h2 { font-size: 1.28rem; }
+    }
+    @media (max-width: 420px) {
+      nav .navlinks { grid-template-columns: 1fr; }
+      .brand { margin-bottom: 25px; }
+    }
+    @media print {
+      body { background: white; }
+      header { background: white; color: black; padding: 20px 0; }
+      .intro, .updated, .eyebrow { color: #333; }
+      .layout { display: block; width: 100%; margin: 0; }
+      nav { display: none; }
+      main { border: 0; box-shadow: none; padding: 0; }
+      footer { display: none; }
+    }
+  </style>
 </head>
-<body>
-<header class="shell topbar">
-<a class="brand" href="index.html" aria-label="PNova IA, inicio"><span class="brand-mark">P</span><span>PNova <span class="gradient">IA</span></span></a>
-<nav class="nav" aria-label="Navegación principal"><a href="politica-privacidad.html">Privacidad</a>
-<a href="condiciones-servicio.html">Condiciones</a>
-<a href="politica-cookies.html">Cookies</a>
-<a href="aviso-legal.html">Aviso legal</a>
-<a href="contacto.html">Contacto</a></nav>
-</header>
-<main class="shell">
-<div class="hero">
-<span class="eyebrow"><span class="dot"></span>PRIVACIDAD Y DATOS</span>
-<h1>Política <span class="gradient">de privacidad</span></h1>
-<p class="lead">Tu privacidad importa. Aquí explicamos qué datos pueden tratarse cuando utilizas PNova IA, para qué se usan y qué opciones tienes.</p>
-<div class="meta"><span class="chip">PNova IA</span><span class="chip">España · Unión Europea</span><span class="chip">Información transparente</span></div>
-</div>
-<div class="layout">
-<aside class="toc"><h3>En esta página</h3><nav><a href="#responsable">1. Responsable del tratamiento</a>
-<a href="#datos">2. Qué datos podemos tratar</a>
-<a href="#finalidades">3. Para qué usamos los datos</a>
-<a href="#base">4. Base jurídica</a>
-<a href="#proveedores">5. Proveedores y destinatarios</a>
-<a href="#transferencias">6. Transferencias internacionales</a>
-<a href="#conservacion">7. Conservación</a>
-<a href="#derechos">8. Tus derechos</a>
-<a href="#seguridad">9. Seguridad y menores</a>
-<a href="#cambios">10. Cambios en esta política</a></nav><hr><p class="small">¿Tienes alguna duda?</p><a class="cta" href="contacto.html">Contactar con PNova <span>↗</span></a></aside>
-<article class="content-card">
-<div class="notice"><strong>Antes de publicar:</strong> Esta política debe ajustarse a los servicios y proveedores que estén realmente activos en la web antes de publicarla.</div>
-<p class="updated">Última actualización: 28 de octubre de 2026</p>
-<section id="responsable"><h2>1. Responsable del tratamiento</h2><p><strong>Responsable:</strong> Pedro Ángel Nova Peñas.</p><p><strong>Correo:</strong> <a href="mailto:contacto@pnova-ai.es">contacto@pnova-ai.es</a>.</p><p><strong>Teléfono:</strong> <a href="https://wa.me/3464072189" rel="noopener noreferrer">WhatsApp: +34 640 721 89</a>.</p><p><strong>Web:</strong> <a href="https://pnova-ai.com/">pnova-ai.com</a>.</p><p>Antes de publicar, confirma que estos datos identifican al responsable que explota el servicio y añade, si procede, domicilio profesional y demás datos legalmente exigibles.</p></section>
-<section id="datos"><h2>2. Qué datos podemos tratar</h2><ul><li>Datos de cuenta, como correo electrónico, identificador y preferencias, si creas una cuenta.</li><li>Mensajes, instrucciones, archivos e imágenes que decidas enviar para utilizar las funciones de IA.</li><li>Historial de conversaciones y ajustes, si la función de guardado está activada.</li><li>Datos técnicos básicos y registros de seguridad necesarios para mantener el servicio y prevenir abusos.</li><li>Mensajes que nos envíes al contactar con soporte.</li></ul><p>No envíes datos especialmente sensibles ni información de otras personas salvo que sea necesario y tengas una base legítima para hacerlo.</p></section>
-<section id="finalidades"><h2>3. Para qué usamos los datos</h2><ul><li>Prestar las funciones de chat y las herramientas que solicites.</li><li>Crear y gestionar tu cuenta, autenticarte y, cuando esté habilitado, guardar tus conversaciones.</li><li>Responder a consultas y resolver incidencias.</li><li>Proteger el servicio, detectar usos fraudulentos y cumplir obligaciones legales.</li><li>Mejorar el funcionamiento y la seguridad, evitando usar los contenidos para fines no explicados aquí.</li></ul></section>
-<section id="base"><h2>4. Base jurídica</h2><p>Según el caso, el tratamiento puede ser necesario para prestar el servicio solicitado o aplicar medidas precontractuales, para cumplir obligaciones legales, para proteger intereses legítimos relacionados con la seguridad o basarse en tu consentimiento cuando sea requerido. La base aplicable debe comprobarse para cada función activa y explicarse de forma específica si corresponde.</p></section>
-<section id="proveedores"><h2>5. Proveedores y destinatarios</h2><p>Para operar la web pueden intervenir proveedores de alojamiento, autenticación, almacenamiento, entrega de correo o procesamiento de IA. Solo deben mencionarse como proveedores activos aquellos que realmente estén integrados en producción. Antes de publicar, completa esta sección con sus nombres, funciones, ubicación y enlaces a sus políticas; indica también si el contenido que envías se remite a un proveedor de IA externo.</p><p>No se venden tus datos personales. Los datos solo se comunicarán cuando sea necesario para prestar el servicio, exista una obligación legal o hayas autorizado la comunicación.</p></section>
-<section id="transferencias"><h2>6. Transferencias internacionales</h2><p>Si algún proveedor trata datos fuera del Espacio Económico Europeo, deben identificarse los países y las garantías aplicables, cuando corresponda. Verifica las regiones configuradas en el alojamiento, la base de datos y los servicios de IA antes de publicar esta política.</p></section>
-<section id="conservacion"><h2>7. Conservación</h2><p>Conservaremos los datos solo durante el tiempo necesario para la finalidad para la que se recogieron, mientras mantengas la cuenta o durante los plazos exigidos por ley. Los historiales guardados se conservarán conforme a los controles que ofrezca la aplicación y a la política de borrado que realmente esté implementada.</p></section>
-<section id="derechos"><h2>8. Tus derechos</h2><p>Puedes solicitar acceso, rectificación, supresión, oposición, limitación del tratamiento y, cuando proceda, portabilidad, escribiendo a <a href="mailto:contacto@pnova-ai.es">contacto@pnova-ai.es</a>. Podemos pedir información razonable para verificar tu identidad. También puedes presentar una reclamación ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es/" target="_blank" rel="noopener noreferrer">AEPD</a>).</p></section>
-<section id="seguridad"><h2>9. Seguridad y menores</h2><p>Aplicamos medidas técnicas y organizativas proporcionadas al servicio, aunque ningún sistema puede garantizar seguridad absoluta. Si detectas un problema, contacta con nosotros. Si el servicio no está diseñado para menores de una determinada edad, esa restricción debe indicarse expresamente en las condiciones y aplicarse en la práctica.</p></section>
-<section id="cambios"><h2>10. Cambios en esta política</h2><p>Podemos actualizar esta política cuando cambien las funciones, proveedores o requisitos legales. Publicaremos la versión vigente en esta página e indicaremos la fecha de actualización.</p></section>
-<hr><p class="small">Si tienes dudas sobre esta página, contacta con <a href="mailto:contacto@pnova-ai.es">contacto@pnova-ai.es</a>.</p>
-</article>
-</div>
-</main>
-<footer class="shell footer"><span>© 2026 PNova IA · Pedro Ángel Nova Peñas</span><div class="footer-links"><a href="politica-privacidad.html">Privacidad</a> · <a href="condiciones-servicio.html">Condiciones</a> · <a href="politica-cookies.html">Cookies</a> · <a href="aviso-legal.html">Aviso legal</a> · <a href="contacto.html">Contacto</a></div></footer>
-</body></html>
+<body id="top">
+  <div class="topbar"></div>
+  <header>
+    <div class="hero">
+      <div class="brand"><span class="brand-mark">P</span><span>PNova IA</span></div>
+      <p class="eyebrow">Transparencia y confianza</p>
+      <h1>Política de privacidad</h1>
+      <p class="intro">Conoce qué datos personales podemos tratar, para qué los utilizamos, qué proveedores intervienen y cómo puedes ejercer tus derechos.</p>
+      <div class="updated">◷ &nbsp; Última actualización: 28 de octubre de 2026</div>
+    </div>
+  </header>
+  <div class="layout">
+    <nav aria-label="Índice de la política">
+      <h2>En esta página</h2>
+      <div class="navlinks">
+        <a href="#responsable">1. Responsable</a>
+        <a href="#datos">2. Datos tratados</a>
+        <a href="#finalidades">3. Finalidades y base jurídica</a>
+        <a href="#proveedores">4. Proveedores externos</a>
+        <a href="#transferencias">5. Transferencias internacionales</a>
+        <a href="#conservacion">6. Conservación</a>
+        <a href="#seguridad">7. Seguridad</a>
+        <a href="#derechos">8. Tus derechos</a>
+        <a href="#eliminacion">9. Eliminación de cuenta</a>
+        <a href="#menores">10. Menores de edad</a>
+        <a href="#cookies">11. Cookies</a>
+        <a href="#automatizadas">12. Decisiones automatizadas</a>
+        <a href="#cambios">13. Cambios</a>
+        <a href="#contacto">14. Contacto</a>
+      </div>
+    </nav>
+    <main>
+      <h1>Política de privacidad de PNova IA</h1>
+<p><strong>Última actualización: 28 de octubre de 2026</strong></p>
+<p>En PNova IA nos tomamos en serio la privacidad y la protección de los datos personales. Esta política explica qué datos podemos recoger cuando utilizas nuestra plataforma, para qué los utilizamos, qué proveedores intervienen y cómo puedes ejercer tus derechos.</p>
+<p>Al utilizar PNova IA, debes leer esta política y la información que se te presente en los formularios de registro y en las funciones que utilices.</p>
+<h2>1. Responsable del tratamiento</h2>
+<p>El responsable del tratamiento de los datos personales relacionados con PNova IA es:</p>
+<ul>
+<li><strong>Responsable:</strong> Pedro Angel Nova Peñas.</li>
+<li><strong>Sitio web:</strong> <a href="https://pnova-ai.com" target="_blank" rel="noopener noreferrer">https://pnova-ai.com</a></li>
+<li><strong>Correo electrónico de contacto y privacidad:</strong> contacto@pnova-ai.es</li>
+<li><strong>Teléfono de contacto y soporte por WhatsApp:</strong> 964072189.</li>
+<li><strong>Ámbito de actividad:</strong> España.</li>
+</ul>
+<p>Puedes utilizar el correo electrónico indicado para realizar consultas sobre privacidad, solicitar información acerca de tus datos o ejercer tus derechos.</p>
+<h2>2. Qué datos personales tratamos</h2>
+<p>Los datos tratados dependen de las funciones que utilices y de la información que decidas facilitar.</p>
+<h3>2.1. Datos de registro y cuenta</h3>
+<p>Cuando creas una cuenta, podemos tratar:</p>
+<ul>
+<li>Dirección de correo electrónico.</li>
+<li>Número de teléfono.</li>
+<li>Contraseña o credenciales de acceso, gestionadas mediante el sistema de autenticación.</li>
+<li>Códigos temporales de verificación o acceso (OTP), así como la información técnica necesaria para comprobarlos.</li>
+<li>Identificador interno de usuario.</li>
+<li>Fecha de creación de la cuenta y datos básicos relacionados con su estado y seguridad.</li>
+</ul>
+<p>Las contraseñas no deben almacenarse en texto legible. Su tratamiento técnico corresponde al sistema de autenticación utilizado.</p>
+<h3>2.2. Mensajes y contenido enviado a la inteligencia artificial</h3>
+<p>Cuando utilizas el asistente, podemos tratar los mensajes que escribes, las instrucciones que envías y el contenido necesario para generar una respuesta.</p>
+<p>Si la plataforma permite guardar conversaciones, también pueden conservarse el historial, las respuestas generadas y los datos asociados a cada conversación.</p>
+<p>No incluyas contraseñas, datos bancarios, documentos de identidad ni información especialmente sensible en los mensajes, salvo que exista una necesidad legítima y una función diseñada para tratar esos datos con las garantías adecuadas.</p>
+<h3>2.3. Datos técnicos y de seguridad</h3>
+<p>Para prestar y proteger el servicio, pueden tratarse datos técnicos como la dirección IP, el tipo de navegador, información del dispositivo, registros de actividad, errores, fechas de acceso y eventos relacionados con la seguridad.</p>
+<p>Estos datos se utilizan para mantener el funcionamiento de la plataforma, detectar usos indebidos y resolver incidencias, en la medida en que se recojan efectivamente.</p>
+<h3>2.4. Comunicaciones de soporte</h3>
+<p>Si contactas con PNova IA por correo electrónico o WhatsApp, trataremos los datos que nos facilites en la comunicación, como tu número de teléfono, dirección de correo, consulta y los mensajes necesarios para atenderte.</p>
+<h2>3. Para qué utilizamos los datos y cuál es la base jurídica</h2>
+<p>Tratamos los datos personales para las siguientes finalidades:</p>
+<p><strong>Crear y gestionar cuentas.</strong> Utilizamos los datos de registro para identificar a los usuarios, permitir el acceso y administrar sus cuentas. La base jurídica es la ejecución del contrato de uso del servicio y las medidas solicitadas antes de su contratación.</p>
+<p><strong>Verificar la identidad y proteger el acceso.</strong> Podemos utilizar códigos temporales (OTP), el correo electrónico y el número de teléfono para comprobar el acceso, confirmar la titularidad del medio de contacto y prevenir accesos no autorizados. La base jurídica será la ejecución del servicio y, cuando corresponda, nuestro interés legítimo en mantener su seguridad.</p>
+<p><strong>Generar respuestas mediante inteligencia artificial.</strong> Tratamos los mensajes e instrucciones para producir las respuestas solicitadas. La base jurídica es la prestación de la funcionalidad que solicita el usuario.</p>
+<p><strong>Guardar conversaciones y preferencias.</strong> Si estas funciones están activadas, utilizamos la información necesaria para conservar el historial y permitir que el usuario consulte sus conversaciones. La base jurídica es la prestación de esa funcionalidad.</p>
+<p><strong>Atender consultas y solicitudes.</strong> Utilizamos los datos de contacto para responder a dudas, incidencias y solicitudes relacionadas con la cuenta o el servicio.</p>
+<p><strong>Mantener la seguridad y prevenir abusos.</strong> Podemos tratar datos técnicos y registros para investigar errores, prevenir fraudes, detectar accesos indebidos y proteger la plataforma. La base jurídica será nuestro interés legítimo, cuando resulte aplicable, y el cumplimiento de las obligaciones legales que correspondan.</p>
+<p><strong>Cumplir obligaciones legales.</strong> Cuando sea necesario, trataremos y conservaremos determinados datos para cumplir las obligaciones legales aplicables o atender requerimientos válidos de las autoridades.</p>
+<p>Cuando un tratamiento se base en el consentimiento, podrás retirarlo en cualquier momento. La retirada no afecta a la licitud del tratamiento realizado antes de retirarlo.</p>
+<h2>4. Proveedores y servicios externos</h2>
+<p>PNova IA utiliza servicios tecnológicos externos para ofrecer sus funcionalidades. Estos proveedores pueden tratar determinados datos personales en la medida necesaria para prestar sus servicios.</p>
+<h3>4.1. Supabase</h3>
+<p>Utilizamos Supabase para las funciones de autenticación y base de datos que estén habilitadas en la plataforma.</p>
+<p>Según la configuración de PNova IA, esto puede incluir identificadores de usuario, información de registro, datos de la cuenta, registros técnicos y conversaciones guardadas.</p>
+<p>La información se trata conforme a la configuración de la plataforma y a las condiciones y políticas aplicables del proveedor.</p>
+<p>Puedes consultar la política de privacidad de Supabase en:</p>
+<p><a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">https://supabase.com/privacy</a></p>
+<h3>4.2. OpenRouter y proveedores de modelos de inteligencia artificial</h3>
+<p>PNova IA utiliza OpenRouter para encaminar las solicitudes a modelos de inteligencia artificial.</p>
+<p>Cuando envías un mensaje al asistente, el contenido necesario para generar la respuesta puede transmitirse a OpenRouter y al proveedor del modelo seleccionado. El tratamiento concreto depende del modelo utilizado, de la ruta de procesamiento y de las condiciones del proveedor correspondiente.</p>
+<p>Por ello, los mensajes enviados a la inteligencia artificial no deben considerarse necesariamente información que permanezca exclusivamente en los sistemas de PNova IA.</p>
+<p>Las condiciones de conservación, uso, registro y tratamiento de las solicitudes pueden variar según el proveedor y la configuración utilizada. No se garantiza que todos los proveedores de modelos a los que pueda accederse mediante OpenRouter apliquen idénticas condiciones.</p>
+<p>Puedes consultar:</p>
+<ul>
+<li>OpenRouter: <a href="https://openrouter.ai/privacy" target="_blank" rel="noopener noreferrer">https://openrouter.ai/privacy</a></li>
+<li>Condiciones de OpenRouter: <a href="https://openrouter.ai/terms" target="_blank" rel="noopener noreferrer">https://openrouter.ai/terms</a></li>
+</ul>
+<p>Antes de enviar información personal o confidencial al asistente, recomendamos evitar datos que no sean necesarios para formular la consulta.</p>
+<h3>4.3. Servicios de verificación y WhatsApp</h3>
+<p>Si utilizas la verificación por WhatsApp, tu número de teléfono y los datos técnicos necesarios para enviar o validar el código podrán ser tratados por los servicios que intervengan en esa operación.</p>
+<p>Si utilizas WhatsApp para contactar con el equipo de soporte, Meta y los proveedores que intervengan en la comunicación tratarán los datos correspondientes conforme a sus propias condiciones y políticas.</p>
+<p>La política de privacidad de WhatsApp está disponible en:</p>
+<p><a href="https://www.whatsapp.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">https://www.whatsapp.com/legal/privacy-policy</a></p>
+<p>El tratamiento exacto dependerá de la integración y del proveedor de envío que esté configurado en PNova IA.</p>
+<h3>4.4. Otros proveedores</h3>
+<p>Podemos utilizar proveedores de alojamiento, seguridad, mantenimiento o infraestructura cuando sean necesarios para prestar el servicio. Los datos solo deberán comunicarse en la medida necesaria para la finalidad correspondiente y conforme a las garantías legales aplicables.</p>
+<p>No se venderán los datos personales de los usuarios.</p>
+<h2>5. Transferencias internacionales de datos</h2>
+<p>Algunos proveedores tecnológicos pueden estar establecidos fuera del Espacio Económico Europeo o utilizar infraestructura situada en otros países.</p>
+<p>En consecuencia, determinados datos podrían tratarse fuera del Espacio Económico Europeo, dependiendo de los proveedores, sus subcontratistas, las regiones configuradas y el modelo de inteligencia artificial seleccionado.</p>
+<p>Cuando se produzcan transferencias internacionales sujetas al Reglamento General de Protección de Datos, estas deberán realizarse con una base y unas garantías adecuadas, como una decisión de adecuación o las garantías contractuales previstas legalmente, según corresponda.</p>
+<p>Puedes solicitar información adicional sobre las transferencias que afecten a tus datos a través de contacto@pnova-ai.es.</p>
+<h2>6. Durante cuánto tiempo conservamos los datos</h2>
+<p>Conservamos los datos personales durante el tiempo necesario para cumplir las finalidades descritas y atender las obligaciones legales aplicables.</p>
+<p>En particular:</p>
+<ul>
+<li><strong>Datos de cuenta:</strong> mientras la cuenta permanezca activa y sean necesarios para prestar el servicio.</li>
+<li><strong>Datos de autenticación y verificación:</strong> durante el tiempo necesario para gestionar el acceso, validar las solicitudes y proteger la cuenta.</li>
+<li><strong>Historial de conversaciones:</strong> mientras la función esté activa y las conversaciones deban conservarse conforme a las opciones disponibles para el usuario.</li>
+<li><strong>Consultas de soporte:</strong> durante el tiempo necesario para resolver la consulta y gestionar posibles responsabilidades.</li>
+<li><strong>Registros de seguridad:</strong> durante el periodo necesario para investigar incidencias, proteger la plataforma y cumplir las obligaciones aplicables.</li>
+</ul>
+<p>Cuando solicites eliminar tu cuenta, se eliminarán o dejarán de estar disponibles los datos que corresponda suprimir, de acuerdo con las funcionalidades y los procedimientos de eliminación implementados. Algunos datos podrán conservarse durante el tiempo exigido por la ley o cuando exista una razón legítima para formular, ejercer o defender reclamaciones.</p>
+<p>Los datos que permanezcan en copias de seguridad podrán desaparecer conforme al ciclo de eliminación aplicable a dichas copias.</p>
+<p>Los plazos concretos dependen de la configuración técnica y de las obligaciones legales aplicables.</p>
+<h2>7. Seguridad de los datos</h2>
+<p>Aplicamos medidas técnicas y organizativas razonables para proteger los datos personales frente a accesos no autorizados, pérdida, alteración, divulgación o destrucción.</p>
+<p>Estas medidas pueden incluir controles de acceso, autenticación, gestión de permisos y medidas de seguridad proporcionadas a los riesgos del servicio.</p>
+<p>Ningún sistema conectado a Internet puede garantizar una seguridad absoluta. Si se produce una incidencia que deba comunicarse conforme a la normativa, se adoptarán las medidas y notificaciones legalmente exigibles.</p>
+<h2>8. Tus derechos en materia de protección de datos</h2>
+<p>De acuerdo con la normativa aplicable, puedes ejercer los siguientes derechos cuando se cumplan sus requisitos:</p>
+<ul>
+<li><strong>Acceso:</strong> saber si tratamos tus datos y obtener información sobre ese tratamiento.</li>
+<li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
+<li><strong>Supresión:</strong> solicitar la eliminación de tus datos cuando proceda.</li>
+<li><strong>Oposición:</strong> oponerte a determinados tratamientos.</li>
+<li><strong>Limitación:</strong> solicitar que se restrinja el tratamiento en los casos previstos legalmente.</li>
+<li><strong>Portabilidad:</strong> recibir determinados datos en un formato estructurado y solicitar su transmisión cuando se cumplan los requisitos legales.</li>
+<li><strong>Retirada del consentimiento:</strong> cuando el tratamiento se base en él, sin afectar a los tratamientos anteriores a la retirada.</li>
+</ul>
+<p>Para ejercer estos derechos, escribe a contacto@pnova-ai.es e indica el derecho que deseas ejercer y la información necesaria para tramitar tu solicitud.</p>
+<p>Podremos solicitar información adicional razonable para verificar tu identidad cuando sea necesario para proteger tus datos. No envíes copias de documentos de identidad salvo que sean estrictamente necesarias y se te soliciten de forma justificada.</p>
+<p>También tienes derecho a presentar una reclamación ante la Agencia Española de Protección de Datos:</p>
+<p><a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer">https://www.aepd.es</a></p>
+<h2>9. Eliminación de la cuenta</h2>
+<p>Puedes solicitar la eliminación de tu cuenta y de los datos personales asociados escribiendo a contacto@pnova-ai.es.</p>
+<p>La solicitud se tramitará conforme a la normativa aplicable y a los procedimientos de eliminación disponibles. La supresión puede no ser inmediata en todas las copias de seguridad o sistemas técnicos, y podrán conservarse los datos que deban mantenerse por obligación legal o para atender responsabilidades legítimas.</p>
+<p>Si la plataforma incorpora una opción directa de eliminación de cuenta, podrás utilizarla siguiendo las instrucciones mostradas en la propia aplicación.</p>
+<h2>10. Menores de edad</h2>
+<p>PNova IA no debe utilizarse para tratar datos personales de menores de una forma contraria a la legislación aplicable.</p>
+<p>Cuando sea necesario el consentimiento para tratar datos personales de menores, se aplicarán las reglas sobre edad y consentimiento previstas en la normativa correspondiente. En España, la edad general a partir de la cual un menor puede prestar por sí mismo consentimiento para el tratamiento de sus datos es de catorce años, sin perjuicio de las excepciones y requisitos legales aplicables.</p>
+<p>No solicites ni compartas información personal de otros menores sin contar con la autorización o la base legal que corresponda.</p>
+<h2>11. Cookies y tecnologías similares</h2>
+<p>PNova IA puede utilizar cookies y tecnologías similares necesarias para mantener la sesión, gestionar la autenticación, proteger la seguridad o recordar preferencias.</p>
+<p>Las cookies no necesarias, analíticas o publicitarias, si se utilizan, deberán gestionarse de acuerdo con la normativa aplicable y con las opciones de consentimiento correspondientes.</p>
+<p>Para obtener información específica sobre las cookies utilizadas, consulta la Política de cookies publicada en el sitio web.</p>
+<h2>12. Decisiones automatizadas</h2>
+<p>PNova IA utiliza sistemas de inteligencia artificial para generar respuestas a las consultas de los usuarios. Las respuestas se producen de forma automatizada.</p>
+<p>La generación de respuestas no implica, por sí misma, que se adopten decisiones automatizadas con efectos jurídicos sobre los usuarios o que les afecten significativamente de manera similar. Si se incorporaran en el futuro funciones de ese tipo, se facilitaría la información exigida por la normativa antes de aplicarlas.</p>
+<p>Las respuestas generadas por la inteligencia artificial pueden contener errores y no deben considerarse una garantía de exactitud.</p>
+<h2>13. Cambios en esta política</h2>
+<p>Esta política puede actualizarse para reflejar cambios en las funcionalidades de PNova IA, en los proveedores utilizados o en las obligaciones legales aplicables.</p>
+<p>La versión vigente estará disponible en:</p>
+<p><a href="https://pnova-ai.com/politica-privacidad.html" target="_blank" rel="noopener noreferrer">https://pnova-ai.com/politica-privacidad.html</a></p>
+<p>Cuando los cambios requieran una comunicación específica o una nueva base jurídica, se adoptarán las medidas que correspondan conforme a la normativa.</p>
+<h2>14. Contacto</h2>
+<p>Para consultas relacionadas con esta política, el tratamiento de datos personales o el ejercicio de tus derechos, puedes contactar con:</p>
+<p><strong>Correo electrónico:</strong> contacto@pnova-ai.es</p>
+<p><strong>Teléfono y WhatsApp:</strong> 964072189</p>
+<p><strong>Sitio web:</strong> <a href="https://pnova-ai.com" target="_blank" rel="noopener noreferrer">https://pnova-ai.com</a></p>
+    </main>
+  </div>
+  <footer>
+    <div>© 2026 PNova IA · Privacidad y protección de datos</div>
+    <a class="backtop" href="#top">Volver al inicio ↑</a>
+  </footer>
+  <script>
+    // Añade identificadores estables a los apartados para el índice lateral.
+    const ids = ["responsable","datos","finalidades","proveedores","transferencias","conservacion","seguridad","derechos","eliminacion","menores","cookies","automatizadas","cambios","contacto"];
+    document.querySelectorAll("main h2").forEach((heading, index) => {
+      if (ids[index]) heading.id = ids[index];
+    });
+  </script>
+</body>
+</html>
