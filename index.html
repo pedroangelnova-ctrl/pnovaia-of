@@ -1567,13 +1567,13 @@ const CONFIG = {
   HISTORY_LIMIT: 20,          // mensajes previos que se envían al backend
   REQUEST_TIMEOUT_MS: 90000,  // tiempo máximo de espera de la respuesta
 
-  // Crear imagen (Worker POST /image). La clave de OpenRouter vive solo en el Worker.
-  IMAGE_ENDPOINT: "https://pnova-ai-api.pedroangelnp-es.workers.dev/image",
+  // Crear imagen (Worker POST /image, Workers AI · FLUX.1 schnell, cuota gratuita de Cloudflare).
+  IMAGE_ENDPOINT: "https://pnova-gemini.pedroangelnp-es.workers.dev/image",
   IMAGE_TIMEOUT_MS: 120000,   // tiempo máximo de espera de una imagen
   IMAGE_PROMPT_MAX: 1000,     // longitud máxima de la descripción
 
   // false = «Crear imagen» aparece como «Próximamente» en el menú de adjuntar. Ponlo en true cuando quieras reactivarlo.
-  IMAGE_ENABLED: false,
+  IMAGE_ENABLED: true,
 
   // Archivos adjuntos
   FILE_MAX: 4,                       // archivos por mensaje
