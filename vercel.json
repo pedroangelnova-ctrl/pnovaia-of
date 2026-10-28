@@ -1,6 +1,11 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/chat/:id", "destination": "/index.html" },
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/login/:sub", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -18,10 +23,5 @@
       "source": "/(robots.txt|sitemap.xml)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
     }
-  ]
-}
-{
-  "rewrites": [
-    { "source": "/chat/:id", "destination": "/index.html" }
   ]
 }
