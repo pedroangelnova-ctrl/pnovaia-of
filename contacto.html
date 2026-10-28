@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b1b"><meta name="description" content="Contacta con PNova IA para consultas, soporte y privacidad."><title>Contacto · PNova IA</title><link rel="stylesheet" href="legal.css"></head>
+<body>
+<header class="shell topbar"><a class="brand" href="index.html"><span class="brand-mark">P</span><span>PNova <span class="gradient">IA</span></span></a><nav class="nav"><a href="politica-privacidad.html">Privacidad</a><a href="condiciones-servicio.html">Condiciones</a><a href="politica-cookies.html">Cookies</a><a href="aviso-legal.html">Aviso legal</a></nav></header>
+<main class="shell">
+<section class="hero"><span class="eyebrow"><span class="dot"></span>ESTAMOS PARA AYUDAR</span><h1>Hablemos de <span class="gradient">PNova IA.</span></h1><p class="lead">¿Tienes una pregunta, has encontrado un problema o necesitas ejercer tus derechos de privacidad? Elige el canal que te venga mejor.</p><div class="meta"><span class="chip">Soporte</span><span class="chip">Privacidad y datos</span><span class="chip">Consultas generales</span></div></section>
+<section class="contact-grid">
+<div class="contact-card"><div class="icon">✉</div><h3>Correo electrónico</h3><p>Para consultas generales, soporte o privacidad.</p><p style="margin-top:12px"><a href="mailto:contacto@pnova-ai.es">contacto@pnova-ai.es</a></p></div>
+<div class="contact-card"><div class="icon">↗</div><h3>WhatsApp</h3><p>Contacta por mensaje. Evita enviar contraseñas o datos personales sensibles.</p><p style="margin-top:12px"><a href="https://wa.me/3464072189" target="_blank" rel="noopener noreferrer">Abrir conversación en WhatsApp ↗</a></p></div>
+</section>
+<div class="layout">
+<aside class="toc"><h3>Enlaces útiles</h3><nav><a href="politica-privacidad.html">Política de privacidad</a><a href="condiciones-servicio.html">Condiciones del servicio</a><a href="politica-cookies.html">Política de cookies</a><a href="aviso-legal.html">Aviso legal</a></nav><hr><p class="small">Responsable de contacto</p><p style="font-size:13px;color:#c2cbe4">Pedro Ángel Nova Peñas</p></aside>
+<article class="content-card"><h2 style="margin-top:0">Envíanos un mensaje</h2><p>Este formulario abre tu aplicación de correo con el mensaje preparado. No envía datos a un servidor ni los almacena en esta web.</p>
+<form class="contact-form" id="contactForm">
+<div><label for="name">Tu nombre (opcional)</label><input id="name" name="name" autocomplete="name" placeholder="¿Cómo te llamas?"></div>
+<div><label for="email">Tu correo (opcional)</label><input id="email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com"></div>
+<div><label for="topic">Motivo de contacto</label><select id="topic" name="topic"><option>Consulta general</option><option>Problema técnico</option><option>Privacidad y protección de datos</option><option>Solicitud de derechos</option><option>Seguridad</option></select></div>
+<div><label for="message">Mensaje</label><textarea id="message" name="message" required placeholder="Cuéntanos en qué podemos ayudarte…"></textarea></div>
+<button class="cta" type="submit">Preparar correo <span>↗</span></button>
+<p class="form-hint">Al continuar, se abrirá tu aplicación de correo. Revisa el destinatario y el contenido antes de enviarlo.</p>
+</form>
+</article></div>
+</main>
+<footer class="shell footer"><span>© 2026 PNova IA · Pedro Ángel Nova Peñas</span><div class="footer-links"><a href="politica-privacidad.html">Privacidad</a><a href="condiciones-servicio.html">Condiciones</a><a href="politica-cookies.html">Cookies</a><a href="aviso-legal.html">Aviso legal</a></div></footer>
+<script>
+document.getElementById('contactForm').addEventListener('submit',function(e){e.preventDefault();const v=id=>document.getElementById(id).value.trim();const subject=encodeURIComponent('[PNova IA] '+document.getElementById('topic').value);const body=encodeURIComponent('Nombre: '+(v('name')||'No indicado')+'\\nCorreo: '+(v('email')||'No indicado')+'\\nMotivo: '+document.getElementById('topic').value+'\\n\\n'+v('message'));window.location.href='mailto:contacto@pnova-ai.es?subject='+subject+'&body='+body;});
+</script></body></html>

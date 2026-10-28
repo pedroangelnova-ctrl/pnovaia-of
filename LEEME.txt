@@ -1,0 +1,33 @@
+# PNova IA — páginas legales y contacto
+
+Archivos incluidos:
+- `politica-privacidad.html`
+- `condiciones-servicio.html`
+- `politica-cookies.html`
+- `aviso-legal.html`
+- `contacto.html`
+- `legal.css`
+
+## Cómo publicarlo
+Sube los archivos HTML y `legal.css` a la misma carpeta que tu `index.html` en el repositorio de GitHub Pages o en el hosting del dominio `pnova-ai.com`.
+
+Rutas esperadas:
+- `https://pnova-ai.com/politica-privacidad.html`
+- `https://pnova-ai.com/condiciones-servicio.html`
+- `https://pnova-ai.com/politica-cookies.html`
+- `https://pnova-ai.com/aviso-legal.html`
+- `https://pnova-ai.com/contacto.html`
+
+Si prefieres rutas limpias sin `.html` (por ejemplo `/politica-privacidad/`), necesitarás configurar reglas de rutas en el hosting o crear carpetas con un `index.html` dentro.
+
+## IMPORTANTE — revisar antes de publicar
+Son plantillas visuales y textuales, no asesoramiento jurídico ni una garantía de cumplimiento. Revisa y completa:
+1. El domicilio o dirección profesional que deba constar en el aviso legal.
+2. Qué proveedor de alojamiento, autenticación, base de datos, IA, analítica y correo está realmente activo.
+3. Qué datos se guardan, por cuánto tiempo y cómo se eliminan.
+4. El inventario real de cookies y el mecanismo de consentimiento/bloqueo previo si es necesario. La página informativa no implementa un gestor de cookies.
+5. La edad mínima y cualquier precio, renovación o cancelación que realmente aplique.
+6. Considera no publicar el DNI completo en una página abierta salvo que hayas confirmado que es necesario. El DNI se ha incluido porque fue facilitado expresamente, pero puedes quitarlo del aviso legal.
+7. Comprueba que la web tiene HTTPS y que los enlaces de pie de página apuntan a estas rutas.
+
+El formulario de contacto usa `mailto:` y abre la aplicación de correo del visitante; no envía formularios a un servidor.
