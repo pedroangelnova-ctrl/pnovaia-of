@@ -357,6 +357,39 @@
   .content > *:first-child { margin-top: 0; }
   h1, h2, h3 { letter-spacing: -0.02em; }
   .content code, .content pre code { letter-spacing: 0; }
+
+  /* ---------- Bloques de código (copiar / vista previa) ---------- */
+  .code-block { margin: 0 0 14px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .code-block pre { margin: 0; border-radius: 0; background: none; }
+  .cb-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--border); font-size: 12.5px; color: var(--muted); }
+  .cb-lang { font-family: var(--mono); text-transform: lowercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cb-actions { display: flex; gap: 4px; flex: none; }
+  .cb-btn { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 8px; font-size: 12.5px; color: var(--muted); }
+  .cb-btn:hover { background: var(--hover); color: var(--text); }
+  .cb-btn .i { width: 15px; height: 15px; }
+
+  /* ---------- Panel de vista previa HTML (derecha) ---------- */
+  #pv-panel { flex: none; width: clamp(380px, 46vw, 780px); height: 100%; display: flex; flex-direction: column; background: var(--bg); border-left: 1px solid var(--border); animation: pv-in .22s ease-out; }
+  .pv-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 10px 10px 16px; border-bottom: 1px solid var(--border); }
+  .pv-title { min-width: 0; font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pv-actions { display: flex; align-items: center; gap: 4px; flex: none; }
+  .pv-btn { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--text); }
+  .pv-btn:hover { background: var(--hover); }
+  .pv-btn .i { width: 18px; height: 18px; }
+  .pv-btn.pv-ico { width: 36px; padding: 0; justify-content: center; color: var(--muted); }
+  .pv-btn.pv-ico:hover { color: var(--text); }
+  #pv-download { background: var(--accent); color: #fff; margin-right: 4px; }
+  #pv-download:hover { background: var(--accent); filter: brightness(1.1); }
+  #pv-frame { flex: 1; min-height: 0; width: 100%; border: 0; background: #fff; }
+  #pv-panel.is-full { position: fixed; inset: 0; z-index: 86; width: 100%; height: 100%; border-left: 0; animation: none; }
+  #pv-panel.is-full .pv-head { padding-top: max(10px, env(safe-area-inset-top)); }
+  @keyframes pv-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @media (max-width: 1100px) {
+    #pv-panel:not(.is-full) { position: fixed; z-index: 62; top: 0; right: 0; bottom: 0; width: min(640px, 100%); box-shadow: var(--shadow); }
+    #pv-panel:not(.is-full) .pv-head { padding-top: max(10px, env(safe-area-inset-top)); }
+  }
+  @media (max-width: 720px) { #pv-panel:not(.is-full) { width: 100%; } }
+  @media (max-width: 420px) { .pv-lbl { display: none; } #pv-download { width: 36px; padding: 0; justify-content: center; } }
   .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 { margin: 22px 0 8px; line-height: 1.35; font-weight: 600; }
   .content h1 { font-size: 1.4em; } .content h2 { font-size: 1.25em; } .content h3 { font-size: 1.12em; } .content h4, .content h5, .content h6 { font-size: 1em; }
   .content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
@@ -1308,6 +1341,19 @@
       </div>
     </div>
   </main>
+
+  <!-- ================= VISTA PREVIA HTML ================= -->
+  <aside id="pv-panel" aria-label="Vista previa" hidden>
+    <div class="pv-head">
+      <span class="pv-title" id="pv-title">Vista previa</span>
+      <div class="pv-actions">
+        <button class="pv-btn" id="pv-download" type="button" title="Descargar HTML"><span data-icon="download"></span><span class="pv-lbl">Descargar</span></button>
+        <button class="pv-btn pv-ico" id="pv-full" type="button" aria-label="Pantalla completa" title="Pantalla completa"><span data-icon="expand"></span></button>
+        <button class="pv-btn pv-ico" id="pv-close" type="button" aria-label="Cerrar vista previa" title="Cerrar"><span data-icon="x"></span></button>
+      </div>
+    </div>
+    <iframe id="pv-frame" title="Vista previa del HTML" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-pointer-lock"></iframe>
+  </aside>
 </div>
 
 <!-- ================= CONVERSACIÓN POR VOZ ================= -->
@@ -1731,7 +1777,10 @@ Object.assign(ICONS, {
   play: '<path d="M7 4v16l13-8Z" fill="currentColor"/>',
   stop: '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>',
   wave: '<path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>',
-  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>'
+  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+  expand: '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  shrink: '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>'
 });
 const icon = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 document.querySelectorAll("[data-icon]").forEach(el => { el.outerHTML = icon(el.dataset.icon); });
@@ -1808,12 +1857,20 @@ function cleanMath(text) {
   }).join("```");
 }
 
+/* ¿Este bloque de código es una página HTML? (por el lenguaje indicado o por su contenido) */
+function isHtmlCode(lang, code) {
+  return /^(html?|xhtml)$/.test(lang) || (!lang && /^\s*(<!doctype\s+html|<html[\s>])/i.test(code));
+}
+
 function renderMd(src) {
   return cleanMath(String(src)).replace(/\r\n?/g, "\n").split("```").map((part, i) => {
     if (i % 2 === 1) {
       const nl = part.indexOf("\n");
-      const code = nl > -1 ? part.slice(nl + 1) : part;
-      return `<pre><code>${esc(code.replace(/\n$/, ""))}</code></pre>`;
+      const lang = (nl > -1 ? part.slice(0, nl) : "").trim().split(/\s+/)[0].toLowerCase();
+      const code = (nl > -1 ? part.slice(nl + 1) : part).replace(/\n$/, "");
+      const prev = isHtmlCode(lang, code)
+        ? `<button type="button" class="cb-btn" data-cb-preview title="Ver vista previa">${icon("eye")}<span>Vista previa</span></button>` : "";
+      return `<div class="code-block"><div class="cb-head"><span class="cb-lang">${esc(lang || "código")}</span><span class="cb-actions">${prev}<button type="button" class="cb-btn" data-cb-copy title="Copiar código">${icon("copy")}<span>Copiar</span></button></span></div><pre><code>${esc(code)}</code></pre></div>`;
     }
     return mdBlocks(part);
   }).join("");
@@ -2859,7 +2916,7 @@ function setGreeting() {
   $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
 }
 function newChat() {
-  ttsStop();
+  ttsStop(); pvClose();
   setGreeting();
   currentId = null; messages = []; lastFailed = false;
   renderList(); renderMessages();
@@ -2874,7 +2931,7 @@ async function openConversation(id) {
   if (!error) await loadAttUrls(data || []);   // enlaces temporales de las imágenes guardadas
   loadingConv = false;
   if (error) { toast("No se pudo abrir el chat."); return; }
-  ttsStop();
+  ttsStop(); pvClose();
   currentId = id; messages = data || []; lastFailed = false;
   renderList(); renderMessages(); scrollDown(true);
 }
@@ -3081,6 +3138,7 @@ async function requestReply() {
     renderList();
     renderMessages();
     typeReply(partsOf(data).text);
+    autoPreview(partsOf(data).text);
     voiceAfterReply(data);
   } catch (err) {
     lastFailed = err.name === "AbortError"
@@ -3282,6 +3340,100 @@ function closeSources() { srcMsgId = null; $("#src-overlay").hidden = true; $("#
 $("#src-close").onclick = closeSources;
 $("#src-overlay").onclick = closeSources;
 document.addEventListener("keydown", e => { if (e.key === "Escape" && srcMsgId) closeSources(); });
+
+/* =====================================================================
+   Bloques de código (copiar) + panel de vista previa HTML
+   ===================================================================== */
+async function copyText(text) {
+  try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) {}
+  const ta = document.createElement("textarea");           // plan B para contextos sin portapapeles moderno
+  ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+  ta.remove(); return ok;
+}
+
+const pv = { html: "", name: "pagina" };
+
+function pvOpen(html) {
+  pv.html = html;
+  const t = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1];
+  const title = t ? t.replace(/\s+/g, " ").trim() : "";
+  pv.name = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "pagina";
+  $("#pv-title").textContent = title || "Vista previa";
+  $("#pv-frame").srcdoc = html;          // iframe aislado (sandbox sin allow-same-origin): el código de la IA no toca tu sesión
+  $("#pv-panel").hidden = false;
+}
+
+function pvSetFull(on) {
+  const p = $("#pv-panel");
+  p.classList.toggle("is-full", on);
+  const b = $("#pv-full");
+  b.innerHTML = icon(on ? "shrink" : "expand");
+  b.title = b.ariaLabel = on ? "Salir de pantalla completa" : "Pantalla completa";
+}
+
+async function pvToggleFull() {
+  const p = $("#pv-panel");
+  if (!p.classList.contains("is-full")) {
+    pvSetFull(true);
+    try { if (p.requestFullscreen) await p.requestFullscreen(); } catch (e) {}   // si el navegador no lo permite, queda ampliado sobre toda la ventana
+  } else {
+    pvSetFull(false);
+    if (document.fullscreenElement) { try { await document.exitFullscreen(); } catch (e) {} }
+  }
+}
+
+function pvClose() {
+  const p = $("#pv-panel");
+  if (!p || p.hidden) return;
+  if (document.fullscreenElement) { try { document.exitFullscreen(); } catch (e) {} }
+  pvSetFull(false);
+  p.hidden = true;
+  $("#pv-frame").srcdoc = "";            // detiene scripts y audio de la página
+}
+
+/* Al llegar una respuesta con una página HTML completa, se abre sola la vista previa */
+function autoPreview(text) {
+  let last = null;
+  String(text).replace(/\r\n?/g, "\n").split("```").forEach((part, i) => {
+    if (i % 2 !== 1) return;
+    const nl = part.indexOf("\n");
+    const lang = (nl > -1 ? part.slice(0, nl) : "").trim().split(/\s+/)[0].toLowerCase();
+    const code = (nl > -1 ? part.slice(nl + 1) : part).replace(/\n$/, "");
+    if (isHtmlCode(lang, code) && (/<!doctype\s+html|<html[\s>]|<body[\s>]/i.test(code) || code.length > 400)) last = code;
+  });
+  if (last) pvOpen(last);                // los trozos HTML muy cortos no la abren sola; tienen el botón «Vista previa»
+}
+
+$("#messages").addEventListener("click", async e => {
+  const cp = e.target.closest("[data-cb-copy]");
+  if (cp) {
+    const code = cp.closest(".code-block").querySelector("pre code").textContent;
+    if (!(await copyText(code))) { toast("No se pudo copiar."); return; }
+    cp.innerHTML = icon("check") + "<span>Copiado</span>";
+    setTimeout(() => { cp.innerHTML = icon("copy") + "<span>Copiar</span>"; }, 1600);
+    return;
+  }
+  const pb = e.target.closest("[data-cb-preview]");
+  if (pb) pvOpen(pb.closest(".code-block").querySelector("pre code").textContent);
+});
+
+$("#pv-close").onclick = pvClose;
+$("#pv-full").onclick = pvToggleFull;
+$("#pv-download").onclick = () => {
+  const url = URL.createObjectURL(new Blob([pv.html], { type: "text/html;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url; a.download = pv.name + ".html";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+};
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement && $("#pv-panel").classList.contains("is-full")) pvSetFull(false);   // Esc del navegador
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && $("#pv-panel").classList.contains("is-full")) pvSetFull(false);           // Esc en modo ampliado sin API
+});
 
 /* Efecto de escritura: va mostrando la respuesta poco a poco */
 function typeReply(full) {
@@ -4136,7 +4288,7 @@ function unlockTTS() {                       // iOS exige un primer speak() dent
 }
 function htmlToSpeech(html) {
   const d = document.createElement("div"); d.innerHTML = html;
-  d.querySelectorAll("pre").forEach(el => el.replaceWith(document.createTextNode(" Aquí hay un bloque de código.\n")));
+  d.querySelectorAll(".code-block, pre").forEach(el => el.replaceWith(document.createTextNode(" Aquí hay un bloque de código.\n")));
   d.querySelectorAll("p,li,h1,h2,h3,h4,h5,h6,blockquote,th,td,tr").forEach(el => el.append(document.createTextNode("\n")));
   return (d.textContent || "").replace(URL_RE, "enlace").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim();
 }
