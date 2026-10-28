@@ -2203,6 +2203,18 @@ const hasTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in wind
 /* =====================================================================
    Autenticación
    ===================================================================== */
+/* ---- URLs de la app: /login, /login/registro, /login/telefono y /chat/<id> ---- */
+const CHAT_RE = /^\/chat\/([A-Za-z0-9_-]{8,64})\/?$/;
+const LOGIN_ROUTES = { "/login": "login", "/login/registro": "register", "/login/telefono": "phone" };
+function setPath(path, replace) {
+  if (location.pathname === path) return;
+  try { history[replace ? "replaceState" : "pushState"]({}, "", path); } catch (e) {}
+}
+function loginRoute() { return LOGIN_ROUTES[location.pathname.replace(/\/+$/, "") || "/"] || null; }
+// Si entras sin sesión a /chat/<id>, se recuerda para abrirlo después de iniciar sesión.
+function rememberNext() { try { if (CHAT_RE.test(location.pathname)) sessionStorage.setItem("pnova.next", location.pathname); } catch (e) {} }
+function takeNext() { try { const n = sessionStorage.getItem("pnova.next"); sessionStorage.removeItem("pnova.next"); return n; } catch (e) { return null; } }
+
 let authMode = "login";
 
 function setAuthMode(mode) {
@@ -2233,8 +2245,8 @@ function authError(err) {
   return (err && err.message) || "No se pudo completar la acción.";
 }
 
-$("#tab-login").onclick = () => setAuthMode("login");
-$("#tab-register").onclick = () => setAuthMode("register");
+$("#tab-login").onclick = () => { setAuthMode("login"); setPath("/login", true); };
+$("#tab-register").onclick = () => { setAuthMode("register"); setPath("/login/registro", true); };
 
 $("#auth-form").addEventListener("submit", async e => {
   e.preventDefault();
@@ -2910,8 +2922,8 @@ async function sendPhoneCode() {
     btn.disabled = false;
   }
 }
-$("#btn-phone").onclick = () => showPanel("phone");
-$("#phone-back").onclick = () => showPanel("main");
+$("#btn-phone").onclick = () => { showPanel("phone"); setPath("/login/telefono"); };
+$("#phone-back").onclick = () => { showPanel("main"); setPath(authMode === "register" ? "/login/registro" : "/login"); };
 $("#phone-form").addEventListener("submit", e => { e.preventDefault(); sendPhoneCode(); });
 
 async function logout() {
@@ -2933,6 +2945,8 @@ function applyConfigWarning() {
 }
 
 function showAuth() {
+  const wasIn = !!user;
+  if (wasIn && CHAT_RE.test(location.pathname)) setPath("/", true);   // al cerrar sesión no dejar /chat/<id>
   stReset();                          // sin sesión: se muestra la pantalla de inicio
   $("#plan-modal").hidden = true;
   $("#set-overlay").hidden = true;
@@ -2945,7 +2959,7 @@ function showAuth() {
   if (typeof syncPasskeyUI === "function") syncPasskeyUI();
   pending = null; showPanel("main");
   applyConfigWarning();
-  showLanding();
+  routeAuth();
 }
 
 /* ---------- Pantalla de inicio ---------- */
@@ -3001,7 +3015,7 @@ function hideLanding() {
   landing.hidden = true;
   Stars.stop();
 }
-function goAuth(mode) {
+function goAuth(mode, noPush) {
   if (supabaseMissing) {   // el componente de acceso no se pudo descargar: se explica en lugar de dejar los botones muertos
     showAuthError();
     return;
@@ -3011,11 +3025,23 @@ function goAuth(mode) {
   setAuthMode(mode);
   showPanel("main");
   applyConfigWarning();
+  if (!noPush) { rememberNext(); setPath(mode === "register" ? "/login/registro" : "/login"); }
   $("#auth-email").focus({ preventScroll: true });
+}
+// Sin sesión: muestra la pantalla que indica la URL (/login, /login/registro, /login/telefono) o la de bienvenida.
+function routeAuth() {
+  const r = loginRoute();
+  if (!r || supabaseMissing) {
+    if (!r && /^\/login(\/|$)/.test(location.pathname)) setPath("/", true);
+    showLanding();
+    return;
+  }
+  goAuth(r === "register" ? "register" : "login", true);
+  if (r === "phone") { if (CONFIG.PHONE_ENABLED) showPanel("phone"); else setPath("/login", true); }
 }
 landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => goAuth(b.dataset.go)));
 landing.addEventListener("pointerdown", e => { if (!e.target.closest("button")) landing.classList.add("done"); });  // tocar = saltar la intro
-$("#auth-home").onclick = () => { showNotice(); showLanding(); };
+$("#auth-home").onclick = () => { showNotice(); showLanding(); setPath("/"); };
 
 function showAuthError() {
   landing.hidden = true; $("#auth-view").hidden = false; setAuthMode("login"); showPanel("main");
@@ -3089,17 +3115,16 @@ function setGreeting() {
   $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
 }
 /* ---- URL por chat: pnova-ai.com/chat/<id> ---- */
-const CHAT_RE = /^\/chat\/([A-Za-z0-9_-]{8,64})\/?$/;
-function setChatUrl(id, replace) {
-  const path = id ? "/chat/" + id : "/";
-  if (location.pathname === path) return;
-  try { history[replace ? "replaceState" : "pushState"]({ chat: id || null }, "", path); } catch (e) {}
-}
+function setChatUrl(id, replace) { setPath(id ? "/chat/" + id : "/", replace); }
 async function routeFromUrl() {
+  if (!CHAT_RE.test(location.pathname)) {
+    const nx = takeNext();                       // venías de un enlace /chat/<id> sin sesión
+    if (nx && CHAT_RE.test(nx)) setPath(nx, true);
+  } else takeNext();
   const m = location.pathname.match(CHAT_RE);
   if (!m) {
     newChat({ noPush: true });
-    if (location.pathname.indexOf("/chat") === 0) setChatUrl(null, true);
+    if (/^\/(chat|login)(\/|$)/.test(location.pathname)) setPath("/", true);   // /login ya con sesión → inicio
     return;
   }
   const id = m[1];
@@ -3115,7 +3140,7 @@ async function routeFromUrl() {
     newChat({ noPush: true }); setChatUrl(null, true);
   }
 }
-window.addEventListener("popstate", () => { if (user) routeFromUrl(); });
+window.addEventListener("popstate", () => { if (user) routeFromUrl(); else routeAuth(); });
 
 function newChat(opts) {
   opts = opts || {};
