@@ -368,6 +368,155 @@
   .cb-btn:hover { background: var(--hover); color: var(--text); }
   .cb-btn .i { width: 15px; height: 15px; }
 
+  /* ---------- Studio ---------- */
+  .nav-item.active { background: var(--active); }
+  body.studio-open .chat-item.active:not(:hover) { background: none; }
+  .st-topname { display: flex; align-items: center; gap: 8px; padding-left: 6px; font-weight: 600; font-size: 16px; }
+  .st-topname .i { width: 20px; height: 20px; color: var(--accent); }
+  #st-body { flex: 1; min-height: 0; overflow-y: auto; }
+  .st-wrap { width: 100%; max-width: 860px; margin: 0 auto; padding: 4px 24px 56px; }
+  .st-tabs { display: flex; gap: 4px; padding: 4px; background: var(--hover); border-radius: 14px; margin: 6px 0 20px; overflow-x: auto; scrollbar-width: none; }
+  .st-tabs::-webkit-scrollbar { display: none; }
+  .st-tab { position: relative; flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+  .st-tab .i { width: 17px; height: 17px; }
+  .st-tab:hover { color: var(--text); }
+  .st-tab[aria-selected="true"] { background: var(--bg); color: var(--text); box-shadow: var(--shadow); }
+  .st-dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; }
+  .st-dot.is-busy { background: var(--accent); animation: st-pulse 1s ease-in-out infinite; }
+  @keyframes st-pulse { 50% { opacity: .25; } }
+  .st-lead { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+  .st-lead b { color: var(--text); }
+  .st-card { border: 1px solid var(--border); border-radius: 18px; padding: 16px; margin-bottom: 14px; background: var(--bg); }
+  .st-card.is-drag { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--bg)); }
+  .st-card-h { font-size: 15px; margin-bottom: 10px; }
+  .st-card-h small { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .st-card textarea, .st-card input[type="text"], .st-card select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 15px; }
+  .st-card textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
+  .st-card select { width: auto; padding-right: 8px; }
+  .st-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .st-muted { color: var(--muted); font-size: 13px; }
+  .st-count { margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .st-count.is-over { color: var(--danger); }
+  .st-files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .st-files:empty { display: none; }
+  .st-file { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; padding: 6px 6px 6px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 13.5px; background: var(--hover); }
+  .st-file span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
+  .st-file small { color: var(--muted); }
+  .st-file button { width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; color: var(--muted); }
+  .st-file button:hover { background: var(--active); color: var(--text); }
+  .st-file .i { width: 14px; height: 14px; }
+  .st-opt { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .st-gen { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .st-gc { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--border); border-radius: 14px; }
+  .st-gc .st-gi { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, var(--bg)); color: var(--accent); }
+  .st-gc b { font-size: 15px; }
+  .st-gc p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); flex: 1; }
+  .st-gc .st-opt { margin-top: 2px; }
+  .st-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--border); font-weight: 500; font-size: 14.5px; background: var(--bg); color: var(--text); }
+  .st-btn:hover:not(:disabled) { background: var(--hover); }
+  .st-btn .i { width: 18px; height: 18px; }
+  .st-btn.primary { background: var(--accent); border-color: transparent; color: #fff; }
+  .st-btn.primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.1); }
+  .st-btn:disabled { opacity: .5; cursor: default; }
+  .st-ib { width: 42px; height: 42px; flex: none; border-radius: 12px; border: 1px solid var(--border); display: grid; place-items: center; background: var(--bg); }
+  .st-ib:hover { background: var(--hover); }
+  .st-link { color: var(--accent); font-size: 14px; text-decoration: underline; text-underline-offset: 2px; }
+  .st-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .st-top b { font-size: 17px; letter-spacing: -.01em; }
+  .st-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .st-state { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 56px 16px; border: 1px dashed var(--border); border-radius: 18px; }
+  .st-state h3 { margin: 4px 0 0; font-size: 18px; }
+  .st-state p { margin: 0 0 8px; color: var(--muted); max-width: 30em; line-height: 1.55; }
+  .st-state .st-gi { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, var(--bg)); color: var(--accent); }
+  .st-state.is-err .st-gi { background: color-mix(in srgb, var(--danger) 12%, var(--bg)); color: var(--danger); }
+  .st-spin { width: 38px; height: 38px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: st-rot .8s linear infinite; }
+  @keyframes st-rot { to { transform: rotate(360deg); } }
+
+  /* Cuestionario y tarjetas: marcador y barra */
+  .qz-meta { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--muted); margin-bottom: 8px; }
+  .qz-bar { height: 6px; border-radius: 6px; background: var(--hover); overflow: hidden; margin-bottom: 22px; }
+  .qz-bar i { display: block; height: 100%; background: var(--accent-grad); border-radius: 6px; transition: width .3s ease; }
+  .qz-q { margin: 0 0 18px; font-size: clamp(18px, 2.6vw, 22px); line-height: 1.4; letter-spacing: -.01em; }
+  .qz-opts { display: grid; gap: 10px; }
+  .qz-opt { display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: 14px; background: var(--bg); color: var(--text); line-height: 1.45; transition: border-color .15s, background .15s, opacity .15s; }
+  .qz-opt b { flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--hover); font-size: 13px; }
+  .qz-opt span { padding-top: 3px; min-width: 0; overflow-wrap: anywhere; }
+  .qz-opt:hover:not(:disabled) { border-color: var(--accent); }
+  .qz-opt:disabled { cursor: default; }
+  .qz-opt.is-right { border-color: #16a34a; background: color-mix(in srgb, #16a34a 12%, var(--bg)); }
+  .qz-opt.is-right b { background: #16a34a; color: #fff; }
+  .qz-opt.is-wrong { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--bg)); }
+  .qz-opt.is-wrong b { background: var(--danger); color: #fff; }
+  .qz-opt.is-dim { opacity: .55; }
+  .qz-fb { margin-top: 16px; padding: 13px 15px; border-radius: 14px; line-height: 1.55; font-size: 15px; }
+  .qz-fb.ok { background: color-mix(in srgb, #16a34a 12%, var(--bg)); }
+  .qz-fb.bad { background: color-mix(in srgb, var(--danger) 10%, var(--bg)); }
+  .qz-res { text-align: center; padding: 12px 0; }
+  .qz-score { display: inline-flex; align-items: baseline; gap: 8px; margin: 8px 0; }
+  .qz-score b { font-size: 64px; line-height: 1; letter-spacing: -.03em; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .qz-score span { font-size: 18px; color: var(--muted); }
+  .qz-msg { margin: 0 0 8px; font-size: 17px; }
+  .qz-res h4 { text-align: left; margin: 26px 0 10px; font-size: 15px; }
+  .qz-wrong { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; text-align: left; }
+  .qz-wrong li { display: grid; gap: 4px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; line-height: 1.5; }
+  .qz-wrong span { color: #16a34a; font-size: 14.5px; }
+  .qz-wrong small { color: var(--muted); font-size: 13.5px; }
+  .qz-res .st-actions { justify-content: center; }
+
+  /* Tarjetas */
+  .fc-card { display: block; width: 100%; aspect-ratio: 3 / 2; max-height: 56vh; perspective: 1400px; border-radius: 22px; }
+  .fc-in { position: relative; display: block; width: 100%; height: 100%; transition: transform .5s cubic-bezier(.4, .2, .2, 1); transform-style: preserve-3d; }
+  .fc-card.is-flipped .fc-in { transform: rotateY(180deg); }
+  .fc-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 34px 26px 22px; border-radius: 22px; border: 1px solid var(--border); background: var(--bg); box-shadow: var(--shadow); -webkit-backface-visibility: hidden; backface-visibility: hidden; font-size: clamp(18px, 3vw, 26px); line-height: 1.4; }
+  .fc-back { transform: rotateY(180deg); background: color-mix(in srgb, var(--accent) 9%, var(--bg)); }
+  .fc-tag { position: absolute; top: 14px; left: 18px; font-style: normal; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .fc-txt { display: block; max-height: 100%; overflow-y: auto; overflow-wrap: anywhere; }
+  .fc-hint { text-align: center; color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+  .fc-actions { justify-content: center; margin-top: 14px; }
+
+  /* Diapositivas en pizarra */
+  .sl { display: flex; flex-direction: column; gap: 14px; }
+  .sl-stage { position: relative; aspect-ratio: 16 / 9; display: flex; flex-direction: column; justify-content: flex-start; padding: clamp(16px, 3.4vw, 40px) clamp(18px, 4.4vw, 54px); color: #f2f6ef; border: clamp(7px, 1.4vw, 14px) solid #8a5a33; border-radius: 10px; background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.07), transparent 55%), linear-gradient(165deg, #2f5240 0%, #1d3629 70%); box-shadow: inset 0 0 50px rgba(0,0,0,.5), inset 0 0 0 2px rgba(0,0,0,.25), 0 14px 34px rgba(0,0,0,.28); }
+  .sl-num { position: absolute; top: clamp(6px, 1.4vw, 14px); right: clamp(10px, 2vw, 20px); font-size: clamp(11px, 1.6vw, 15px); color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
+  .sl-title { margin: 0 0 .5em; font-family: "Caveat", "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", cursive; font-size: clamp(24px, 4.8vw, 50px); font-weight: 700; line-height: 1.12; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,.18); letter-spacing: 0; animation: ch-in .6s ease both; }
+  .sl-title::after { content: ""; display: block; width: min(60%, 14em); height: 3px; margin-top: .25em; border-radius: 3px; background: rgba(255,255,255,.5); }
+  .sl-bullets { list-style: none; margin: 0; padding: 0; }
+  .sl-bullets li { position: relative; margin: .5em 0; padding-left: 1.5em; font-size: clamp(14px, 2.5vw, 26px); line-height: 1.35; color: #eef3ea; opacity: 0; animation: ch-in .55s ease forwards; animation-delay: calc(.35s + var(--n) * .32s); overflow-wrap: anywhere; }
+  .sl-bullets li::before { content: "✎"; position: absolute; left: 0; top: 0; color: #ffd66b; }
+  .sl-stage.is-cover { justify-content: center; align-items: center; text-align: center; }
+  .sl-stage.is-cover .sl-title { font-size: clamp(30px, 6.4vw, 70px); }
+  .sl-stage.is-cover .sl-title::after { margin-left: auto; margin-right: auto; }
+  .sl-stage.is-cover .sl-bullets li { padding-left: 0; }
+  .sl-stage.is-cover .sl-bullets li::before { content: none; }
+  @keyframes ch-in { from { opacity: 0; transform: translateY(6px); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+  .sl-ledge { display: flex; gap: 10px; align-items: center; height: 12px; margin: -2px 12px 0; padding-left: 20px; background: #6b4423; border-radius: 0 0 8px 8px; box-shadow: 0 6px 12px rgba(0,0,0,.2); }
+  .sl-ledge i { display: block; width: 26px; height: 6px; border-radius: 3px; background: #f1f1ea; margin-top: -9px; }
+  .sl-ledge i + i { width: 18px; background: #ffd66b; }
+  .sl-bar { display: flex; align-items: center; gap: 12px; }
+  .sl-dots { flex: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .sl-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); transition: background .15s, transform .15s; }
+  .sl-dot:hover { background: var(--muted); }
+  .sl-dot.on { background: var(--accent); transform: scale(1.35); }
+  .sl-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .st-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); cursor: pointer; }
+  .st-toggle input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .sl-explain { padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; background: color-mix(in srgb, var(--accent) 5%, var(--bg)); }
+  .sl-explain b { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 6px; color: var(--muted); }
+  .sl-explain b .i { width: 16px; height: 16px; }
+  .sl-explain p { margin: 0; line-height: 1.65; font-size: 16px; }
+  .sl.is-full { position: fixed; inset: 0; z-index: 86; background: var(--bg); padding: max(14px, env(safe-area-inset-top)) 18px max(14px, env(safe-area-inset-bottom)); overflow-y: auto; gap: 10px; }
+  .sl.is-full .sl-boardwrap { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .sl.is-full .sl-stage { aspect-ratio: auto; flex: 1; min-height: 0; overflow-y: auto; }
+  .sl.is-full .sl-explain { max-height: 28vh; overflow-y: auto; flex: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .sl-bullets li, .sl-title { animation: none; opacity: 1; }
+    .fc-in { transition: none; }
+  }
+  @media (max-width: 800px) {
+    .st-wrap { padding: 4px 16px 48px; }
+    .st-card { padding: 14px; }
+  }
+
   /* ---------- Panel de vista previa HTML (derecha) ---------- */
   #pv-panel { flex: none; width: clamp(380px, 46vw, 780px); height: 100%; display: flex; flex-direction: column; background: var(--bg); border-left: 1px solid var(--border); animation: pv-in .22s ease-out; }
   .pv-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 10px 10px 16px; border-bottom: 1px solid var(--border); }
@@ -1277,6 +1426,7 @@
     </div>
     <div class="side-nav">
       <button class="nav-item" id="btn-new" type="button"><span data-icon="newchat"></span>Nuevo chat</button>
+      <button class="nav-item" id="btn-studio" type="button"><span data-icon="studio"></span>Studio</button>
     </div>
     <div class="search-box" id="search-box" hidden>
       <input id="search-input" type="search" placeholder="Buscar chats" aria-label="Buscar chats">
@@ -1338,6 +1488,20 @@
         <input type="file" id="file-img" accept="image/*" multiple hidden>
         <input type="file" id="file-any" multiple hidden>
         <div id="disclaimer">PNova IA puede cometer errores. Comprueba la información importante.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= STUDIO ================= -->
+  <main id="studio" hidden>
+    <header class="topbar">
+      <button class="icon-btn only-collapsed" id="st-open" type="button" aria-label="Abrir barra lateral"><span data-icon="panel"></span></button>
+      <div class="st-topname"><span data-icon="studio"></span>Studio</div>
+    </header>
+    <div id="st-body">
+      <div class="st-wrap">
+        <div class="st-tabs" id="st-tabs" role="tablist" aria-label="Secciones de Studio"></div>
+        <div id="st-pane"></div>
       </div>
     </div>
   </main>
@@ -1780,7 +1944,15 @@ Object.assign(ICONS, {
   alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
   expand: '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   shrink: '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
-  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>'
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  studio: '<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/>',
+  quiz: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  cards: '<path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 12 10 5 10-5"/><path d="m2 17 10 5 10-5"/>',
+  slides: '<path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/>',
+  upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/>',
+  left: '<path d="m15 18-6-6 6-6"/>',
+  right: '<path d="m9 18 6-6-6-6"/>',
+  sparkle: '<path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M19 3v4"/><path d="M21 5h-4"/>'
 });
 const icon = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 document.querySelectorAll("[data-icon]").forEach(el => { el.outerHTML = icon(el.dataset.icon); });
@@ -2760,7 +2932,8 @@ function applyConfigWarning() {
   }
 }
 
-function showAuth() {                          // sin sesión: se muestra la pantalla de inicio
+function showAuth() {
+  stReset();                          // sin sesión: se muestra la pantalla de inicio
   $("#plan-modal").hidden = true;
   $("#set-overlay").hidden = true;
   closeVoiceMode(); ttsStop(); dictAbort();
@@ -2916,7 +3089,7 @@ function setGreeting() {
   $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
 }
 function newChat() {
-  ttsStop(); pvClose();
+  ttsStop(); pvClose(); closeStudio();
   setGreeting();
   currentId = null; messages = []; lastFailed = false;
   renderList(); renderMessages();
@@ -2931,7 +3104,7 @@ async function openConversation(id) {
   if (!error) await loadAttUrls(data || []);   // enlaces temporales de las imágenes guardadas
   loadingConv = false;
   if (error) { toast("No se pudo abrir el chat."); return; }
-  ttsStop(); pvClose();
+  ttsStop(); pvClose(); closeStudio();
   currentId = id; messages = data || []; lastFailed = false;
   renderList(); renderMessages(); scrollDown(true);
 }
@@ -3395,6 +3568,7 @@ function pvClose() {
 
 /* Al llegar una respuesta con una página HTML completa, se abre sola la vista previa */
 function autoPreview(text) {
+  if (st && st.open) return;             // en Studio no se abre el panel del chat
   let last = null;
   String(text).replace(/\r\n?/g, "\n").split("```").forEach((part, i) => {
     if (i % 2 !== 1) return;
@@ -3433,6 +3607,537 @@ document.addEventListener("fullscreenchange", () => {
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && $("#pv-panel").classList.contains("is-full")) pvSetFull(false);           // Esc en modo ampliado sin API
+});
+
+/* =====================================================================
+   Studio: fuentes → cuestionario, tarjetas didácticas y diapositivas
+   El modelo PNova 3.0 Galaxy devuelve JSON y la interfaz lo convierte en material interactivo.
+   ===================================================================== */
+var st = null;                                   // var: así funciona aunque se llame antes de llegar aquí
+const ST_MAX_CHARS = 28000, ST_MAX_FILES = 8;
+const ST_KINDS = {
+  src:    { label: "Fuentes",      icon: "file" },
+  quiz:   { label: "Cuestionario", icon: "quiz" },
+  cards:  { label: "Tarjetas",     icon: "cards" },
+  slides: { label: "Diapositivas", icon: "slides" }
+};
+const ST_NOUN = { quiz: "cuestionario", cards: "tarjetas didácticas", slides: "diapositivas" };
+const ST_INFO = {
+  quiz:   ["Cuestionario",         "Preguntas tipo test con corrección al instante y explicación de cada respuesta.", [5, 10, 15, 20], "preguntas"],
+  cards:  ["Tarjetas didácticas",  "Tarjetas que se giran para memorizar conceptos. Marca las que ya sabes y repasa el resto.", [8, 12, 20, 30], "tarjetas"],
+  slides: ["Diapositivas",         "Una presentación en pizarra que te va explicando cada tema, con voz si quieres.", [5, 8, 10, 12], "diapositivas"]
+};
+
+function stFresh() {
+  return {
+    open: false, tab: "src", text: "", topic: "", files: [],
+    opts: { level: "intermedio", quiz: 10, cards: 12, slides: 8 },
+    data: { quiz: null, cards: null, slides: null },
+    busy: null, ctrl: null, err: {},
+    quiz: null, cards: null, sl: { i: 0, auto: false, speaking: false }
+  };
+}
+st = stFresh();
+
+function openStudio() {
+  if (!user || st.open) { closeSidebarMobile(); return; }
+  pvClose();
+  st.open = true;
+  $("#main").hidden = true; $("#studio").hidden = false;
+  document.body.classList.add("studio-open");
+  $("#btn-studio").classList.add("active");
+  stRender();
+  closeSidebarMobile();
+}
+function closeStudio() {
+  if (!st || !st.open) return;
+  slStop(); slExitFull();
+  st.open = false;
+  $("#studio").hidden = true; $("#main").hidden = false;
+  document.body.classList.remove("studio-open");
+  $("#btn-studio").classList.remove("active");
+}
+function stReset() {                              // al cerrar sesión: no se arrastra nada a otra cuenta
+  if (!st) return;
+  if (st.ctrl) { st.ctrl.user = true; try { st.ctrl.abort(); } catch (e) {} }
+  closeStudio();
+  st = stFresh();
+}
+
+/* ---------- Fuentes ---------- */
+function stFullText() {
+  const parts = [];
+  if (st.text.trim()) parts.push("[Apuntes pegados]\n" + st.text.trim());
+  st.files.forEach(f => parts.push("[Archivo: " + f.name + "]\n" + f.text));
+  return parts.join("\n\n---\n\n");
+}
+function stSource() {
+  let text = stFullText();
+  if (text.length > ST_MAX_CHARS) text = text.slice(0, ST_MAX_CHARS) + "\n…[recortado]";
+  return { text };
+}
+function stCount() {
+  const el = $("#st-count"); if (!el) return;
+  const n = stFullText().length;
+  el.textContent = n ? n.toLocaleString("es-ES") + " / " + ST_MAX_CHARS.toLocaleString("es-ES") + " caracteres" + (n > ST_MAX_CHARS ? " · solo se usará el principio" : "") : "Aún no has añadido fuentes.";
+  el.classList.toggle("is-over", n > ST_MAX_CHARS);
+}
+async function stAddFiles(list) {
+  for (const file of Array.from(list || [])) {
+    if (st.files.length >= ST_MAX_FILES) { toast("Máximo " + ST_MAX_FILES + " archivos."); break; }
+    if (!file.size) { toast("«" + file.name + "» está vacío."); continue; }
+    if (file.size > CONFIG.FILE_MAX_BYTES) { toast("«" + file.name + "» pesa más de " + fmtSize(CONFIG.FILE_MAX_BYTES) + "."); continue; }
+    const isTxt = file.type.startsWith("text/") || file.type === "application/json" || TEXT_EXT.test(file.name);
+    if (!isTxt) { toast("«" + file.name + "»: Studio lee archivos de texto. Para PDF o Word, copia y pega el contenido."); continue; }
+    try {
+      const t = (await file.text()).trim();
+      if (!t) { toast("«" + file.name + "» está vacío."); continue; }
+      st.files.push({ name: file.name, text: t, size: file.size });
+    } catch (err) { toast("No se pudo leer «" + file.name + "»."); }
+  }
+  if (st.open && st.tab === "src") stRender();
+}
+
+/* ---------- Pintado general ---------- */
+function stRenderTabs() {
+  $("#st-tabs").innerHTML = Object.entries(ST_KINDS).map(([k, v]) =>
+    '<button type="button" class="st-tab" role="tab" data-tab="' + k + '" aria-selected="' + (st.tab === k) + '">' + icon(v.icon) + "<span>" + v.label + "</span>" +
+    (st.busy === k ? '<i class="st-dot is-busy"></i>' : st.data[k] ? '<i class="st-dot"></i>' : "") + "</button>").join("");
+}
+function stRender() {
+  stRenderTabs();
+  const p = $("#st-pane"), k = st.tab;
+  if (k === "src") {
+    p.innerHTML = stSrcHtml();
+    $("#st-text").value = st.text; $("#st-topic").value = st.topic;
+    stCount();
+  }
+  else if (st.busy === k) p.innerHTML = stLoadingHtml(k);
+  else if (st.err[k]) p.innerHTML = stStateHtml(k, "alert", "No se pudo crear", st.err[k], true);
+  else if (!st.data[k]) p.innerHTML = stStateHtml(k, ST_KINDS[k].icon, "Aún no has creado " + (k === "quiz" ? "un " : "") + ST_NOUN[k], "Genera " + (k === "quiz" ? "un " : "") + ST_NOUN[k] + " a partir de tus fuentes con PNova 3.0 Galaxy.", false);
+  else if (k === "quiz") p.innerHTML = qzHtml();
+  else if (k === "cards") p.innerHTML = fcHtml();
+  else { p.innerHTML = slHtml(); slShow(); }
+}
+function stTab(k) {
+  if (!ST_KINDS[k]) return;
+  slStop(); slExitFull();
+  st.tab = k; stRender();
+  $("#st-body").scrollTop = 0;
+}
+
+function stSrcHtml() {
+  const files = st.files.map((f, i) => '<div class="st-file">' + icon("file") + '<span title="' + escA(f.name) + '">' + esc(f.name) + "</span><small>" + fmtSize(f.size) + '</small><button type="button" data-st-rm="' + i + '" aria-label="Quitar ' + escA(f.name) + '">' + icon("x") + "</button></div>").join("");
+  const gens = ["quiz", "cards", "slides"].map(k => {
+    const [name, desc, counts, unit] = ST_INFO[k];
+    return '<div class="st-gc"><span class="st-gi">' + icon(ST_KINDS[k].icon) + "</span><b>" + name + "</b><p>" + desc + "</p>" +
+      '<label class="st-opt">Cantidad <select data-st-n="' + k + '">' + counts.map(c => '<option value="' + c + '"' + (st.opts[k] === c ? " selected" : "") + ">" + c + " " + unit + "</option>").join("") + "</select></label>" +
+      '<button type="button" class="st-btn primary" data-gen="' + k + '"' + (st.busy ? " disabled" : "") + ">" + icon("sparkle") + (st.data[k] ? "Crear de nuevo" : "Crear") + "</button></div>";
+  }).join("");
+  return '<p class="st-lead">Sube o pega lo que tienes que estudiar. <b>PNova 3.0 Galaxy</b> lo convierte en un cuestionario interactivo, tarjetas didácticas y diapositivas que te lo explican.</p>' +
+    '<div class="st-card" id="st-drop"><div class="st-card-h"><b>1 · Tus fuentes</b></div>' +
+    '<textarea id="st-text" placeholder="Pega aquí tus apuntes, un resumen o el texto del tema…" aria-label="Apuntes"></textarea>' +
+    '<div class="st-files">' + files + "</div>" +
+    '<div class="st-row"><button type="button" class="st-btn" data-st="upload">' + icon("upload") + 'Subir archivos</button><span class="st-muted">.txt, .md, .csv, .json… También puedes arrastrarlos aquí. Para PDF o Word, copia y pega el texto.</span></div>' +
+    '<input type="file" id="st-file" multiple hidden accept="text/*,.md,.markdown,.csv,.tsv,.json,.xml,.yml,.yaml,.log">' +
+    '<div class="st-count" id="st-count"></div></div>' +
+    '<div class="st-card"><div class="st-card-h"><b>2 · Enfoque</b><small>opcional</small></div>' +
+    '<input type="text" id="st-topic" maxlength="160" placeholder="Tema o examen, por ejemplo: «La Revolución Francesa, examen del viernes»" aria-label="Tema o enfoque">' +
+    '<label class="st-opt">Dificultad <select id="st-level">' + ["básico", "intermedio", "avanzado"].map(l => '<option value="' + l + '"' + (st.opts.level === l ? " selected" : "") + ">" + l[0].toUpperCase() + l.slice(1) + "</option>").join("") + "</select></label></div>" +
+    '<div class="st-card"><div class="st-card-h"><b>3 · ¿Qué quieres crear?</b></div><div class="st-gen">' + gens + "</div></div>";
+}
+function stLoadingHtml(k) {
+  return '<div class="st-state"><div class="st-spin"></div><h3>Creando tu ' + ST_NOUN[k] + "…</h3><p>PNova 3.0 Galaxy está leyendo tus fuentes. Puede tardar hasta un minuto.</p>" +
+    '<button type="button" class="st-btn" data-st="cancel">Cancelar</button></div>';
+}
+function stStateHtml(k, ic, title, text, isErr) {
+  return '<div class="st-state' + (isErr ? " is-err" : "") + '"><span class="st-gi">' + icon(ic) + "</span><h3>" + esc(title) + "</h3><p>" + esc(text) + "</p>" +
+    '<div class="st-actions" style="justify-content:center;margin-top:4px"><button type="button" class="st-btn primary" data-gen="' + k + '"' + (st.busy ? " disabled" : "") + ">" + icon("sparkle") + (isErr ? "Reintentar" : "Crear ahora") + "</button>" +
+    '<button type="button" class="st-btn" data-st="gosrc">Ir a Fuentes</button></div></div>';
+}
+
+/* ---------- Petición al modelo ---------- */
+function stPrompt(kind, src, retry) {
+  const n = st.opts[kind], topic = st.topic.trim();
+  const base = "Eres un generador de material de estudio. Responde SIEMPRE con un único objeto JSON válido: sin markdown, sin bloques de código, sin comentarios y sin ningún texto antes ni después. Escribe en español claro. Basa el contenido únicamente en las fuentes" +
+    (src.text ? "" : " (no hay fuentes: usa tu conocimiento sobre el tema indicado)") + "; no inventes datos que las contradigan. Dificultad: " + st.opts.level + ".";
+  const tasks = {
+    quiz: "Crea un cuestionario de " + n + ' preguntas de opción múltiple, con 4 opciones y una sola correcta. Cada pregunta lleva una explicación breve (1 o 2 frases) de por qué la respuesta es correcta. Formato exacto: {"title":"...","questions":[{"q":"...","options":["...","...","...","..."],"answer":0,"explanation":"..."}]} donde "answer" es el índice (0 a 3) de la opción correcta.',
+    cards: "Crea " + n + ' tarjetas didácticas para memorizar los conceptos clave: el anverso es un término, concepto o pregunta corta y el reverso una definición o respuesta breve y clara. Formato exacto: {"title":"...","cards":[{"front":"...","back":"..."}]}',
+    slides: "Crea una presentación de " + n + ' diapositivas para explicar este contenido como un profesor en una pizarra. La primera es la portada (título y una frase) y la última un resumen. Cada diapositiva lleva "title" corto, "bullets" con 2 a 5 ideas muy breves (máximo 12 palabras cada una) y "explanation": lo que dirías en voz alta al explicarla (3 a 6 frases, tono didáctico, sin repetir literalmente las viñetas). Formato exacto: {"title":"...","slides":[{"title":"...","bullets":["..."],"explanation":"..."}]}'
+  };
+  return [base, tasks[kind], topic ? "Enfoque o tema: " + topic : "",
+    retry ? "IMPORTANTE: tu respuesta anterior no era un JSON válido. Devuelve únicamente el objeto JSON, sin nada más." : "",
+    "FUENTES:\n" + (src.text || "(sin fuentes)")].filter(Boolean).join("\n\n");
+}
+
+async function stAsk(message, ctrl) {
+  const model = CONFIG.MODELS.find(m => m.id === "pnova-3.0-galaxy");
+  if (!model || !model.endpoint) { const e = new Error("nomodel"); e.userMessage = "PNova 3.0 Galaxy no está disponible ahora mismo."; throw e; }
+  const { data: sess } = await sb.auth.getSession();
+  if (!sess.session) { const e = new Error("auth"); e.userMessage = "Tu sesión ha caducado. Vuelve a iniciar sesión."; throw e; }
+  const timer = setTimeout(() => { ctrl.timedOut = true; ctrl.abort(); }, 120000);
+  try {
+    let res;
+    try {
+      res = await fetch(model.endpoint, {
+        method: "POST", signal: ctrl.signal,
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + sess.session.access_token },
+        body: JSON.stringify({ message, history: [], conversation_id: currentId || null, user_id: user.id, model: model.id })
+      });
+    } catch (err) {
+      if (err.name === "AbortError") throw err;
+      const e = new Error("network"); e.userMessage = "No se pudo conectar con PNova 3.0 Galaxy. Comprueba tu conexión."; throw e;
+    }
+    if (!res.ok) {
+      const e = new Error("http " + res.status);
+      e.userMessage = res.status === 429 ? "PNova 3.0 Galaxy está recibiendo muchas peticiones. Inténtalo de nuevo en un momento."
+        : res.status === 401 ? "Tu sesión ha caducado. Vuelve a iniciar sesión."
+        : res.status === 413 ? "Las fuentes son demasiado largas. Prueba con menos texto."
+        : "PNova 3.0 Galaxy respondió con un error (" + res.status + ").";
+      throw e;
+    }
+    const reply = extractReply(await res.json().catch(() => null));
+    if (!reply) { const e = new Error("empty"); e.userMessage = "PNova 3.0 Galaxy devolvió una respuesta vacía."; throw e; }
+    return reply;
+  } finally { clearTimeout(timer); }
+}
+
+const stParseErr = () => Object.assign(new Error("parse"), { parse: true, userMessage: "PNova 3.0 Galaxy no devolvió un formato válido. Inténtalo de nuevo." });
+function stParse(raw) {
+  let t = String(raw).replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/```(?:json)?/gi, "").trim();
+  const a = t.indexOf("{"); if (a < 0) throw stParseErr();
+  t = t.slice(a);
+  const tryParse = x => { try { return JSON.parse(x); } catch (e) { try { return JSON.parse(x.replace(/,\s*([}\]])/g, "$1")); } catch (e2) { return null; } } };
+  const b = t.lastIndexOf("}");
+  let o = b > -1 ? tryParse(t.slice(0, b + 1)) : null;
+  if (o && typeof o === "object") return o;
+  let idx = t.length;                              // JSON cortado a medias: se recupera hasta el último elemento completo
+  for (let n = 0; n < 40; n++) {
+    idx = t.lastIndexOf("}", idx - 1); if (idx < 0) break;
+    for (const tail of ["]}", "}]}", "]}]}"]) { o = tryParse(t.slice(0, idx + 1) + tail); if (o && typeof o === "object") return o; }
+  }
+  throw stParseErr();
+}
+
+const stStr = (v, max) => (v == null ? "" : String(v)).replace(/\s+/g, " ").trim().slice(0, max || 600);
+function stShuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function stNormalize(kind, o) {
+  const title = stStr(o.title || o.titulo, 120);
+  const arr = v => Array.isArray(v) ? v : [];
+  if (kind === "quiz") {
+    const questions = arr(o.questions || o.preguntas || o.quiz).map(q => {
+      if (!q || typeof q !== "object") return null;
+      const text = stStr(q.q || q.question || q.pregunta, 400);
+      const raw = arr(q.options || q.opciones || q.answers).slice(0, 4).map(x => stStr(x && typeof x === "object" ? (x.text || x.texto) : x, 300).replace(/^[A-Da-d][\).:]\s+/, ""));
+      if (!text || raw.length < 2 || raw.some(x => !x)) return null;
+      const a = q.answer ?? q.correct ?? q.correcta ?? q.respuesta ?? q.correct_index;
+      let ans = -1;
+      if (typeof a === "number") ans = a;
+      else if (typeof a === "string") {
+        const t = a.trim();
+        if (/^[A-Da-d]$/.test(t)) ans = "abcd".indexOf(t.toLowerCase());
+        else if (/^\d+$/.test(t)) ans = parseInt(t, 10);
+        else ans = raw.findIndex(x => x.toLowerCase() === t.toLowerCase());
+      }
+      if (!(ans >= 0 && ans < raw.length)) return null;
+      let options = raw, answer = ans;
+      if (!raw.some(x => /todas|ninguna|anteriores/i.test(x))) {        // se mezclan las opciones para que la correcta no siempre sea la A
+        const idx = stShuffle(raw.map((_, i) => i));
+        options = idx.map(i => raw[i]); answer = idx.indexOf(ans);
+      }
+      return { q: text, options, answer, explanation: stStr(q.explanation || q.explicacion || q.explicación, 500) };
+    }).filter(Boolean);
+    if (!questions.length) throw stParseErr();
+    return { title, questions };
+  }
+  if (kind === "cards") {
+    const cards = arr(o.cards || o.tarjetas || o.flashcards).map(c => {
+      if (!c || typeof c !== "object") return null;
+      const front = stStr(c.front || c.frente || c.anverso || c.term || c.pregunta || c.q, 300), back = stStr(c.back || c.reverso || c.definition || c.definicion || c.respuesta || c.a, 700);
+      return front && back ? { front, back } : null;
+    }).filter(Boolean);
+    if (!cards.length) throw stParseErr();
+    return { title, cards };
+  }
+  const slides = arr(o.slides || o.diapositivas).map(x => {
+    if (!x || typeof x !== "object") return null;
+    const t = stStr(x.title || x.titulo, 140);
+    const bullets = arr(x.bullets || x.puntos || x.viñetas || x.ideas).map(b => stStr(b, 180)).filter(Boolean).slice(0, 6);
+    if (!t && !bullets.length) return null;
+    return { title: t || "Diapositiva", bullets, explanation: stStr(x.explanation || x.explicacion || x.explicación || x.narration || x.notas, 1400) || bullets.join(". ") };
+  }).filter(Boolean);
+  if (!slides.length) throw stParseErr();
+  return { title, slides };
+}
+
+function stInitTool(kind) {
+  if (kind === "quiz") st.quiz = { list: st.data.quiz.questions.slice(), i: 0, picked: null, score: 0, wrong: [], done: false };
+  else if (kind === "cards") st.cards = { list: st.data.cards.cards.map((_, i) => i), i: 0, known: new Set(), done: false };
+  else st.sl = { i: 0, auto: false, speaking: false };
+}
+
+async function stGenerate(kind) {
+  if (st.busy) return;
+  const src = stSource();
+  if (!src.text && st.topic.trim().length < 3) { toast("Añade tus fuentes o escribe un tema para empezar."); stTab("src"); return; }
+  const me = st;
+  slStop(); slExitFull();
+  st.busy = kind; st.err[kind] = null; st.tab = kind;
+  const ctrl = new AbortController(); st.ctrl = ctrl;
+  stRender();
+  try {
+    let data = null, lastErr = null;
+    for (let attempt = 0; attempt < 2 && !data; attempt++) {
+      try { data = stNormalize(kind, stParse(await stAsk(stPrompt(kind, src, attempt > 0), ctrl))); }
+      catch (e) { lastErr = e; if (!e.parse) throw e; }
+    }
+    if (!data) throw lastErr;
+    if (st !== me) return;
+    st.data[kind] = data; stInitTool(kind);
+    if (!st.open) toast("Tu " + ST_NOUN[kind] + " " + (kind === "quiz" ? "está listo" : "están listas") + " en Studio.");
+  } catch (e) {
+    if (st !== me) return;
+    if (e.name === "AbortError" && ctrl.user) { /* cancelado por la persona */ }
+    else st.err[kind] = e.name === "AbortError" ? "PNova 3.0 Galaxy tardó demasiado en responder. Inténtalo de nuevo." : (e.userMessage || "No se pudo crear. Inténtalo de nuevo.");
+  } finally {
+    if (st === me) { st.busy = null; st.ctrl = null; if (st.open) stRender(); }
+  }
+}
+
+/* ---------- Cuestionario interactivo ---------- */
+function qzHtml() {
+  const q = st.quiz, d = st.data.quiz;
+  if (q.done) return qzResult();
+  const cur = q.list[q.i], n = q.list.length, done = q.picked !== null, L = "ABCD", ok = q.picked === cur.answer;
+  return '<div class="st-top"><b>' + esc(d.title || "Cuestionario") + '</b><button type="button" class="st-link" data-gen="quiz">Crear de nuevo</button></div>' +
+    '<div class="qz-meta"><span>Pregunta ' + (q.i + 1) + " de " + n + "</span><span>Aciertos: " + q.score + "</span></div>" +
+    '<div class="qz-bar"><i style="width:' + ((q.i + (done ? 1 : 0)) / n * 100) + '%"></i></div>' +
+    '<h3 class="qz-q">' + esc(cur.q) + "</h3>" +
+    '<div class="qz-opts">' + cur.options.map((o, k) => {
+      let c = "qz-opt";
+      if (done) c += k === cur.answer ? " is-right" : k === q.picked ? " is-wrong" : " is-dim";
+      return '<button type="button" class="' + c + '" data-qz-opt="' + k + '"' + (done ? " disabled" : "") + "><b>" + L[k] + "</b><span>" + esc(o) + "</span></button>";
+    }).join("") + "</div>" +
+    (done ? '<div class="qz-fb ' + (ok ? "ok" : "bad") + '"><b>' + (ok ? "¡Correcto!" : "No es esa. La correcta es la " + L[cur.answer] + ".") + "</b> " + esc(cur.explanation) + "</div>" +
+      '<div class="st-actions"><button type="button" class="st-btn primary" data-qz-next>' + (q.i + 1 < n ? "Siguiente" : "Ver resultado") + "</button></div>" : "");
+}
+function qzResult() {
+  const q = st.quiz, n = q.list.length, pct = Math.round(q.score / n * 100);
+  const msg = pct === 100 ? "¡Perfecto! Lo dominas." : pct >= 70 ? "¡Muy bien! Casi lo tienes." : pct >= 40 ? "Vas por buen camino. Repasa los fallos." : "Toca repasar un poco más. ¡Tú puedes!";
+  return '<div class="qz-res"><div class="qz-score"><b>' + q.score + "</b><span>/ " + n + '</span></div><p class="qz-msg">' + msg + "</p>" +
+    (q.wrong.length ? '<h4>Para repasar</h4><ul class="qz-wrong">' + q.wrong.map(w => "<li><b>" + esc(w.q) + "</b><span>Respuesta: " + esc(w.options[w.answer]) + "</span>" + (w.explanation ? "<small>" + esc(w.explanation) + "</small>" : "") + "</li>").join("") + "</ul>" : "") +
+    '<div class="st-actions"><button type="button" class="st-btn primary" data-qz-again="all">Repetir cuestionario</button>' +
+    (q.wrong.length ? '<button type="button" class="st-btn" data-qz-again="wrong">Solo los ' + q.wrong.length + " fallos</button>" : "") +
+    '<button type="button" class="st-btn" data-gen="quiz">Crear uno nuevo</button></div></div>';
+}
+function qzPick(k) {
+  const q = st.quiz; if (!q || q.done || q.picked !== null) return;
+  const cur = q.list[q.i]; if (!cur || k >= cur.options.length) return;
+  q.picked = k;
+  if (k === cur.answer) q.score++; else q.wrong.push(cur);
+  stRender();
+}
+function qzNext() {
+  const q = st.quiz; if (!q || q.picked === null) return;
+  if (q.i + 1 >= q.list.length) q.done = true; else { q.i++; q.picked = null; }
+  stRender(); $("#st-body").scrollTop = 0;
+}
+function qzAgain(mode) {
+  const src = mode === "wrong" ? st.quiz.wrong.slice() : st.data.quiz.questions.slice();
+  st.quiz = { list: stShuffle(src), i: 0, picked: null, score: 0, wrong: [], done: false };
+  stRender(); $("#st-body").scrollTop = 0;
+}
+
+/* ---------- Tarjetas didácticas ---------- */
+function fcHtml() {
+  const d = st.data.cards, c = st.cards, total = d.cards.length;
+  if (c.done) {
+    const pending = d.cards.map((_, i) => i).filter(i => !c.known.has(i));
+    return '<div class="st-top"><b>' + esc(d.title || "Tarjetas didácticas") + '</b><button type="button" class="st-link" data-gen="cards">Crear de nuevo</button></div>' +
+      '<div class="qz-res"><div class="qz-score"><b>' + c.known.size + "</b><span>/ " + total + ' sabidas</span></div><p class="qz-msg">' + (pending.length ? "Te quedan " + pending.length + " por repasar." : "¡Las dominas todas!") + "</p>" +
+      '<div class="st-actions">' + (pending.length ? '<button type="button" class="st-btn primary" data-fc="pending">Repasar las ' + pending.length + " pendientes</button>" : "") +
+      '<button type="button" class="st-btn" data-fc="restart">Empezar de nuevo</button></div></div>';
+  }
+  const card = d.cards[c.list[c.i]];
+  return '<div class="st-top"><b>' + esc(d.title || "Tarjetas didácticas") + '</b><button type="button" class="st-link" data-gen="cards">Crear de nuevo</button></div>' +
+    '<div class="qz-meta"><span>Tarjeta ' + (c.i + 1) + " de " + c.list.length + "</span><span>Sabidas: " + c.known.size + " / " + total + "</span></div>" +
+    '<div class="qz-bar"><i style="width:' + (c.i / c.list.length * 100) + '%"></i></div>' +
+    '<button type="button" class="fc-card" data-fc-flip aria-label="Girar tarjeta"><span class="fc-in"><span class="fc-face fc-front"><em class="fc-tag">Pregunta</em><span class="fc-txt">' + esc(card.front) +
+    '</span></span><span class="fc-face fc-back"><em class="fc-tag">Respuesta</em><span class="fc-txt">' + esc(card.back) + "</span></span></span></button>" +
+    '<p class="fc-hint">Toca la tarjeta para girarla · usa las flechas ← → para moverte</p>' +
+    '<div class="st-actions fc-actions"><button type="button" class="st-btn" data-fc="prev"' + (c.i === 0 ? " disabled" : "") + ">" + icon("left") + 'Anterior</button>' +
+    '<button type="button" class="st-btn" data-fc="review">Repasar</button>' +
+    '<button type="button" class="st-btn primary" data-fc="know">' + icon("check") + 'Lo sé</button>' +
+    '<button type="button" class="st-btn" data-fc="next">Siguiente' + icon("right") + '</button></div>' +
+    '<div class="st-actions fc-actions" style="margin-top:6px"><button type="button" class="st-link" data-fc="shuffle">Mezclar</button></div>';
+}
+function fcMove(delta) {
+  const c = st.cards; if (!c || c.done) return;
+  if (delta > 0 && c.i + 1 >= c.list.length) c.done = true; else c.i = Math.max(0, c.i + delta);
+  stRender();
+}
+function fcAct(a) {
+  const c = st.cards; if (!c) return;
+  const idx = c.list[c.i];
+  if (a === "prev") fcMove(-1);
+  else if (a === "next") fcMove(1);
+  else if (a === "know") { c.known.add(idx); fcMove(1); }
+  else if (a === "review") { c.known.delete(idx); fcMove(1); }
+  else if (a === "shuffle") { c.list = stShuffle(c.list.slice()); c.i = 0; c.done = false; stRender(); }
+  else if (a === "pending") { c.list = st.data.cards.cards.map((_, i) => i).filter(i => !c.known.has(i)); c.i = 0; c.done = false; stRender(); }
+  else if (a === "restart") { c.known = new Set(); c.list = st.data.cards.cards.map((_, i) => i); c.i = 0; c.done = false; stRender(); }
+}
+function fcFlip() { const b = $("#st-pane .fc-card"); if (b) b.classList.toggle("is-flipped"); }
+
+/* ---------- Diapositivas en pizarra ---------- */
+function slHtml() {
+  const d = st.data.slides;
+  return '<div class="st-top"><b>' + esc(d.title || "Diapositivas") + '</b><button type="button" class="st-link" data-gen="slides">Crear de nuevo</button></div>' +
+    '<div class="sl" id="sl"><div class="sl-boardwrap"><div class="sl-stage" id="sl-stage"></div><div class="sl-ledge"><i></i><i></i></div></div>' +
+    '<div class="sl-bar"><button type="button" class="st-ib" data-sl="prev" aria-label="Diapositiva anterior">' + icon("left") + '</button><div class="sl-dots" id="sl-dots"></div>' +
+    '<button type="button" class="st-ib" data-sl="next" aria-label="Siguiente diapositiva">' + icon("right") + "</button></div>" +
+    '<div class="sl-tools"><button type="button" class="st-btn primary" id="sl-speak" data-sl="speak"></button>' +
+    '<label class="st-toggle"><input type="checkbox" id="sl-auto"' + (st.sl.auto ? " checked" : "") + '> Pasar sola al terminar de explicar</label>' +
+    '<button type="button" class="st-btn" id="sl-full" data-sl="full"></button></div>' +
+    '<div class="sl-explain" id="sl-explain"></div></div>';
+}
+function slShow() {
+  const stage = $("#sl-stage"); if (!stage) return;
+  const list = st.data.slides.slides, n = list.length, i = st.sl.i, s = list[i];
+  stage.className = "sl-stage" + (i === 0 ? " is-cover" : "");
+  stage.innerHTML = '<span class="sl-num">' + (i + 1) + " / " + n + '</span><h2 class="sl-title">' + esc(s.title) + '</h2><ul class="sl-bullets">' + s.bullets.map((b, k) => '<li style="--n:' + k + '">' + esc(b) + "</li>").join("") + "</ul>";
+  $("#sl-dots").innerHTML = list.map((_, k) => '<button type="button" class="sl-dot' + (k === i ? " on" : "") + '" data-sl-go="' + k + '" aria-label="Ir a la diapositiva ' + (k + 1) + '"></button>').join("");
+  $("#sl-explain").innerHTML = "<b>" + icon("volume") + "Explicación</b><p>" + esc(s.explanation) + "</p>";
+  slBtn();
+}
+function slBtn() {
+  const b = $("#sl-speak"); if (!b) return;
+  b.innerHTML = st.sl.speaking ? icon("stop") + "<span>Detener</span>" : icon("volume") + "<span>Explicar</span>";
+  b.hidden = !hasTTS;
+  const f = $("#sl-full"), on = $("#sl").classList.contains("is-full");
+  if (f) f.innerHTML = icon(on ? "shrink" : "expand") + "<span>" + (on ? "Salir de pantalla completa" : "Pantalla completa") + "</span>";
+}
+function slGo(k) {
+  const n = st.data.slides.slides.length;
+  if (k < 0 || k >= n || k === st.sl.i) return;
+  slStop(); st.sl.i = k; slShow();
+}
+function slSpeak() {
+  if (!hasTTS) return toast("Tu navegador no puede leer en voz alta.");
+  if (st.sl.speaking) { slStop(); return; }
+  unlockTTS();
+  const list = st.data.slides.slides, idx = st.sl.i, s = list[idx];
+  st.sl.speaking = true; slBtn();
+  const started = ttsPlay(s.title + ". " + s.explanation, { onDone: completed => {
+    if (!st || st.sl.i !== idx) return;
+    st.sl.speaking = false; slBtn();
+    if (completed && st.sl.auto && st.open && st.tab === "slides" && idx + 1 < list.length) {
+      setTimeout(() => { if (st.sl.auto && st.open && st.tab === "slides" && st.sl.i === idx) { slGo(idx + 1); slSpeak(); } }, 900);
+    }
+  } });
+  if (!started) { st.sl.speaking = false; slBtn(); }
+}
+function slStop() {
+  if (st && st.sl && st.sl.speaking) { st.sl.speaking = false; try { ttsStop(); } catch (e) {} slBtn(); }
+}
+async function slFull() {
+  const el = $("#sl"); if (!el) return;
+  const on = !el.classList.contains("is-full");
+  el.classList.toggle("is-full", on);
+  if (on) { try { if (el.requestFullscreen) await el.requestFullscreen(); } catch (e) {} }   // sin API (iPhone): se amplía sobre toda la ventana
+  else if (document.fullscreenElement) { try { await document.exitFullscreen(); } catch (e) {} }
+  slBtn();
+}
+function slExitFull() {
+  const el = $("#sl");
+  if (el && el.classList.contains("is-full")) {
+    el.classList.remove("is-full");
+    if (document.fullscreenElement) { try { document.exitFullscreen(); } catch (e) {} }
+    slBtn();
+  }
+}
+
+/* ---------- Eventos ---------- */
+$("#btn-studio").onclick = openStudio;
+$("#st-open").onclick = () => $("#btn-open").click();
+$("#chat-list").addEventListener("click", e => { if (e.target.closest(".chat-open")) closeStudio(); }, true);
+$("#st-tabs").addEventListener("click", e => { const t = e.target.closest("[data-tab]"); if (t) stTab(t.dataset.tab); });
+
+$("#st-pane").addEventListener("click", e => {
+  const g = e.target.closest("[data-gen]");
+  if (g) { stGenerate(g.dataset.gen); return; }
+  const a = e.target.closest("[data-st]");
+  if (a) {
+    const act = a.dataset.st;
+    if (act === "upload") $("#st-file").click();
+    else if (act === "cancel") { if (st.ctrl) { st.ctrl.user = true; st.ctrl.abort(); } }
+    else if (act === "gosrc") stTab("src");
+    return;
+  }
+  const rm = e.target.closest("[data-st-rm]");
+  if (rm) { st.files.splice(+rm.dataset.stRm, 1); stRender(); return; }
+  const qo = e.target.closest("[data-qz-opt]");
+  if (qo) { qzPick(+qo.dataset.qzOpt); return; }
+  if (e.target.closest("[data-qz-next]")) { qzNext(); return; }
+  const qa = e.target.closest("[data-qz-again]");
+  if (qa) { qzAgain(qa.dataset.qzAgain); return; }
+  if (e.target.closest("[data-fc-flip]")) { fcFlip(); return; }
+  const fc = e.target.closest("[data-fc]");
+  if (fc) { fcAct(fc.dataset.fc); return; }
+  const sg = e.target.closest("[data-sl-go]");
+  if (sg) { slGo(+sg.dataset.slGo); return; }
+  const sl = e.target.closest("[data-sl]");
+  if (sl) {
+    const act = sl.dataset.sl;
+    if (act === "prev") slGo(st.sl.i - 1);
+    else if (act === "next") slGo(st.sl.i + 1);
+    else if (act === "speak") slSpeak();
+    else if (act === "full") slFull();
+  }
+});
+$("#st-pane").addEventListener("input", e => {
+  if (e.target.id === "st-text") { st.text = e.target.value; stCount(); }
+  else if (e.target.id === "st-topic") st.topic = e.target.value;
+});
+$("#st-pane").addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "st-file") { stAddFiles(t.files); t.value = ""; }
+  else if (t.id === "st-level") st.opts.level = t.value;
+  else if (t.dataset && t.dataset.stN) st.opts[t.dataset.stN] = +t.value;
+  else if (t.id === "sl-auto") { st.sl.auto = t.checked; if (t.checked && !st.sl.speaking) slSpeak(); }
+});
+$("#st-pane").addEventListener("dragover", e => {
+  const z = e.target.closest("#st-drop");
+  if (z && e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) { e.preventDefault(); z.classList.add("is-drag"); }
+});
+$("#st-pane").addEventListener("dragleave", e => { const z = e.target.closest("#st-drop"); if (z && !z.contains(e.relatedTarget)) z.classList.remove("is-drag"); });
+$("#st-pane").addEventListener("drop", e => {
+  const z = e.target.closest("#st-drop"); if (!z) return;
+  e.preventDefault(); z.classList.remove("is-drag");
+  stAddFiles(e.dataTransfer.files);
+});
+
+document.addEventListener("fullscreenchange", () => {
+  const el = $("#sl");
+  if (!document.fullscreenElement && el && el.classList.contains("is-full")) { el.classList.remove("is-full"); slBtn(); }
+});
+document.addEventListener("keydown", e => {
+  if (!st || !st.open || e.ctrlKey || e.metaKey || e.altKey) return;
+  const tg = e.target, tag = tg && tg.tagName;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) return;
+  if (st.tab === "slides" && st.data.slides) {
+    if (e.key === "ArrowRight") { e.preventDefault(); slGo(st.sl.i + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); slGo(st.sl.i - 1); }
+    else if (e.key === "Escape") slExitFull();
+  } else if (st.tab === "cards" && st.data.cards && st.cards && !st.cards.done) {
+    if (e.key === "ArrowRight") { e.preventDefault(); fcMove(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); fcMove(-1); }
+    else if (e.key === " " && tag !== "BUTTON") { e.preventDefault(); fcFlip(); }
+  } else if (st.tab === "quiz" && st.data.quiz && st.quiz && !st.quiz.done) {
+    if (/^[1-4]$/.test(e.key)) qzPick(+e.key - 1);
+    else if ((e.key === "Enter" || e.key === "ArrowRight") && tag !== "BUTTON") qzNext();
+  }
 });
 
 /* Efecto de escritura: va mostrando la respuesta poco a poco */
