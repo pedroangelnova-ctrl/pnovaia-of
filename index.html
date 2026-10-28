@@ -30,7 +30,7 @@
 <meta name="twitter:description" content="PNova IA es tu asistente de inteligencia artificial en español. Chatea con IA, escribe, programa, crea imágenes y analiza archivos. Habla con voz y guarda tus chats en tu cuenta.">
 <meta name="twitter:image" content="https://pnova-ai.com/og-image.png">
 <meta name="twitter:image:alt" content="PNova IA, asistente de inteligencia artificial en español">
-<link rel="preload" as="image" href="logo.png">
+<link rel="preload" as="image" href="/logo.png">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -138,14 +138,14 @@
  ]
 }
 </script>
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#ffffff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="PNova IA">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="logo.png">
+<link rel="apple-touch-icon" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script>
@@ -1083,7 +1083,7 @@
   /* Mensajes */
   .msg.user .bubble { background: var(--accent-grad); color: #fff; border-radius: 20px 20px 6px 20px; box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent); }
   .msg.assistant { position: relative; padding-left: 46px; }
-  .msg.assistant::before { content: ""; position: absolute; left: 0; top: 2px; width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--border); background: #fff url("logo.png") center / 78% no-repeat; }
+  .msg.assistant::before { content: ""; position: absolute; left: 0; top: 2px; width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--border); background: #fff url("/logo.png") center / 78% no-repeat; }
   .msg.assistant .content { background: var(--card); border: 1px solid var(--border); border-radius: 6px 20px 20px 20px; padding: 14px 18px; font-size: 15.5px; }
   .msg.assistant .typing { padding: 12px 4px; }
   .msg-actions { margin-left: -4px; }
@@ -1346,7 +1346,7 @@
 <section id="auth-view" hidden>
   <div class="auth-card">
     <button class="link-btn" id="auth-home" type="button" style="margin: 0 auto 16px">← Volver al inicio</button>
-    <img class="logo" src="logo.png" alt="PNova IA">
+    <img class="logo" src="/logo.png" alt="PNova IA">
     <h1 id="auth-title">Inicia sesión en PNova IA</h1>
     <p class="sub" id="auth-sub">Tus chats se guardan en tu cuenta.</p>
 
@@ -1420,7 +1420,7 @@
 <div id="app-view" hidden>
   <aside class="sidebar" id="sidebar" aria-label="Barra lateral">
     <div class="side-head">
-      <div class="brand"><img class="logo" src="logo.png" alt=""><span>PNova IA</span></div>
+      <div class="brand"><img class="logo" src="/logo.png" alt=""><span>PNova IA</span></div>
       <button class="icon-btn" id="btn-search" type="button" aria-label="Buscar chats"><span data-icon="search"></span></button>
       <button class="icon-btn" id="btn-collapse" type="button" aria-label="Cerrar barra lateral"><span data-icon="panel"></span></button>
     </div>
@@ -1455,7 +1455,7 @@
       <div id="scroll">
         <div class="col">
           <div id="empty">
-            <img class="logo" src="logo.png" alt="">
+            <img class="logo" src="/logo.png" alt="">
             <h1 id="empty-title">¿Qué creamos hoy?</h1>
             <p class="empty-sub">Pregunta, escribe, programa o analiza archivos con PNova IA.</p>
             <div class="suggest" id="suggest">
@@ -1757,7 +1757,7 @@
   <div class="checkout" role="dialog" aria-modal="true" aria-labelledby="co-title">
     <aside class="co-summary">
       <button class="co-back" id="co-back" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Cambiar meses</button>
-      <div class="co-brand"><img class="logo" src="logo.png" alt=""><span>PNova IA</span></div>
+      <div class="co-brand"><img class="logo" src="/logo.png" alt=""><span>PNova IA</span></div>
       <div class="co-sum-main">
         <p class="co-kicker">Resumen del pedido</p>
         <h3 id="co-title">Plan Basic</h3>
@@ -3032,7 +3032,7 @@ async function enterApp(session) {
   await loadProfile();
   refreshSubscription();                     // plan: se consulta en cada inicio de sesión y recarga
   await loadConversations();
-  newChat();
+  await routeFromUrl();          // /chat/ID → abre ese chat; si no, chat nuevo
 }
 
 async function loadProfile() {
@@ -3088,15 +3088,47 @@ function setGreeting() {
   const n = ((profile && profile.display_name) || "").trim().split(/\s+/)[0];
   $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
 }
-function newChat() {
+/* ---- URL por chat: pnova-ai.com/chat/<id> ---- */
+const CHAT_RE = /^\/chat\/([A-Za-z0-9_-]{8,64})\/?$/;
+function setChatUrl(id, replace) {
+  const path = id ? "/chat/" + id : "/";
+  if (location.pathname === path) return;
+  try { history[replace ? "replaceState" : "pushState"]({ chat: id || null }, "", path); } catch (e) {}
+}
+async function routeFromUrl() {
+  const m = location.pathname.match(CHAT_RE);
+  if (!m) {
+    newChat({ noPush: true });
+    if (location.pathname.indexOf("/chat") === 0) setChatUrl(null, true);
+    return;
+  }
+  const id = m[1];
+  if (id === currentId) return;
+  let conv = conversations.find(c => c.id === id);
+  if (!conv && sb) {                       // puede ser un chat antiguo que no está en los 200 cargados
+    const { data } = await sb.from("conversations").select("id,title,model,updated_at").eq("id", id).maybeSingle();
+    if (data) { conversations.push(data); conv = data; }
+  }
+  if (conv) await openConversation(id, { noPush: true });
+  if (!conv || currentId !== id) {         // no existe, no es tuyo o falló al cargar
+    if (!conv) toast("Ese chat no existe o no es tuyo.");
+    newChat({ noPush: true }); setChatUrl(null, true);
+  }
+}
+window.addEventListener("popstate", () => { if (user) routeFromUrl(); });
+
+function newChat(opts) {
+  opts = opts || {};
   ttsStop(); pvClose(); closeStudio();
   setGreeting();
   currentId = null; messages = []; lastFailed = false;
+  if (!opts.noPush) setChatUrl(null, opts.replace);
   renderList(); renderMessages();
   $("#input").focus({ preventScroll: true });
 }
 
-async function openConversation(id) {
+async function openConversation(id, opts) {
+  opts = opts || {};
   if (id === currentId || loadingConv) return;
   loadingConv = true;
   const { data, error } = await sb.from("messages")
@@ -3106,6 +3138,7 @@ async function openConversation(id) {
   if (error) { toast("No se pudo abrir el chat."); return; }
   ttsStop(); pvClose(); closeStudio();
   currentId = id; messages = data || []; lastFailed = false;
+  if (!opts.noPush) setChatUrl(id);
   renderList(); renderMessages(); scrollDown(true);
 }
 
@@ -3157,7 +3190,7 @@ async function deleteConversation(id) {
   if (error) { toast("No se pudo eliminar el chat."); return; }
   removeConvFiles([id]);
   conversations = conversations.filter(c => c.id !== id);
-  if (currentId === id) newChat(); else renderList();
+  if (currentId === id) newChat({ replace: true }); else renderList();
 }
 
 /* =====================================================================
@@ -3263,6 +3296,7 @@ async function sendMessage(text, opts = {}) {
         .insert({ user_id: user.id, title: makeTitle(text), model: model.id }).select("id,title,model,updated_at").single();
       if (error) throw error;
       currentId = data.id; conversations.unshift(data); renderList();
+      setChatUrl(currentId);
     }
     if (files.length) await uploadAttachments(files, metadata);   // imágenes → Supabase Storage (ruta en metadata)
     const { data: saved, error: e2 } = await sb.from("messages")
@@ -4871,7 +4905,7 @@ const forcePwa = new URLSearchParams(location.search).has("pwa");
 let deferredInstall = null;
 
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+  window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
 }
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
 window.addEventListener("appinstalled", () => {
@@ -4889,7 +4923,7 @@ function pwaShouldShow() {
   return !(v && Date.now() - Number(v) < 7 * 864e5);
 }
 function pwaCard(title, text, extra, buttons) {
-  pwaBox.innerHTML = `<div class="pwa-top"><img src="logo.png" alt=""><div><b>${title}</b><p>${text}</p></div></div>${extra || ""}<div class="pwa-actions">${buttons}</div>`;
+  pwaBox.innerHTML = `<div class="pwa-top"><img src="/logo.png" alt=""><div><b>${title}</b><p>${text}</p></div></div>${extra || ""}<div class="pwa-actions">${buttons}</div>`;
   pwaBox.hidden = false;
 }
 function pwaStep1() {
