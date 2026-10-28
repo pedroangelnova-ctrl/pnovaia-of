@@ -1064,6 +1064,11 @@
   #btn-new { justify-content: center; background: var(--accent-grad); color: #fff; font-weight: 600; border-radius: 12px; box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent); }
   #btn-new:hover { background: var(--accent-grad); filter: brightness(1.08); }
   .side-nav { padding: 8px 10px 4px; }
+  #btn-new { min-height: 46px; font-size: 15.5px; }
+  #btn-studio { margin-top: 8px; min-height: 52px; justify-content: center; gap: 12px; padding: 12px 14px; font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; border-radius: 14px; color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent); border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent); box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 22%, transparent); transition: background .15s, color .15s, box-shadow .15s, transform .15s; }
+  #btn-studio .i { width: 24px; height: 24px; stroke-width: 2; }
+  #btn-studio:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 32%, transparent); transform: translateY(-1px); }
+  #btn-studio.active { background: var(--accent-grad); color: #fff; border-color: transparent; box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 40%, transparent); }
   .side-label { text-transform: uppercase; letter-spacing: .06em; font-size: 11.5px; }
   .chat-item { border-radius: 12px; margin: 2px 0; }
   .chat-item.active { background: color-mix(in srgb, var(--accent) 13%, transparent); box-shadow: inset 3px 0 0 var(--accent); }
@@ -1865,14 +1870,6 @@ const CONFIG = {
       sendAuthToken: false   // true = envía el token de Supabase en la cabecera Authorization
     },
     {
-      id: "pnova-1.5-pro",
-      name: "PNova 1.5 Pro",
-      description: "Modelo avanzado de PNova Group",
-      provider: "gemini",
-      endpoint: "https://pnova-gemini.pedroangelnp-es.workers.dev/chat",   // Worker que guarda la clave de Gemini (ver gemini-worker.js)
-      sendAuthToken: true
-    },
-    {
       id: "pnova-3.0-galaxy",
       name: "PNova 3.0 Galaxy",
       description: "Razonamiento avanzado de PNova Group",
@@ -1887,7 +1884,10 @@ const CONFIG = {
       sendAuthToken: false
     }
   ],
-  DEFAULT_MODEL: "pnova-1.5-pro",   // modelo con el que entran todos los usuarios
+  DEFAULT_MODEL: "pnova-3.0-galaxy",   // modelo con el que entran todos los usuarios
+  GALAXY_MODEL: "pnova-3.0-galaxy",
+  FALLBACK_MODEL: "pnova-1.5",         // al agotar las preguntas de Galaxy se pasa a este
+  GALAXY_DAILY_QUESTIONS: 10,          // preguntas con Galaxy antes de pasar a PNova 1.5 (se renuevan cada día)
   HISTORY_LIMIT: 20,          // mensajes previos que se envían al backend
   REQUEST_TIMEOUT_MS: 90000,  // tiempo máximo de espera de la respuesta
 
@@ -2193,9 +2193,23 @@ let imageMode = false, imgPending = false, retryImagePrompt = null;
 let limitInfo = null;   // {msg, plan, limit}: si coincide con lastFailed, se pinta la tarjeta de «límite diario» en vez del error normal   // modo «Crear imagen»
 let pendingFiles = [], readingFiles = 0;       // adjuntos del mensaje que se está escribiendo
 const attPreviews = {}, attData = {};          // por id de mensaje: miniaturas y datos (solo en memoria)
-let modelId = CONFIG.DEFAULT_MODEL;   // todos entran con PNova 1.5 Pro (la elección manual del selector solo dura mientras la sesión esté abierta)
+let modelId = CONFIG.DEFAULT_MODEL;   // todos entran con PNova 3.0 Galaxy (la elección manual del selector solo dura mientras la sesión esté abierta)
 if (!CONFIG.MODELS.some(m => m.id === modelId && m.endpoint)) modelId = CONFIG.DEFAULT_MODEL;
 const getModel = () => CONFIG.MODELS.find(m => m.id === modelId) || CONFIG.MODELS[0];
+
+/* Galaxy: las primeras GALAXY_DAILY_QUESTIONS preguntas del día; después se pasa solo a PNova 1.5 */
+const galaxyKey = () => "pnova.galaxy." + (user ? user.id : "anon") + "." + new Date().toLocaleDateString("sv-SE");
+const galaxyUsed = () => parseInt(store.get(galaxyKey()) || "0", 10) || 0;
+const galaxyLeft = () => Math.max(0, CONFIG.GALAXY_DAILY_QUESTIONS - galaxyUsed());
+function enforceModel() {
+  if (modelId === CONFIG.GALAXY_MODEL && galaxyLeft() <= 0) { modelId = CONFIG.FALLBACK_MODEL; setModelLabel(); return true; }
+  return false;
+}
+function countGalaxyAnswer(model) {
+  if (!model || model.id !== CONFIG.GALAXY_MODEL) return;
+  store.set(galaxyKey(), String(galaxyUsed() + 1));
+  if (enforceModel()) toast(`Has usado tus ${CONFIG.GALAXY_DAILY_QUESTIONS} preguntas con PNova 3.0 Galaxy de hoy. Seguimos con PNova 1.5.`);
+}
 // Voz del navegador: reconocimiento (SpeechRecognition) y lectura (speechSynthesis)
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 const hasTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
@@ -2205,6 +2219,10 @@ const hasTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in wind
    ===================================================================== */
 /* ---- URLs de la app: /login, /login/registro, /login/telefono y /chat/<id> ---- */
 const CHAT_RE = /^\/chat\/([A-Za-z0-9_-]{8,64})\/?$/;
+const STUDIO_RE = /^\/studio(?:\/(cuestionario|tarjetas|diapositivas))?\/?$/;
+const STUDIO_TAB_OF = { "": "src", cuestionario: "quiz", tarjetas: "cards", diapositivas: "slides" };
+const STUDIO_SLUG_OF = { src: "", quiz: "/cuestionario", cards: "/tarjetas", slides: "/diapositivas" };
+const isAppPath = p => CHAT_RE.test(p) || STUDIO_RE.test(p);
 const LOGIN_ROUTES = { "/login": "login", "/login/registro": "register", "/login/telefono": "phone" };
 function setPath(path, replace) {
   if (location.pathname === path) return;
@@ -2212,7 +2230,7 @@ function setPath(path, replace) {
 }
 function loginRoute() { return LOGIN_ROUTES[location.pathname.replace(/\/+$/, "") || "/"] || null; }
 // Si entras sin sesión a /chat/<id>, se recuerda para abrirlo después de iniciar sesión.
-function rememberNext() { try { if (CHAT_RE.test(location.pathname)) sessionStorage.setItem("pnova.next", location.pathname); } catch (e) {} }
+function rememberNext() { try { if (isAppPath(location.pathname)) sessionStorage.setItem("pnova.next", location.pathname); } catch (e) {} }
 function takeNext() { try { const n = sessionStorage.getItem("pnova.next"); sessionStorage.removeItem("pnova.next"); return n; } catch (e) { return null; } }
 
 let authMode = "login";
@@ -2946,7 +2964,7 @@ function applyConfigWarning() {
 
 function showAuth() {
   const wasIn = !!user;
-  if (wasIn && CHAT_RE.test(location.pathname)) setPath("/", true);   // al cerrar sesión no dejar /chat/<id>
+  if (wasIn && isAppPath(location.pathname)) setPath("/", true);   // al cerrar sesión no dejar /chat/<id>
   stReset();                          // sin sesión: se muestra la pantalla de inicio
   $("#plan-modal").hidden = true;
   $("#set-overlay").hidden = true;
@@ -3054,7 +3072,7 @@ async function enterApp(session) {
   hideLanding();
   $("#auth-view").hidden = true;
   $("#app-view").hidden = false;
-  setModelLabel();
+  enforceModel(); setModelLabel();
   await loadProfile();
   refreshSubscription();                     // plan: se consulta en cada inicio de sesión y recarga
   await loadConversations();
@@ -3117,10 +3135,17 @@ function setGreeting() {
 /* ---- URL por chat: pnova-ai.com/chat/<id> ---- */
 function setChatUrl(id, replace) { setPath(id ? "/chat/" + id : "/", replace); }
 async function routeFromUrl() {
-  if (!CHAT_RE.test(location.pathname)) {
-    const nx = takeNext();                       // venías de un enlace /chat/<id> sin sesión
-    if (nx && CHAT_RE.test(nx)) setPath(nx, true);
+  if (!isAppPath(location.pathname)) {
+    const nx = takeNext();                       // venías de un enlace /chat/<id> o /studio sin sesión
+    if (nx && isAppPath(nx)) setPath(nx, true);
   } else takeNext();
+  const sm = location.pathname.match(STUDIO_RE);
+  if (sm) {                                      // /studio, /studio/cuestionario, /studio/tarjetas, /studio/diapositivas
+    const tab = STUDIO_TAB_OF[sm[1] || ""];
+    if (st.open) stTab(tab, true);
+    else { newChat({ noPush: true }); openStudio({ noPush: true, tab }); }
+    return;
+  }
   const m = location.pathname.match(CHAT_RE);
   if (!m) {
     newChat({ noPush: true });
@@ -3128,7 +3153,7 @@ async function routeFromUrl() {
     return;
   }
   const id = m[1];
-  if (id === currentId) return;
+  if (id === currentId) { closeStudio(); return; }
   let conv = conversations.find(c => c.id === id);
   if (!conv && sb) {                       // puede ser un chat antiguo que no está en los 200 cargados
     const { data } = await sb.from("conversations").select("id,title,model,updated_at").eq("id", id).maybeSingle();
@@ -3154,7 +3179,7 @@ function newChat(opts) {
 
 async function openConversation(id, opts) {
   opts = opts || {};
-  if (id === currentId || loadingConv) return;
+  if (id === currentId || loadingConv) { if (id === currentId && !opts.noPush) setChatUrl(id); return; }
   loadingConv = true;
   const { data, error } = await sb.from("messages")
     .select("id,role,content,model,created_at,metadata").eq("conversation_id", id).order("created_at", { ascending: true });
@@ -3300,6 +3325,7 @@ async function sendMessage(text, opts = {}) {
   text = text.trim();
   const files = opts.files || [];
   if ((!text && !files.length) || sending) return;
+  enforceModel();
   const model = getModel();
   if (!model.endpoint) { toast(`${model.name} aún no está disponible.`); return; }
   const autoText = !text;
@@ -3365,6 +3391,7 @@ async function requestReply() {
       .select("id,role,content,model,created_at,metadata").single();
     if (error) throw error;
     messages.push(data);
+    countGalaxyAnswer(model);
     const c = conversations.find(x => x.id === currentId);
     if (c) { c.updated_at = data.created_at; conversations = [c, ...conversations.filter(x => x !== c)]; }
     renderList();
@@ -3698,10 +3725,13 @@ function stFresh() {
 }
 st = stFresh();
 
-function openStudio() {
+function openStudio(opts) {
+  opts = opts || {};
   if (!user || st.open) { closeSidebarMobile(); return; }
   pvClose();
   st.open = true;
+  if (opts.tab && ST_KINDS[opts.tab]) st.tab = opts.tab;
+  if (!opts.noPush) setPath("/studio" + (STUDIO_SLUG_OF[st.tab] || ""));
   $("#main").hidden = true; $("#studio").hidden = false;
   document.body.classList.add("studio-open");
   $("#btn-studio").classList.add("active");
@@ -3778,10 +3808,11 @@ function stRender() {
   else if (k === "cards") p.innerHTML = fcHtml();
   else { p.innerHTML = slHtml(); slShow(); }
 }
-function stTab(k) {
+function stTab(k, fromUrl) {
   if (!ST_KINDS[k]) return;
   slStop(); slExitFull();
   st.tab = k; stRender();
+  if (!fromUrl) setPath("/studio" + (STUDIO_SLUG_OF[k] || ""), true);
   $("#st-body").scrollTop = 0;
 }
 
@@ -4118,7 +4149,7 @@ function slExitFull() {
 }
 
 /* ---------- Eventos ---------- */
-$("#btn-studio").onclick = openStudio;
+$("#btn-studio").onclick = () => openStudio();
 $("#st-open").onclick = () => $("#btn-open").click();
 $("#chat-list").addEventListener("click", e => { if (e.target.closest(".chat-open")) closeStudio(); }, true);
 $("#st-tabs").addEventListener("click", e => { const t = e.target.closest("[data-tab]"); if (t) stTab(t.dataset.tab); });
@@ -4637,11 +4668,17 @@ function setModelLabel() { $("#model-name").textContent = getModel().name; }
 
 $("#model-btn").onclick = e => {
   e.stopPropagation();
-  openPopover($("#model-btn"), CONFIG.MODELS.map(m => `
-    <button type="button" data-act="${m.id}" ${m.endpoint ? "" : "disabled"}>
-      <span class="opt-text">${esc(m.name)}<small>${m.endpoint ? esc(m.description) : "Próximamente"}</small></span>
+  openPopover($("#model-btn"), CONFIG.MODELS.map(m => {
+    const out = m.id === CONFIG.GALAXY_MODEL && galaxyLeft() <= 0;
+    const note = !m.endpoint ? "Próximamente"
+      : out ? "Límite de hoy alcanzado"
+      : m.id === CONFIG.GALAXY_MODEL ? `${esc(m.description)} · ${galaxyLeft()} preguntas hoy`
+      : esc(m.description);
+    return `
+    <button type="button" data-act="${m.id}" ${m.endpoint && !out ? "" : "disabled"}>
+      <span class="opt-text">${esc(m.name)}<small>${note}</small></span>
       ${m.id === modelId ? icon("check") : ""}
-    </button>`).join(""),
+    </button>`; }).join(""),
     id => { modelId = id; store.set("pnova.model", id); setModelLabel(); });
 };
 
