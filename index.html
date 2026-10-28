@@ -2267,7 +2267,7 @@ $("#auth-form").addEventListener("submit", async e => {
         email, password,
         options: {
           data: { display_name: name || email.split("@")[0] },
-          emailRedirectTo: location.origin + location.pathname
+          emailRedirectTo: location.origin + "/"
         }
       });
       if (error) throw error;
@@ -2290,7 +2290,7 @@ $("#btn-google").onclick = async () => {
   try {
     const { error } = await sb.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: location.origin + location.pathname }
+      options: { redirectTo: location.origin + "/" }
     });
     if (error) throw error;   // si todo va bien, el navegador redirige a Google
   } catch (err) {
