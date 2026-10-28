@@ -3339,6 +3339,8 @@ async function callBackend(model) {
     const e = new Error("http " + res.status);
     e.userMessage = res.status === 429 ? `${model.name} está recibiendo muchas peticiones. Inténtalo de nuevo en un momento.`
       : res.status === 401 ? "Tu sesión ha caducado. Vuelve a iniciar sesión."
+      : res.status === 413 ? "La imagen es demasiado grande. Prueba con una más pequeña."
+      : res.status === 415 ? "Formato de imagen no compatible. Usa JPG, PNG, WEBP o GIF."
       : `${model.name} respondió con un error (${res.status}).`;
     throw e;
   }
