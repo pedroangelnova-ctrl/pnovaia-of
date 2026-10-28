@@ -398,6 +398,16 @@
   @keyframes blink { 0%, 80%, 100% { opacity: .25; transform: scale(.8); } 40% { opacity: 1; transform: scale(1); } }
   .msg-error { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 14px; border-radius: 14px; background: color-mix(in srgb, var(--danger) 10%, transparent); color: var(--danger); }
   .msg-error button { text-decoration: underline; font-weight: 600; }
+  .limit-card { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--border); background: var(--card); max-width: 560px; }
+  .limit-ico { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: var(--accent-grad); }
+  .limit-ico .i { width: 20px; height: 20px; }
+  .limit-body { flex: 1 1 220px; min-width: 0; }
+  .limit-body b { display: block; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .limit-body p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .limit-btn { flex: none; height: 40px; padding: 0 18px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 14px; background: var(--accent-grad); white-space: nowrap; }
+  .limit-btn:hover { filter: brightness(1.06); }
+  .limit-btn.ghost { color: var(--text); background: transparent; border: 1px solid var(--border); font-weight: 500; }
+  @media (max-width: 520px) { .limit-btn { width: 100%; } }
 
   #composer-wrap { flex: none; padding: 0 0 12px; }
   .composer {
@@ -1792,7 +1802,8 @@ let sb = null;
 let user = null, profile = null;
 let conversations = [], currentId = null, messages = [];
 let sending = false, loadingConv = false, lastFailed = false;
-let imageMode = false, imgPending = false, retryImagePrompt = null;   // modo «Crear imagen»
+let imageMode = false, imgPending = false, retryImagePrompt = null;
+let limitInfo = null;   // {msg, plan, limit}: si coincide con lastFailed, se pinta la tarjeta de «límite diario» en vez del error normal   // modo «Crear imagen»
 let pendingFiles = [], readingFiles = 0;       // adjuntos del mensaje que se está escribiendo
 const attPreviews = {}, attData = {};          // por id de mensaje: miniaturas y datos (solo en memoria)
 let modelId = store.get("pnova.model") || CONFIG.DEFAULT_MODEL;
@@ -2752,6 +2763,23 @@ async function deleteConversation(id) {
    Mensajes
    ===================================================================== */
 let typeToken = 0;
+/* Tarjeta de «límite diario de imágenes alcanzado» con botón para mejorar de plan */
+function limitCardHtml(info) {
+  const names = { free: "Gratis", basic: "Plan Basic", galaxy: "Galaxia" };
+  const plan = names[info.plan] || "actual";
+  let text, btn = "";
+  if (info.plan === "free") {
+    text = `Tu plan Gratis incluye ${info.limit} imágenes al día. Se renuevan a medianoche. Con el Plan Basic puedes crear hasta 20 al día.`;
+    btn = `<button type="button" class="limit-btn" id="btn-upgrade">Pasar a Basic</button>`;
+  } else if (info.plan === "basic") {
+    text = `Tu Plan Basic incluye ${info.limit} imágenes al día. Se renuevan a medianoche. Galaxia, con 70 al día, llegará pronto.`;
+    btn = `<button type="button" class="limit-btn ghost" id="btn-upgrade">Ver planes</button>`;
+  } else {
+    text = `Tu plan ${plan} incluye ${info.limit} imágenes al día. Se renuevan a medianoche.`;
+  }
+  return `<div class="msg"><div class="limit-card" role="alert"><span class="limit-ico">${icon("zap")}</span><div class="limit-body"><b>Has alcanzado el límite diario de imágenes</b><p>${esc(text)}</p></div>${btn}</div></div>`;
+}
+
 function renderMessages(typing = false) {
   typeToken++;
   if (srcMsgId && !messages.some(m => m.id === srcMsgId)) closeSources();   // cancela cualquier animación de escritura en curso
@@ -2768,8 +2796,9 @@ function renderMessages(typing = false) {
   ).join("")
   + (typing && imgPending ? `<div class="msg assistant"><div class="gen-img gen-img--loading" role="status" aria-label="Generando imagen"><div class="gen-spin"></div><span>Generando imagen… puede tardar unos segundos</span></div></div>`
     : typing ? `<div class="msg assistant" aria-label="PNova IA está escribiendo"><div class="typing"><i></i><i></i><i></i></div></div>` : "")
-  + (lastFailed ? `<div class="msg"><div class="msg-error"><span id="err-text"></span><button type="button" id="btn-retry">Reintentar</button></div></div>` : "");
-  if (lastFailed) $("#err-text").textContent = lastFailed;
+  + (lastFailed && limitInfo && limitInfo.msg === lastFailed ? limitCardHtml(limitInfo)
+    : lastFailed ? `<div class="msg"><div class="msg-error"><span id="err-text"></span><button type="button" id="btn-retry">Reintentar</button></div></div>` : "");
+  if (lastFailed && !(limitInfo && limitInfo.msg === lastFailed)) $("#err-text").textContent = lastFailed;
   if (typing || lastFailed) scrollDown();
 }
 
@@ -2792,6 +2821,10 @@ $("#messages").addEventListener("click", async e => {
   }
   const srcBtn = e.target.closest("[data-sources]");
   if (srcBtn) openSources(messages[+srcBtn.dataset.sources]);
+  if (e.target.closest("#btn-upgrade")) {
+    if (limitInfo && limitInfo.plan === "free") openPlanModal(); else openSettings("plans");
+    return;
+  }
   if (e.target.closest("#btn-retry") && !sending) {
     lastFailed = false; sending = true; updateSend();
     await (retryImagePrompt ? requestImage(retryImagePrompt) : requestReply());
@@ -2913,8 +2946,9 @@ async function requestImage(prompt) {
     if (c) { c.updated_at = msg.created_at; conversations = [c, ...conversations.filter(x => x !== c)]; }
     renderList();
   } catch (err) {
-    retryImagePrompt = prompt;
     lastFailed = err.userMessage || "No se pudo generar la imagen. Vuelve a intentarlo.";
+    if (err.limit) { limitInfo = { msg: lastFailed, plan: err.limit.plan, limit: err.limit.limit }; retryImagePrompt = null; }
+    else { limitInfo = null; retryImagePrompt = prompt; }
   } finally {
     imgPending = false;
   }
@@ -2939,7 +2973,11 @@ async function callImageBackend(prompt) {
   } finally { clearTimeout(timer); }
 
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw fail((data && data.error) || `El generador de imágenes respondió con un error (${res.status}).`);
+  if (!res.ok) {
+    const e = fail((data && data.error) || `El generador de imágenes respondió con un error (${res.status}).`);
+    if (res.status === 429 && data && data.code === "limit_reached") e.limit = { plan: data.plan, limit: data.limit };
+    throw e;
+  }
   if (!data || typeof data.image !== "string" || !/^data:image\//.test(data.image)) throw fail("El generador no devolvió ninguna imagen. Vuelve a intentarlo.");
 
   // La URL de datos se convierte en blob: ligero para el DOM y directo para descargar
