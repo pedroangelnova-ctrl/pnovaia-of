@@ -1575,7 +1575,7 @@ const CONFIG = {
       sendAuthToken: false
     }
   ],
-  DEFAULT_MODEL: "pnova-1.5",
+  DEFAULT_MODEL: "pnova-1.5-pro",   // modelo con el que entran todos los usuarios
   HISTORY_LIMIT: 20,          // mensajes previos que se envían al backend
   REQUEST_TIMEOUT_MS: 90000,  // tiempo máximo de espera de la respuesta
 
@@ -1806,7 +1806,7 @@ let imageMode = false, imgPending = false, retryImagePrompt = null;
 let limitInfo = null;   // {msg, plan, limit}: si coincide con lastFailed, se pinta la tarjeta de «límite diario» en vez del error normal   // modo «Crear imagen»
 let pendingFiles = [], readingFiles = 0;       // adjuntos del mensaje que se está escribiendo
 const attPreviews = {}, attData = {};          // por id de mensaje: miniaturas y datos (solo en memoria)
-let modelId = store.get("pnova.model") || CONFIG.DEFAULT_MODEL;
+let modelId = CONFIG.DEFAULT_MODEL;   // todos entran con PNova 1.5 Pro (la elección manual del selector solo dura mientras la sesión esté abierta)
 if (!CONFIG.MODELS.some(m => m.id === modelId && m.endpoint)) modelId = CONFIG.DEFAULT_MODEL;
 const getModel = () => CONFIG.MODELS.find(m => m.id === modelId) || CONFIG.MODELS[0];
 // Voz del navegador: reconocimiento (SpeechRecognition) y lectura (speechSynthesis)
