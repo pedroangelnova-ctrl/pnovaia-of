@@ -148,7 +148,17 @@
 <link rel="apple-touch-icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* Fuentes de Google sin bloquear el primer pintado: si la red las bloquea o las deja colgadas, la página se ve igual con la fuente del sistema */
+(function () {
+  try {
+    var l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap";
+    document.head.appendChild(l);
+  } catch (e) {}
+})();
+</script>
 <script>
 (function () {
   var d = document.documentElement;
@@ -990,6 +1000,42 @@
 </style>
 </head>
 <body>
+<div id="boot" role="status" aria-live="polite" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#05060f;color:#eef1ff">
+  <div style="width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.18);border-top-color:#7fb0ff;animation:bootspin .8s linear infinite"></div>
+  <div id="boot-msg" style="font-size:15px;opacity:.9">Cargando PNova IA…</div>
+  <div id="boot-help" style="display:none;max-width:460px;font-size:13.5px;line-height:1.55;opacity:.8"></div>
+  <button id="boot-retry" type="button" style="display:none;height:40px;padding:0 20px;border-radius:12px;border:0;font-weight:600;font-size:14px;color:#fff;background:#1d6ff2;cursor:pointer" onclick="location.reload()">Reintentar</button>
+</div>
+<style>@keyframes bootspin{to{transform:rotate(360deg)}}</style>
+<script>
+/* Red de seguridad (ES5, independiente del script principal): si tras unos segundos la app no ha arrancado
+   —por un bloqueo de red, un navegador antiguo o un error— se explica en pantalla en vez de dejar la página en blanco. */
+(function () {
+  function fail(why) {
+    var b = document.getElementById("boot"); if (!b) return;
+    document.getElementById("boot-msg").textContent = "No se pudo cargar PNova IA";
+    var h = document.getElementById("boot-help");
+    h.style.display = "block";
+    h.textContent = why || "Puede que la red del centro o del dispositivo esté bloqueando algún componente (cdn.jsdelivr.net, unpkg.com o fonts.googleapis.com), o que el navegador esté muy desactualizado. Prueba a recargar, a usar otra red o a actualizar Chrome/ChromeOS.";
+    document.getElementById("boot-retry").style.display = "inline-block";
+    var sp = b.firstElementChild; if (sp) sp.style.display = "none";
+  }
+  window.__bootFail = fail;
+  window.__bootTimer = setTimeout(function () {      // tarda más de lo normal: se avisa sin cortar la carga
+    var b = document.getElementById("boot"); if (!b) return;
+    document.getElementById("boot-msg").textContent = "Está tardando más de lo normal…";
+    var h = document.getElementById("boot-help"); h.style.display = "block";
+    h.textContent = "Si esto no avanza, puede que la red esté bloqueando algún componente (cdn.jsdelivr.net o unpkg.com). Puedes reintentar o probar con otra red.";
+    document.getElementById("boot-retry").style.display = "inline-block";
+  }, 10000);
+  window.addEventListener("error", function (e) {
+    if (document.getElementById("boot")) fail("Error al iniciar: " + (e && e.message ? e.message : "desconocido") + ". Recarga la página; si sigue igual, prueba otra red o actualiza el navegador.");
+  });
+  window.addEventListener("unhandledrejection", function (e) {
+    if (document.getElementById("boot")) fail("Error al iniciar: " + (e && e.reason && e.reason.message ? e.reason.message : "desconocido") + ".");
+  });
+})();
+</script>
 <noscript>
 <main style="font-family:system-ui,sans-serif;max-width:720px;margin:48px auto;padding:0 20px;line-height:1.6">
 <h1>PNova IA: asistente de inteligencia artificial en español</h1>
@@ -1533,8 +1579,32 @@
 
 <div id="toast" role="alert" hidden></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js"></script>
-<script>window.supabase || document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"><\/script>');</script>
+<script>
+/* Supabase: se prueba el archivo propio (vendor/supabase.js, si lo subes) y después varios CDN. Cada intento tiene tiempo máximo. */
+window.__loadSupabase = function () {
+  if (window.supabase && window.supabase.createClient) return Promise.resolve(true);
+  var urls = [
+    "vendor/supabase.js",
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.min.js",
+    "https://unpkg.com/@supabase/supabase-js@2.105.0/dist/umd/supabase.js",
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js",
+    "https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"
+  ];
+  function ok() { return !!(window.supabase && window.supabase.createClient); }
+  function one(url) {
+    return new Promise(function (resolve) {
+      var done = false, sc = document.createElement("script");
+      function end(v) { if (done) return; done = true; clearTimeout(t); resolve(v); }
+      var t = setTimeout(function () { end(false); }, 5000);
+      sc.src = url; sc.async = true;
+      sc.onload = function () { end(ok()); };
+      sc.onerror = function () { end(false); };
+      document.head.appendChild(sc);
+    });
+  }
+  return urls.reduce(function (p, u) { return p.then(function (got) { return got || one(u); }); }, Promise.resolve(false));
+};
+</script>
 <script>
 /* =====================================================================
    CONFIGURACIÓN — edita solo este bloque
@@ -1853,7 +1923,7 @@ function mdBlocks(text) {
    Estado
    ===================================================================== */
 const configured = !CONFIG.SUPABASE_URL.includes("TU-PROYECTO") && !CONFIG.SUPABASE_ANON_KEY.startsWith("TU_");
-let sb = null;
+let sb = null, supabaseMissing = false;
 let user = null, profile = null;
 let conversations = [], currentId = null, messages = [];
 let sending = false, loadingConv = false, lastFailed = false;
@@ -2625,6 +2695,7 @@ const Stars = (() => {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let W = 0, H = 0, stars = [], raf = 0;
   function size() {
+    if (!ctx) return;
     const r = cv.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2);
     if (!r.width || !r.height) return;
     W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
@@ -2645,7 +2716,7 @@ const Stars = (() => {
     }
     if (!still) raf = requestAnimationFrame(frame);
   }
-  function start() { stop(); size(); raf = requestAnimationFrame(frame); }
+  function start() { stop(); if (!ctx) return; size(); raf = requestAnimationFrame(frame); }
   function stop() { cancelAnimationFrame(raf); raf = 0; }
   window.addEventListener("resize", () => { if (!landing.hidden) start(); });
   document.addEventListener("visibilitychange", () => {
@@ -2668,6 +2739,10 @@ function hideLanding() {
   Stars.stop();
 }
 function goAuth(mode) {
+  if (supabaseMissing) {   // el componente de acceso no se pudo descargar: se explica en lugar de dejar los botones muertos
+    showAuthError();
+    return;
+  }
   hideLanding();
   $("#auth-view").hidden = false;
   setAuthMode(mode);
@@ -2678,6 +2753,12 @@ function goAuth(mode) {
 landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => goAuth(b.dataset.go)));
 landing.addEventListener("pointerdown", e => { if (!e.target.closest("button")) landing.classList.add("done"); });  // tocar = saltar la intro
 $("#auth-home").onclick = () => { showNotice(); showLanding(); };
+
+function showAuthError() {
+  landing.hidden = true; $("#auth-view").hidden = false; setAuthMode("login"); showPanel("main");
+  showNotice("No se pudo cargar el sistema de acceso. Es posible que la red o el dispositivo esté bloqueando cdn.jsdelivr.net o unpkg.com. Recarga la página, prueba con otra red o pide que los permitan.", "error");
+  ["#auth-submit", "#btn-google", "#btn-phone"].forEach(q => { const el = $(q); if (el) el.disabled = true; });
+}
 
 async function enterApp(session) {
   user = session.user;
@@ -4296,26 +4377,41 @@ syncAutoReadUI(); vcSyncLang(); ttsUI();
    Arranque
    ===================================================================== */
 (async function init() {
-  setAuthMode("login");
-  if (!configured) { showAuth(); return; }
+  const hideBoot = () => { clearTimeout(window.__bootTimer); const b = document.getElementById("boot"); if (b) b.remove(); };
+  try {
+    setAuthMode("login");
+    if (!configured) { showAuth(); hideBoot(); return; }
 
-  sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, experimental: { passkey: true } }
-  });
+    // El componente de acceso (Supabase) puede tardar o estar bloqueado por la red: se prueban varias fuentes
+    const loaded = await (window.__loadSupabase ? window.__loadSupabase() : Promise.resolve(!!window.supabase));
+    if (!loaded) {
+      showLanding(); hideBoot();
+      supabaseMissing = true;
+      return;
+    }
 
-  syncPasskeyUI();
+    sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, experimental: { passkey: true } }
+    });
 
-  // No hacer llamadas a Supabase dentro del callback: se difieren con setTimeout
-  sb.auth.onAuthStateChange((event, session) => {
-    setTimeout(() => {
-      if (event === "SIGNED_OUT" || !session) { showAuth(); return; }
-      if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && (!user || user.id !== session.user.id)) gateSession(session);
-    }, 0);
-  });
+    syncPasskeyUI();
 
-  const { data } = await sb.auth.getSession();
-  if (data.session) { if (!user) gateSession(data.session); }
-  else showAuth();
+    // No hacer llamadas a Supabase dentro del callback: se difieren con setTimeout
+    sb.auth.onAuthStateChange((event, session) => {
+      setTimeout(() => {
+        if (event === "SIGNED_OUT" || !session) { showAuth(); return; }
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && (!user || user.id !== session.user.id)) gateSession(session);
+      }, 0);
+    });
+
+    const { data } = await sb.auth.getSession();
+    if (data.session) { if (!user) gateSession(data.session); }
+    else showAuth();
+    hideBoot();
+  } catch (err) {
+    console.error("[PNova] Error al iniciar:", err);
+    if (window.__bootFail) window.__bootFail("Error al iniciar: " + ((err && err.message) || err) + ". Recarga la página; si sigue igual, prueba otra red o actualiza el navegador.");
+  }
 })();
 </script>
 </body>
