@@ -703,6 +703,8 @@
   .pay-brands .i { width: 15px; height: 15px; }
   #co-retry { align-self: flex-start; }
   .co-fine { margin: auto 0 0; padding-top: 4px; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+  .co-fine a { color: var(--muted); text-decoration: underline; }
+  .co-fine a:hover { color: var(--text); }
 
   /* =====================================================================
      ADAPTACIÓN A MÓVILES, TABLETS Y ESCRITORIO
@@ -1153,7 +1155,7 @@
       <button class="btn-primary" id="name-submit" type="submit">Continuar</button>
       <button class="link-btn" id="name-cancel" type="button">Cancelar</button>
     </form>
-    <p class="legal-note" id="legal-note">Al continuar aceptas las <a href="/condiciones-del-servicio" target="_blank" rel="noopener">Condiciones del servicio</a> y la <a href="/politica-de-privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</p>
+    <p class="legal-note" id="legal-note">Al iniciar sesión o registrarte aceptas la <a href="https://pnova-ai.com/politica-privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</p>
     <div id="auth-notice" class="notice" role="status" hidden></div>
   </div>
 </section>
@@ -1284,14 +1286,6 @@
       <!-- General -->
       <div class="set-pane" id="pane-general" role="tabpanel">
         <h3>General</h3>
-        <div class="set-row">
-          <div class="lbl"><b>Idioma de la aplicación</b><small>Elige el idioma de la interfaz o déjalo en automático.</small></div>
-          <div class="seg" id="lang-seg" role="group" aria-label="Idioma de la aplicación" data-notr>
-            <button type="button" data-lang="auto" aria-pressed="false">Auto</button>
-            <button type="button" data-lang="es" aria-pressed="false">Español</button>
-            <button type="button" data-lang="en" aria-pressed="false">English</button>
-          </div>
-        </div>
         <div class="set-row"><div class="lbl"><b>Corregir mis mensajes automáticamente</b><small>Arregla abreviaturas, tildes y signos antes de enviarlos a la IA. Tu mensaje se ve igual que lo escribiste.</small></div><label class="switch"><input type="checkbox" id="set-autofix" aria-label="Corregir mis mensajes automáticamente"><i></i></label></div>
         <div class="set-row">
           <div class="lbl"><b>Tema</b><small>Elige cómo se ve PNova IA.</small></div>
@@ -1507,7 +1501,7 @@
       </div>
       <button class="btn-sm" id="co-retry" type="button" hidden>Reintentar</button>
       <div class="notice set-msg" id="msg-pp-checkout" role="status" hidden></div>
-      <p class="co-fine">Al pagar aceptas que el acceso es de pago único y no se renueva solo. Puedes volver a comprar meses cuando quieras y se suman a tu fecha de vencimiento.</p>
+      <p class="co-fine">Al adquirirlo aceptas las <a href="https://pnova-ai.com/condiciones-servicio.html" target="_blank" rel="noopener">Condiciones de Servicio</a>. Al pagar aceptas que el acceso es de pago único y no se renueva solo. Puedes volver a comprar meses cuando quieras y se suman a tu fecha de vencimiento.</p>
     </section>
   </div>
 </div>
@@ -4174,88 +4168,6 @@ syncAutoReadUI(); vcSyncLang(); ttsUI();
   const { data } = await sb.auth.getSession();
   if (data.session) { if (!user) gateSession(data.session); }
   else showAuth();
-})();
-</script>
-<script>
-/* Idioma de la interfaz: auto / es / en (guardado en localStorage "pnova.lang") */
-(function () {
-  var D = {"1 mes": "1 month", "3,99 € / mes": "€3.99 / month", "Abrir barra lateral": "Open sidebar", "Acceso a Nova AI": "Access to Nova AI", "Acceso anticipado a novedades": "Early access to new features", "Acceso durante 1 mes": "1 month of access", "Acceso rápido con clave de acceso": "Quick sign-in with a passkey", "Adjunta archivos e imágenes y pide resúmenes, explicaciones o ayuda con su contenido.": "Attach files and images and ask for summaries, explanations or help with their content.", "Adjuntar archivos": "Attach files", "Ajustes": "Settings", "Al continuar aceptas las": "By continuing you accept the", "Al pagar aceptas que el acceso es de pago único y no se renueva solo. Puedes volver a comprar meses cuando quieras y se suman a tu fecha de vencimiento.": "By paying you agree that access is a one-time payment and does not renew automatically. You can buy more months whenever you like and they are added to your expiry date.", "Analizar archivos": "Analyze files", "Aprender algo nuevo": "Learn something new", "Arregla abreviaturas, tildes y signos antes de enviarlos a la IA. Tu mensaje se ve igual que lo escribiste.": "Fixes abbreviations, accents and punctuation before sending to the AI. Your message looks exactly as you typed it.", "Azul": "Blue", "Barra lateral": "Sidebar", "Bienvenida": "Welcome", "Borra todo tu historial. No se puede deshacer.": "Deletes your whole history. This cannot be undone.", "Borra tu cuenta y todos tus datos.": "Deletes your account and all your data.", "Botones, enlaces y detalles.": "Buttons, links and details.", "Buscar chats": "Search chats", "Cambiar contraseña": "Change password", "Cambiar correo": "Change email", "Cambiar meses": "Change months", "Cancelar": "Cancel", "Cerrar": "Close", "Cerrar ajustes": "Close settings", "Cerrar barra lateral": "Close sidebar", "Cerrar sesión": "Sign out", "Chat con IA": "AI chat", "Chat con PNova 1.5": "Chat with PNova 1.5", "Chatea con inteligencia artificial en español": "Chat with artificial intelligence", "Chats guardados": "Saved chats", "Chats recientes": "Recent chats", "Claro": "Light", "Color de acento": "Accent color", "Compatibilidad de este navegador": "This browser's compatibility", "Comprobando tu plan…": "Checking your plan…", "Con el micrófono del cuadro de texto.": "Using the microphone in the text box.", "Con prefijo internacional. Si escribes un móvil español de 9 cifras, añadiremos +34. Te enviaremos el código únicamente por WhatsApp. Si no tienes cuenta, se crea al verificar el código.": "With country code. If you type a 9-digit Spanish mobile, we'll add +34. We'll send the code by WhatsApp only. If you don't have an account, one is created when you verify the code.", "Condiciones del servicio": "Terms of Service", "Continuar": "Continue", "Continuar al pago": "Continue to payment", "Continuar con Google": "Continue with Google", "Continuar con clave de acceso": "Continue with a passkey", "Continuar con teléfono": "Continue with phone", "Contraseña": "Password", "Contraseña actual": "Current password", "Conversa con un asistente de inteligencia artificial que entiende tu idioma y recuerda el hilo de la conversación.": "Talk to an AI assistant that understands your language and remembers the thread of the conversation.", "Conversación por voz": "Voice conversation", "Corregir mis mensajes automáticamente": "Automatically correct my messages", "Correo": "Email", "Correo electrónico": "Email", "Crear clave de acceso": "Create a passkey", "Crear cuenta": "Create account", "Crear imagen": "Create image", "Crear imágenes con IA": "Create images with AI", "Crédito o débito · ventana segura de PayPal": "Credit or debit · secure PayPal window", "Cuenta": "Account", "Código de verificación": "Verification code", "Datos": "Data", "Descarga todas tus conversaciones en un archivo JSON.": "Download all your conversations as a JSON file.", "Describe lo que imaginas y genera imágenes con inteligencia artificial sin salir del chat.": "Describe what you imagine and generate images with AI without leaving the chat.", "Desde 3,99 € · pago único": "From €3.99 · one-time payment", "Detener lectura": "Stop reading", "Detener voz": "Stop voice", "Dicta tus mensajes, escucha las respuestas en voz alta y usa el modo de conversación por voz.": "Dictate your messages, listen to replies out loud and use voice conversation mode.", "Dictar con la voz": "Dictate with your voice", "Dictar mensaje por voz": "Dictate message by voice", "Duración": "Duration", "Duración del acceso en meses": "Access duration in months", "El audio del micrófono lo procesa el servicio de voz de tu navegador (por ejemplo, Google en Chrome o Apple en Safari). PNova IA solo recibe el texto reconocido y no guarda el audio.": "Microphone audio is processed by your browser's speech service (for example Google in Chrome or Apple in Safari). PNova IA only receives the recognized text and does not store the audio.", "Elegir Plan Basic": "Choose Basic Plan", "Elige cómo pagar": "Choose how to pay", "Elige cómo se ve PNova IA.": "Choose how PNova IA looks.", "Eliminar cuenta": "Delete account", "Eliminar todo": "Delete all", "Eliminar todos los chats": "Delete all chats", "Empezar": "Get started", "Entra con correo, Google o teléfono.": "Sign in with email, Google or phone.", "Enviar al terminar de dictar": "Send when dictation ends", "Enviar mensaje": "Send message", "Escucha cómo suena la lectura.": "Hear how the reading sounds.", "Exportar": "Export", "Exportar mis chats": "Export my chats", "Fuentes": "Sources", "Galaxia": "Galaxy", "Gratis": "Free", "Guardar contraseña": "Save password", "Guardar nombre": "Save name", "Habla con PNova IA y escucha sus respuestas con las funciones de voz de tu navegador.": "Talk to PNova IA and hear its replies using your browser's voice features.", "Habla con tu voz": "Speak with your voice", "Historial": "History", "Historial de chats en tu cuenta": "Chat history in your account", "Idioma de voz": "Voice language", "Inicia sesión en PNova IA": "Sign in to PNova IA", "Iniciar conversación por voz": "Start voice conversation", "Iniciar sesión": "Sign in", "Instálala como app": "Install it as an app", "Las voces disponibles dependen de tu dispositivo.": "Available voices depend on your device.", "Lectura en voz alta": "Read aloud", "Leer respuestas automáticamente": "Read replies automatically", "Leer respuestas en voz alta": "Read replies aloud", "Legal": "Legal", "Leyendo respuesta…": "Reading reply…", "Lluvia de ideas": "Brainstorm", "Mensaje": "Message", "Más mensajes e imágenes": "More messages and images", "Método de acceso": "Sign-in method", "Naranja": "Orange", "Nombre": "Name", "Nombre para mostrar": "Display name", "Nueva contraseña": "New password", "Nuevo chat": "New chat", "Número de teléfono": "Phone number", "Oscuro": "Dark", "PNova IA dirá en voz alta cada respuesta nueva.": "PNova IA will read every new reply aloud.", "PNova IA puede cometer errores. Comprueba la información importante.": "PNova IA can make mistakes. Check important information.", "PNova IA es una PWA: instálala desde el navegador y ábrela como cualquier otra aplicación.": "PNova IA is a PWA: install it from your browser and open it like any other app.", "PNova IA es un asistente de IA pensado para hablar contigo en español. Pregunta lo que quieras, redacta textos, resuelve dudas, aprende, programa o analiza documentos, todo desde una interfaz limpia que funciona en el móvil, la tablet y el ordenador.": "PNova IA is an AI assistant built to talk with you. Ask anything, write texts, solve doubts, learn, code or analyze documents, all from a clean interface that works on phone, tablet and computer.", "PNova IA es un asistente de inteligencia artificial en español con el que puedes conversar, escribir textos, programar, analizar archivos y crear imágenes desde el navegador o instalado como app.": "PNova IA is an AI assistant you can chat with, write texts, code, analyze files and create images, from your browser or installed as an app.", "PNova IA: asistente de inteligencia artificial en español": "PNova IA: artificial intelligence assistant", "Pagar con Apple Pay": "Pay with Apple Pay", "Pagar con PayPal": "Pay with PayPal", "Pagar con tarjeta": "Pay by card", "Pago cifrado y procesado de forma segura por PayPal. PNova IA nunca ve los datos de tu tarjeta.": "Payment is encrypted and securely processed by PayPal. PNova IA never sees your card details.", "Pago único · Sin renovación automática": "One-time payment · No auto-renewal", "Pago único · se activa al instante": "One-time payment · activates instantly", "Para dictar y para leer en voz alta.": "For dictation and reading aloud.", "Pausar lectura": "Pause reading", "Planes": "Plans", "Política de privacidad": "Privacy Policy", "Por ejemplo, Pedro": "For example, Peter", "Precio por anunciar": "Price to be announced", "Pregunta a PNova IA": "Ask PNova IA", "Pregunta, escribe, programa o analiza archivos con PNova IA.": "Ask, write, code or analyze files with PNova IA.", "Preguntas frecuentes sobre PNova IA": "PNova IA FAQ", "Preparando el pago seguro…": "Preparing secure payment…", "Probar": "Test", "Probar voz": "Test voice", "Próximamente": "Coming soon", "Puedes entrar con correo y contraseña, con Google, con clave de acceso o con tu número de teléfono.": "You can sign in with email and password, Google, a passkey or your phone number.", "Recibir código por WhatsApp": "Get code via WhatsApp", "Redactar un texto": "Write a text", "Reenviar código": "Resend code", "Reintentar": "Retry", "Renovación": "Renewal", "Repite la nueva contraseña": "Repeat the new password", "Respuestas más rápidas": "Faster replies", "Resumen del pedido": "Order summary", "Revisar código": "Review code", "Rosa": "Pink", "Salir de PNova IA en este dispositivo.": "Sign out of PNova IA on this device.", "Salir del modo voz": "Exit voice mode", "Sesión": "Session", "Sin renovación automática": "No auto-renewal", "Sistema": "System", "Suscribirme": "Subscribe", "Sí. PNova IA es una aplicación web progresiva (PWA): puedes instalarla desde tu navegador y usarla como una app.": "Yes. PNova IA is a progressive web app (PWA): you can install it from your browser and use it like an app.", "Sí. PNova IA incluye dictado por voz, lectura de las respuestas en voz alta y un modo de conversación por voz.": "Yes. PNova IA includes voice dictation, reading replies aloud and a voice conversation mode.", "Sí. Tus chats se guardan en tu cuenta para que los recuperes desde cualquier dispositivo, y puedes exportarlos cuando quieras.": "Yes. Your chats are saved in your account so you can get them back on any device, and you can export them whenever you want.", "Teléfono": "Phone", "Tema": "Theme", "Temas y personalización": "Themes and customization", "Terminar conversación por voz": "End voice conversation", "Toca el círculo para hablar": "Tap the circle to speak", "Toca para hablar": "Tap to speak", "Todo lo del Plan Basic": "Everything in Basic Plan", "Total a pagar hoy": "Total to pay today", "Tu asistente de inteligencia artificial en español: chatea con IA, escribe, programa, crea imágenes y analiza archivos. Tus chats se guardan en tu cuenta.": "Your artificial intelligence assistant: chat with AI, write, code, create images and analyze files. Your chats are saved in your account.", "Tu historial se guarda en tu cuenta, listo para retomarlo en cualquier dispositivo y exportarlo cuando quieras.": "Your history is saved in your account, ready to pick up on any device and export whenever you want.", "Tu nombre": "Your name", "Tu plan": "Your plan", "Tus chats se guardan en tu cuenta.": "Your chats are saved in your account.", "Uso ampliado": "Extended usage", "Usuario": "User", "Velocidad": "Speed", "Velocidad de lectura": "Reading speed", "Verde": "Green", "Verificar correo": "Verify email", "Vinculado a tu cuenta.": "Linked to your account.", "Violeta": "Violet", "Visa · Mastercard · American Express · PayPal": "Visa · Mastercard · American Express · PayPal", "Volver": "Back", "Volver al inicio": "Back to home", "Voz": "Voice", "Voz de lectura": "Reading voice", "y la": "and the", "¡Pago confirmado!": "Payment confirmed!", "¿Cuántos meses quieres? Más mensajes e imágenes, acceso a Nova AI y respuestas más rápidas.": "How many months do you want? More messages and images, access to Nova AI and faster replies.", "¿Cómo puedo iniciar sesión?": "How can I sign in?", "¿Puedo hablar con PNova IA con la voz?": "Can I talk to PNova IA by voice?", "¿Puedo instalar PNova IA en el móvil u ordenador?": "Can I install PNova IA on my phone or computer?", "¿Qué creamos hoy?": "What shall we create today?", "¿Qué es PNova IA?": "What is PNova IA?", "¿Se guardan mis conversaciones?": "Are my conversations saved?", "← Volver al inicio": "← Back to home", "Plan gratuito": "Free plan", "Plan Basic": "Basic Plan", "Idioma de la aplicación": "App language", "Elige el idioma de la interfaz o déjalo en automático.": "Choose the interface language or leave it on automatic.", "Describe la imagen con algo más de detalle.": "Describe the image in a bit more detail.", "El navegador bloqueó el audio. Pulsa «Escuchar» o el micrófono e inténtalo de nuevo.": "The browser blocked the audio. Press “Listen” or the microphone and try again.", "Espera a que terminen de cargarse los archivos.": "Wait for the files to finish loading.", "La imagen se generó, pero no se pudo guardar en el historial.": "The image was generated but couldn't be saved to your history.", "No se pudieron cargar tus chats.": "Couldn't load your chats.", "No se pudo abrir el chat.": "Couldn't open the chat.", "No se pudo cambiar el nombre.": "Couldn't rename.", "No se pudo cerrar la sesión.": "Couldn't sign out.", "No se pudo copiar.": "Couldn't copy.", "No se pudo eliminar el chat.": "Couldn't delete the chat.", "No se pudo iniciar el micrófono.": "Couldn't start the microphone.", "No te he oído. Pulsa el micrófono y vuelve a intentarlo.": "I didn't hear you. Press the microphone and try again.", "Quita los adjuntos para crear una imagen.": "Remove the attachments to create an image.", "Suscripción recibida. Gracias.": "Subscription received. Thank you.", "¡PNova IA instalada!": "PNova IA installed!", "Contraseña actualizada.": "Password updated.", "Escribe tu contraseña actual.": "Enter your current password.", "Escribe un correo válido.": "Enter a valid email.", "Escribe un nombre de al menos 2 caracteres.": "Enter a name of at least 2 characters.", "Ese ya es tu correo actual.": "That is already your current email.", "La nueva contraseña debe ser distinta de la actual.": "The new password must be different from the current one.", "La nueva contraseña debe tener al menos 6 caracteres.": "The new password must be at least 6 characters.", "Las contraseñas nuevas no coinciden.": "The new passwords don't match.", "No se pudieron eliminar todos los chats.": "Couldn't delete all chats.", "No se pudieron exportar tus chats.": "Couldn't export your chats.", "Nombre actualizado.": "Name updated.", "Te hemos enviado un correo de confirmación. Abre el enlace para completar el cambio.": "We've sent you a confirmation email. Open the link to complete the change.", "Demasiados intentos. Espera un momento y vuelve a probar.": "Too many attempts. Wait a moment and try again.", "Copiar": "Copy", "Copiar respuesta": "Copy reply", "Escuchar": "Listen", "Escuchar respuesta": "Listen to reply", "PNova IA está escribiendo": "PNova IA is typing"}, RX = [["^Hola, (.+)\\. ¿Qué creamos hoy\\?$", "Hi, $1. What shall we create today?"]].map(function (r) { return [new RegExp(r[0]), r[1]]; });
-  var ATTRS = ["aria-label", "title", "placeholder"], KEY = "pnova.lang";
-  var TT = new WeakMap(), AT = new WeakMap(), lang = "es", pref = "auto", busy = false;
-  var TITLE_ES = document.title, DESC = document.querySelector('meta[name="description"]'), DESC_ES = DESC && DESC.content;
-  function resolve(p) { return p === "es" || p === "en" ? p : (/^es/i.test(navigator.language || "") ? "es" : "en"); }
-  function skip(n) {
-    var e = n.nodeType === 1 ? n : n.parentElement;
-    return !e || !!e.closest("script,style,textarea,input,select,[data-notr],.content,.bubble,.chat-open,.rename-input,.msg-error code");
-  }
-  function tr(v) {
-    var m = /^(\s*)([\s\S]*?)(\s*)$/.exec(v), k = m[2].replace(/\s+/g, " ");
-    if (!k) return null;
-    if (D[k]) return m[1] + D[k] + m[3];
-    for (var i = 0; i < RX.length; i++) if (RX[i][0].test(k)) return m[1] + k.replace(RX[i][0], RX[i][1]) + m[3];
-    return null;
-  }
-  function text(n) {
-    if (skip(n)) return;
-    var r = TT.get(n);
-    if (r && n.nodeValue === r.t) { if (lang !== "en") { n.nodeValue = r.o; TT.delete(n); } return; }
-    if (lang !== "en") { TT.delete(n); return; }
-    var t = tr(n.nodeValue);
-    if (t !== null && t !== n.nodeValue) { TT.set(n, { o: n.nodeValue, t: t }); n.nodeValue = t; }
-  }
-  function attrs(el) {
-    if (el.nodeType !== 1 || skip(el)) return;
-    var rec = AT.get(el) || {};
-    ATTRS.forEach(function (a) {
-      if (!el.hasAttribute(a)) return;
-      var v = el.getAttribute(a), r = rec[a];
-      if (r && v === r.t) { if (lang !== "en") { el.setAttribute(a, r.o); delete rec[a]; } return; }
-      if (lang !== "en") { delete rec[a]; return; }
-      var t = tr(v);
-      if (t !== null && t !== v) { rec[a] = { o: v, t: t }; el.setAttribute(a, t); }
-    });
-    AT.set(el, rec);
-  }
-  function walk(root) {
-    if (root.nodeType === 3) return text(root);
-    if (root.nodeType !== 1) return;
-    attrs(root);
-    var w = document.createTreeWalker(root, 5), n;
-    while ((n = w.nextNode())) n.nodeType === 3 ? text(n) : attrs(n);
-  }
-  function apply() {
-    busy = true;
-    document.documentElement.lang = lang;
-    document.title = lang === "en" ? (tr(TITLE_ES) || "PNova IA: AI assistant | Chat with AI") : TITLE_ES;
-    if (DESC) DESC.content = lang === "en" ? "PNova IA is your AI assistant. Chat, write, code, create images and analyze files. Talk by voice and keep your chats in your account." : DESC_ES;
-    walk(document.body);
-    document.querySelectorAll("#lang-seg button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === pref)); });
-    busy = false;
-  }
-  function set(p) {
-    pref = p; lang = resolve(p);
-    try { localStorage.setItem(KEY, p); } catch (e) {}
-    apply();
-    window.dispatchEvent(new CustomEvent("pnova:lang", { detail: lang }));
-  }
-  try { pref = localStorage.getItem(KEY) || "auto"; } catch (e) {}
-  lang = resolve(pref);
-  window.PNovaLang = { get: function () { return lang; }, set: set };
-  document.addEventListener("click", function (e) {
-    var b = e.target.closest && e.target.closest("#lang-seg button");
-    if (b) set(b.dataset.lang);
-  });
-  new MutationObserver(function (list) {
-    if (busy) return;
-    busy = true;
-    list.forEach(function (m) {
-      if (m.type === "characterData") text(m.target);
-      else if (m.type === "attributes") attrs(m.target);
-      else m.addedNodes.forEach(walk);
-    });
-    busy = false;
-  }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS });
-  apply();
 })();
 </script>
 </body>
