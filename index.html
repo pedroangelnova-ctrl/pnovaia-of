@@ -1548,6 +1548,14 @@ const CONFIG = {
       sendAuthToken: false   // true = envía el token de Supabase en la cabecera Authorization
     },
     {
+      id: "pnova-1.5-pro",
+      name: "PNova 1.5 Pro",
+      description: "Modelo avanzado de PNova Group",
+      provider: "gemini",
+      endpoint: "https://pnova-gemini.pedroangelnp-es.workers.dev/chat",   // Worker que guarda la clave de Gemini (ver gemini-worker.js)
+      sendAuthToken: true
+    },
+    {
       id: "nova-ai",
       name: "Nova AI",
       description: "Modelos en Colab",
@@ -3090,6 +3098,7 @@ async function callBackend(model) {
     const { data } = await sb.auth.getSession();
     if (data.session) headers.Authorization = "Bearer " + data.session.access_token;
   }
+  if (model.provider === "gemini") return callGemini(model, history, extra, lastMsg);
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), CONFIG.REQUEST_TIMEOUT_MS);
   let res;
@@ -3117,6 +3126,50 @@ async function callBackend(model) {
   if (!reply) { const e = new Error("empty"); e.userMessage = `${model.name} devolvió una respuesta vacía.`; throw e; }
   const flag = data && [data.searched, data.used_search, data.web_search, data.search_used, data.did_search, data.used_web_search].find(v => typeof v === "boolean");
   return { reply, sources: extractApiSources(data), searched: typeof flag === "boolean" ? flag : wantsSearch(lastMsg ? lastMsg.content : last.content) };
+}
+
+/* PNova 1.5 Pro → Worker de Cloudflare → API de Gemini (la clave vive solo en el Worker) */
+async function callGemini(model, history, extra, lastMsg) {
+  const contents = history.map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: String(m.content || " ") }] }));
+  const lastParts = contents[contents.length - 1].parts;
+  (extra || []).forEach(f => {          // imágenes y PDF se envían a Gemini; el texto de otros archivos ya va en el mensaje
+    const mt = /^data:([^;,]+);base64,(.+)$/.exec(f.data || "");
+    if (mt && (/^image\//.test(mt[1]) || mt[1] === "application/pdf")) lastParts.push({ inlineData: { mimeType: mt[1], data: mt[2] } });
+  });
+  const { data: sess } = await sb.auth.getSession();
+  if (!sess.session) { const e = new Error("auth"); e.userMessage = "Tu sesión ha caducado. Vuelve a iniciar sesión."; throw e; }
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), CONFIG.REQUEST_TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(model.endpoint, {
+      method: "POST", signal: ctrl.signal,
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + sess.session.access_token },
+      body: JSON.stringify({ contents })
+    });
+  } catch (err) {
+    if (err.name === "AbortError") throw err;
+    const e = new Error("network"); e.userMessage = `No se pudo conectar con ${model.name}. Comprueba tu conexión.`; throw e;
+  } finally { clearTimeout(timer); }
+  if (!res.ok) {
+    let detail = ""; try { detail = (await res.json()).error.message || ""; } catch (_) {}
+    console.warn("[PNova] Gemini", res.status, detail);
+    const e = new Error("http " + res.status);
+    e.userMessage = res.status === 429 ? `${model.name} está recibiendo muchas peticiones. Inténtalo de nuevo en un momento.`
+      : (res.status === 400 || res.status === 403) ? `${model.name} no pudo procesar la petición (${res.status}). Inténtalo de nuevo en unos minutos.`
+      : `${model.name} respondió con un error (${res.status}).`;
+    throw e;
+  }
+  const data = await res.json().catch(() => null);
+  const cand = data && data.candidates && data.candidates[0];
+  const reply = cand && cand.content && Array.isArray(cand.content.parts) ? cand.content.parts.map(p => p.text || "").join("").trim() : "";
+  if (!reply) {
+    const e = new Error("empty");
+    e.userMessage = (data && data.promptFeedback && data.promptFeedback.blockReason) || (cand && cand.finishReason === "SAFETY")
+      ? `${model.name} no puede responder a este mensaje.` : `${model.name} devolvió una respuesta vacía.`;
+    throw e;
+  }
+  return { reply, sources: [], searched: false };
 }
 
 /* Diagnóstico: nombre del campo del que extractReply() ha sacado el texto (mismo orden de prioridad) */
