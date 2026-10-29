@@ -3,27 +3,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/invite/:code",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/chat/:id",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/login/:sub",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/studio",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/studio/:sub",
+      "source": "/((?!api/|_vercel/).*)",
       "destination": "/index.html"
     }
   ],
