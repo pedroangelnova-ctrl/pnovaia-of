@@ -154,7 +154,7 @@
   try {
     var l = document.createElement("link");
     l.rel = "stylesheet";
-    l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap";
+    l.href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap";
     document.head.appendChild(l);
   } catch (e) {}
 })();
@@ -1203,6 +1203,137 @@
   .ld-foot { max-width: 960px; margin: 48px auto 0; padding: 20px 0 max(24px, env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,.1); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: #98a2d6; }
   .ld-foot a { color: #b9c4f5; text-decoration: underline; }
 </style>
+<style id="pro-theme">
+/* =====================================================================
+   Tema profesional de PNova IA
+   Superficies planas, acento sólido (sin degradados ni brillos), bordes finos,
+   radios con jerarquía y tipografía IBM Plex Sans. Los ajustes de acento
+   de Ajustes → Apariencia siguen funcionando.
+   ===================================================================== */
+:root {
+  --bg: #ffffff;
+  --sidebar: #f5f6f8;
+  --card: #f7f8fa;
+  --hover: #eceef2;
+  --active: #e3e6ec;
+  --text: #151a24;
+  --muted: #5b6475;
+  --border: #e1e4ea;
+  --border-strong: #cdd2dc;
+  --composer: #ffffff;
+  --code-bg: #f3f4f7;
+  --accent: #2447d6;
+  --accent-fill: #2447d6;          /* fondo de botones sólidos (siempre con texto blanco) */
+  --accent-grad: var(--accent-fill);
+  --danger: #c5311f;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 2px 8px rgba(16, 24, 40, .06);
+  --font: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+:root[data-theme="dark"] {
+  --bg: #13161d;
+  --sidebar: #0e1117;
+  --card: #181c25;
+  --hover: #1d212b;
+  --active: #252a36;
+  --text: #e6e8ee;
+  --muted: #9aa2b1;
+  --border: #262b37;
+  --border-strong: #353c4b;
+  --composer: #181c25;
+  --code-bg: #0c0e13;
+  --accent: #7d96ff;
+  --accent-fill: #3e5ce0;
+  --danger: #ff8478;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 2px 10px rgba(0, 0, 0, .3);
+}
+/* Colores de acento elegidos por la persona: relleno sólido, sin degradado */
+:root[data-accent="green"]  { --accent-fill: #15803d; --accent-grad: #15803d; }
+:root[data-accent="violet"] { --accent-fill: #6d28d9; --accent-grad: #6d28d9; }
+:root[data-accent="orange"] { --accent-fill: #c2410c; --accent-grad: #c2410c; }
+:root[data-accent="pink"]   { --accent-fill: #be185d; --accent-grad: #be185d; }
+
+body { font-feature-settings: normal; letter-spacing: 0; }
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.logo { border-radius: 8px; }
+
+/* Acceso */
+.auth-card h1 { font-size: 24px; font-weight: 600; letter-spacing: -.02em; }
+.tabs { border-radius: 10px; }
+.btn-primary { height: 44px; border-radius: 10px; background: var(--accent-fill); }
+.btn-primary:hover { filter: brightness(1.08); }
+
+/* Barra lateral */
+.brand span { background: none; color: var(--text); -webkit-text-fill-color: var(--text); font-weight: 600; letter-spacing: -.01em; }
+.side-nav { padding: 10px 10px 6px; }
+#btn-new { min-height: 42px; font-size: 14.5px; font-weight: 600; border-radius: 10px; background: var(--accent-fill); color: #fff; box-shadow: none; }
+#btn-new:hover { background: var(--accent-fill); filter: brightness(1.1); }
+#btn-studio { margin-top: 8px; min-height: 48px; padding: 10px 14px; gap: 10px; font-size: 15.5px; font-weight: 600; letter-spacing: 0; border-radius: 10px; color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); box-shadow: none; transform: none; }
+#btn-studio .i { width: 22px; height: 22px; stroke-width: 1.9; }
+#btn-studio:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); box-shadow: none; transform: none; }
+#btn-studio.active { background: var(--accent-fill); color: #fff; border-color: var(--accent-fill); box-shadow: none; }
+.side-label { text-transform: none; letter-spacing: 0; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.chat-item { border-radius: 8px; margin: 1px 0; }
+.chat-item.active { background: var(--active); box-shadow: none; font-weight: 500; }
+
+/* Barra superior */
+.model-btn { border: 1px solid transparent; border-radius: 8px; background: transparent; padding: 6px 10px; font-size: 15px; font-weight: 600; }
+.model-btn:hover { background: var(--hover); }
+
+/* Pantalla vacía */
+#empty h1 { background: none; color: var(--text); -webkit-text-fill-color: var(--text); font-weight: 600; letter-spacing: -.025em; font-size: clamp(26px, 3.4vw, 32px); }
+.suggest { gap: 8px; }
+.suggest button { border-radius: 10px; background: var(--bg); padding: 12px 14px; font-weight: 500; transform: none; transition: border-color .15s, background .15s; }
+.suggest button:hover { border-color: var(--accent); background: var(--card); transform: none; }
+
+/* Mensajes */
+.col { max-width: 760px; }
+.msg.user .bubble { background: color-mix(in srgb, var(--accent) 9%, var(--bg)); color: var(--text); border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--bg)); border-radius: 12px; box-shadow: none; padding: 10px 14px; }
+.msg.assistant { padding-left: 44px; }
+.msg.assistant::before { width: 30px; height: 30px; border-radius: 8px; }
+.msg.assistant .content { background: transparent; border: 0; border-radius: 0; padding: 3px 0 0; font-size: 15.5px; line-height: 1.65; }
+
+/* Cuadro de escritura */
+.composer { border-radius: 14px; border: 1px solid var(--border-strong); background: var(--composer); box-shadow: var(--shadow); }
+.composer:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+.send { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-fill); }
+.attach-btn, .mic-btn { border-radius: 8px; }
+.voice-open { border-radius: 8px; background: var(--accent-fill); box-shadow: none; }
+.limit-ico { background: var(--accent-fill); border-radius: 10px; }
+.limit-btn { background: var(--accent-fill); border-radius: 10px; }
+.avatar { background: var(--accent-fill); }
+
+/* Voz */
+.vc { background: var(--bg); }
+.vc-core { background: var(--accent-fill); box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 14%, transparent); }
+.vc-orb[data-state="error"] .vc-core { box-shadow: 0 0 0 10px color-mix(in srgb, var(--danger) 16%, transparent); }
+
+/* Pago */
+.checkout { border-radius: 16px; box-shadow: 0 24px 60px rgba(16, 24, 40, .3); }
+.co-summary { background: #121826; }
+.pay-card { background: var(--accent-fill); box-shadow: none; }
+
+/* Portada: se mantiene la animación de la estrella; el resto, sobrio */
+#landing-view { background: radial-gradient(120% 90% at 50% 34%, #0b1330 0%, #060812 58%, #020309 100%); }
+.ld-bloom { background: radial-gradient(circle, rgba(52, 110, 255, .20) 0%, rgba(0, 0, 0, 0) 60%); }
+.ld-title { background: none; color: #fff; -webkit-text-fill-color: #fff; font-weight: 600; letter-spacing: -.03em; }
+.ld-tag { color: #aab3d1; }
+.ld-link, .ld-pill { border-radius: 8px; }
+.ld-pill { backdrop-filter: none; background: transparent; border-color: rgba(255, 255, 255, .28); }
+.ld-btn { height: 48px; border-radius: 10px; font-size: 15.5px; }
+.ld-btn:hover { transform: none; }
+.ld-btn-main { background: var(--accent-fill); box-shadow: none; }
+.ld-btn-main:hover { box-shadow: none; filter: brightness(1.12); }
+.ld-btn-ghost { background: transparent; backdrop-filter: none; border-color: rgba(255, 255, 255, .28); border-radius: 10px; }
+.ld-btn-ghost:hover { background: rgba(255, 255, 255, .08); }
+.ld-grid article { border-radius: 12px; }
+
+/* Botones sólidos con texto blanco: relleno con contraste suficiente también en oscuro */
+.st-btn.primary, #pv-download, .btn-sm.primary, .mic-btn[data-state="listening"] { background: var(--accent-fill); }
+.pwa-steps li::before { background: var(--accent-fill); }
+</style>
+
 </head>
 <body>
 <div id="boot" role="status" aria-live="polite" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#05060f;color:#eef1ff">
@@ -1587,11 +1718,11 @@
         <div class="set-row">
           <div class="lbl"><b>Color de acento</b><small>Botones, enlaces y detalles.</small></div>
           <div class="swatches" id="accent-row" role="group" aria-label="Color de acento">
-            <button type="button" class="swatch" data-accent="blue" aria-pressed="false" aria-label="Azul" title="Azul" style="background:linear-gradient(135deg,#1fb6ff,#3b5bf5 55%,#8b3cf6)"></button>
-            <button type="button" class="swatch" data-accent="green" aria-pressed="false" aria-label="Verde" title="Verde" style="background:linear-gradient(135deg,#4ade80,#16a34a)"></button>
-            <button type="button" class="swatch" data-accent="violet" aria-pressed="false" aria-label="Violeta" title="Violeta" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)"></button>
-            <button type="button" class="swatch" data-accent="orange" aria-pressed="false" aria-label="Naranja" title="Naranja" style="background:linear-gradient(135deg,#fdba74,#ea580c)"></button>
-            <button type="button" class="swatch" data-accent="pink" aria-pressed="false" aria-label="Rosa" title="Rosa" style="background:linear-gradient(135deg,#f9a8d4,#db2777)"></button>
+            <button type="button" class="swatch" data-accent="blue" aria-pressed="false" aria-label="Azul" title="Azul" style="background:#2447d6"></button>
+            <button type="button" class="swatch" data-accent="green" aria-pressed="false" aria-label="Verde" title="Verde" style="background:#15803d"></button>
+            <button type="button" class="swatch" data-accent="violet" aria-pressed="false" aria-label="Violeta" title="Violeta" style="background:#6d28d9"></button>
+            <button type="button" class="swatch" data-accent="orange" aria-pressed="false" aria-label="Naranja" title="Naranja" style="background:#c2410c"></button>
+            <button type="button" class="swatch" data-accent="pink" aria-pressed="false" aria-label="Rosa" title="Rosa" style="background:#be185d"></button>
           </div>
         </div>
         <div class="set-row">
