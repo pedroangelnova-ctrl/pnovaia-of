@@ -137,6 +137,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="/logo.png">
 <script>
+/* Respaldo SPA: 404.html guarda la ruta y vuelve a / para que la app la restaure al recargar */
+(function(){try{var r=sessionStorage.getItem("pnova.spa");if(r){sessionStorage.removeItem("pnova.spa");if(location.pathname==="/"&&r.charAt(0)==="/"&&r.charAt(1)!=="/")history.replaceState(null,"",r);}}catch(e){}})();
+</script>
+<script>
 (function(){try{var m=location.pathname.match(/^\/invite\/([A-Za-z0-9]{8,32})\/?$/);var q=new URLSearchParams(location.search).get("ref");var c=m?m[1]:(q&&/^[A-Za-z0-9]{8,32}$/.test(q)?q:"");if(c){localStorage.setItem("pnova.ref",c);history.replaceState(null,"","/");}}catch(e){}})();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
