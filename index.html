@@ -1478,6 +1478,78 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
 .ed-side .ed-dl{background:var(--grad);color:#fff;border:0;font-weight:600;margin-top:auto}
 @media(max-width:760px){.rw,.ed{border-radius:0;height:100dvh;max-height:none;width:100%}.ed-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.ed-side{max-height:38vh}}
 
+/* ===== Recompensas v2 ===== */
+.rw{width:min(760px,100%)}
+.rw-tabs button{transition:transform .15s,background .2s}.rw-tabs button:hover{transform:translateY(-1px)}
+.rw-pane:not([hidden]){animation:rwin .35s ease-out}@keyframes rwin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bar{height:6px;border-radius:99px;background:var(--hover);overflow:hidden;margin:8px 0 6px}.bar.big{height:9px}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--grad);transform-origin:left;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.st-hero{display:flex;align-items:center;gap:22px;padding:22px;border-radius:26px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,#ff9a3c,#ff4d6d)}
+.st-hero.t0{background:linear-gradient(135deg,#4b5675,#2a3150)}.st-hero.t2{background:linear-gradient(135deg,#ff7a18,#e11d48)}.st-hero.t3{background:linear-gradient(135deg,#6d4dff,#e11d9c)}
+.st-hero::after{content:"";position:absolute;inset:auto -40px -60px auto;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.14);filter:blur(30px)}
+.st-ring{position:relative;width:128px;height:128px;flex:none}.st-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.st-ring circle{fill:none;stroke-width:9;stroke-linecap:round}.st-ring .bg{stroke:rgba(255,255,255,.25)}.st-ring .fg{stroke:#fff;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)}
+.st-fire{position:absolute;inset:0;display:grid;place-items:center;font-size:52px;animation:flick 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 14px rgba(0,0,0,.3))}
+.t0 .st-fire{filter:grayscale(1) opacity(.6);animation:none}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.12) rotate(3deg)}}
+.st-num{display:flex;align-items:baseline;gap:8px}.st-num b{font-family:var(--serif);font-weight:400;font-size:72px;line-height:1}.st-num span{font-size:18px;font-weight:600}
+.st-info p{margin:6px 0 10px;opacity:.92}.st-next{display:inline-block;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.2);font-size:13px}
+.st-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:16px 0}
+.st-day{display:grid;justify-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.st-day i{width:100%;max-width:46px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:20px;background:var(--hover);transition:transform .2s}
+.st-day.on i{background:linear-gradient(135deg,#ffb347,#ff5a5f);box-shadow:0 6px 16px rgba(255,90,80,.35)}.st-day:hover i{transform:scale(1.1)}
+.st-day.now i{outline:2px solid var(--accent);outline-offset:3px;animation:pulse 2s infinite}.st-day.now{color:var(--text);font-weight:600}
+@keyframes pulse{50%{outline-offset:6px;outline-color:transparent}}
+.st-level{display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--border)}
+.lv-badge{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-family:var(--serif);font-size:30px;color:#fff;background:var(--grad);box-shadow:0 8px 22px color-mix(in srgb,var(--accent-fill) 35%,transparent);flex:none}
+.lv-txt{flex:1}.lv-txt b{font-size:16px}.lv-txt small{display:block;color:var(--muted);font-size:12.5px}
+.st-hm{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:4px;overflow-x:auto;padding-bottom:4px}
+.hm,.st-hm b{width:100%;aspect-ratio:1;min-width:14px;border-radius:5px;background:var(--hover);display:block;cursor:pointer;transition:transform .12s}
+.st-hm b{background:none;cursor:default}.hm:hover{transform:scale(1.25)}
+.hm.l1{background:#ffd9a8}.hm.l2{background:#ffb347}.hm.l3{background:#ff7a3c}.hm.l4{background:#e11d48}
+.st-hminfo{margin:8px 0 0;color:var(--muted);font-size:13px;min-height:1.3em}
+.rw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.rw-card{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:var(--card);border:1px solid var(--border);transition:transform .2s,box-shadow .2s}
+.rw-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.rw-card.can{border-color:transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;animation:glowc 2s ease-in-out infinite}
+@keyframes glowc{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}}
+.rw-card.got{opacity:.65}
+.rw-ico{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;font-size:26px;background:var(--hover);flex:none}.can .rw-ico{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.rw-txt{flex:1;min-width:0}.rw-txt b{display:block;font-size:14.5px}.rw-txt small{display:block;color:var(--muted);font-size:12.5px}.rw-txt em{font-style:normal;font-size:12.5px;color:var(--accent);font-weight:500}
+.rw-btn{padding:9px 14px;border-radius:12px;border:1px solid var(--border-strong);background:var(--card);color:var(--muted);font:inherit;font-size:13px;font-weight:600;cursor:pointer;flex:none;min-width:84px}
+.rw-card.can .rw-btn,.rw-btn.on{background:var(--grad);color:#fff;border:0}.rw-card.can .rw-btn:hover{transform:scale(1.05)}.rw-btn:disabled{cursor:default}
+.bd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.bd{display:grid;justify-items:center;gap:3px;padding:16px 10px;border-radius:20px;border:1px dashed var(--border-strong);background:transparent;color:var(--text);font:inherit;cursor:pointer;opacity:.6;transition:transform .2s}
+.bd span{font-size:34px;filter:grayscale(.2)}.bd b{font-size:13.5px}.bd small{color:var(--muted);font-size:12px}
+.bd.on{opacity:1;border:1px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:0 8px 24px color-mix(in srgb,var(--accent-fill) 18%,transparent)}
+.bd:hover{transform:translateY(-3px) rotate(-1deg)}.bd.pop span{animation:popb .5s}@keyframes popb{40%{transform:scale(1.5) rotate(-12deg)}}
+.cf{position:fixed;width:9px;height:13px;border-radius:2px;pointer-events:none;z-index:300;animation:cfa 1.1s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes cfa{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+/* Invitar */
+.inv-hero{text-align:center;padding:26px 18px;border-radius:26px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent-fill) 20%,var(--card)),var(--card));border:1px solid var(--border)}
+.inv-gift{font-size:60px;display:inline-block;animation:bob 2.4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-8px) rotate(6deg)}}
+.inv-hero h3{margin:6px 0;font-family:var(--serif);font-weight:400;font-size:30px}.inv-hero p{margin:0;color:var(--muted)}
+.inv-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.inv-steps div{display:grid;justify-items:center;gap:8px;text-align:center;padding:14px 8px;border-radius:18px;background:var(--card);border:1px solid var(--border);font-size:13px}
+.inv-steps span{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--grad);font-weight:700}
+.inv-share{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.inv-share a{padding:12px;border-radius:14px;text-align:center;text-decoration:none;font-weight:600;font-size:14px;color:var(--text);border:1px solid var(--border-strong);background:var(--card);transition:transform .15s,background .2s,color .2s}
+.inv-share a:hover{background:var(--c);color:#fff;border-color:transparent;transform:translateY(-2px)}
+.inv-track{position:relative;height:6px;margin:30px 24px 96px;border-radius:99px;background:var(--hover)}
+.inv-fill{height:100%;border-radius:99px;background:var(--grad);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.inv-node{position:absolute;top:-17px;transform:translateX(-50%);display:grid;justify-items:center;gap:2px;width:96px;text-align:center}
+.inv-node span{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--card);border:2px solid var(--border-strong)}
+.inv-node.on span{border-color:transparent;background:var(--grad)}.inv-node b{font-size:14px}.inv-node small{color:var(--muted);font-size:11.5px;line-height:1.25}
+/* Resumen */
+.rc-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.rc-cards div{padding:12px;border-radius:16px;background:var(--card);border:1px solid var(--border);text-align:center}
+.rc-cards b{display:block;font-family:var(--serif);font-weight:400;font-size:32px}.rc-cards small{color:var(--muted);font-size:12px}
+.rc-hours{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;align-items:end;height:84px;margin-top:6px}
+.rc-hours i{display:block;border-radius:4px 4px 2px 2px;background:var(--grad);opacity:.5;min-height:4px;cursor:pointer;transition:opacity .15s,transform .15s;transform-origin:bottom}
+.rc-hours i:hover,.rc-hours i.top{opacity:1;transform:scaleY(1.06)}
+.rc-hinfo{color:var(--muted);font-size:13px;margin:6px 0 0}
+@media(max-width:560px){.st-hero{flex-direction:column;text-align:center}.st-num{justify-content:center}.rc-cards{grid-template-columns:repeat(2,1fr)}.inv-node{width:78px}}
 </style>
 </head>
 <body>
@@ -2116,9 +2188,9 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
   <div class="rw" role="dialog" aria-modal="true" aria-label="Recompensas">
     <div class="rw-head"><h3>Recompensas</h3><button class="icon-btn" id="rw-close" type="button" aria-label="Cerrar"><span data-icon="x"></span></button></div>
     <div class="rw-tabs" role="tablist">
-      <button type="button" role="tab" data-rw="streak" aria-selected="true">Racha y logros</button>
-      <button type="button" role="tab" data-rw="invite" aria-selected="false">Invita y gana</button>
-      <button type="button" role="tab" data-rw="recap" aria-selected="false">Tu resumen</button>
+      <button type="button" role="tab" data-rw="streak" aria-selected="true">🔥 Racha y logros</button>
+      <button type="button" role="tab" data-rw="invite" aria-selected="false">🎁 Invita y gana</button>
+      <button type="button" role="tab" data-rw="recap" aria-selected="false">📊 Tu resumen</button>
     </div>
     <div class="rw-pane" id="rw-streak"></div>
     <div class="rw-pane" id="rw-invite" hidden></div>
@@ -5912,61 +5984,99 @@ const profile_ = h => h < 6 ? "Búho nocturno" : h < 10 ? "Madrugador" : h < 14 
 
 /* ---------- Catálogo de recompensas y logros ---------- */
 const REW = [
-  { k: "streak3", t: "Racha de 3 días", d: "Escribe 3 días seguidos", r: "+1 día de Plan Basic", ok: x => x.best >= 3 },
-  { k: "streak7", t: "Una semana seguida", d: "7 días seguidos", r: "+3 días de Basic · +10 imágenes", ok: x => x.best >= 7 },
-  { k: "streak30", t: "Un mes imparable", d: "30 días seguidos", r: "+7 días de Basic · +50 imágenes", ok: x => x.best >= 30 },
-  { k: "msgs100", t: "Conversador", d: "Envía 100 mensajes", r: "+1 día de Plan Basic", ok: x => x.all.msgs >= 100 },
-  { k: "chats10", t: "Curioso", d: "Abre 10 conversaciones", r: "+5 imágenes extra", ok: x => x.all.chats >= 10 },
-  { k: "imgs10", t: "Artista", d: "Crea 10 imágenes", r: "+10 imágenes extra", ok: x => x.all.imgs >= 10 },
-  { k: "invite1", t: "Primera invitación", d: "Un amigo se une con tu enlace", r: "+3 días de Plan Basic", ok: x => x.invites >= 1 },
-  { k: "invite5", t: "Cinco amigos", d: "5 amigos se unen", r: "+10 días de Basic · +20 imágenes", ok: x => x.invites >= 5 },
-  { k: "invite10", t: "Embajador", d: "10 amigos se unen", r: "+30 días de Plan Basic", ok: x => x.invites >= 10 }
+  { k: "streak3", e: "🔥", t: "Racha de 3 días", d: "Escribe 3 días seguidos", r: "+1 día de Plan Basic", p: x => [x.best, 3] },
+  { k: "streak7", e: "⚡", t: "Una semana seguida", d: "7 días seguidos", r: "+3 días de Basic · +10 imágenes", p: x => [x.best, 7] },
+  { k: "streak30", e: "👑", t: "Un mes imparable", d: "30 días seguidos", r: "+7 días de Basic · +50 imágenes", p: x => [x.best, 30] },
+  { k: "msgs100", e: "💬", t: "Conversador", d: "Envía 100 mensajes", r: "+1 día de Plan Basic", p: x => [x.all.msgs, 100] },
+  { k: "chats10", e: "🧭", t: "Curioso", d: "Abre 10 conversaciones", r: "+5 imágenes extra", p: x => [x.all.chats, 10] },
+  { k: "imgs10", e: "🎨", t: "Artista", d: "Crea 10 imágenes", r: "+10 imágenes extra", p: x => [x.all.imgs, 10] },
+  { k: "invite1", e: "🎁", t: "Primera invitación", d: "Un amigo se une con tu enlace", r: "+3 días de Plan Basic", p: x => [x.invites, 1] },
+  { k: "invite5", e: "🤝", t: "Cinco amigos", d: "5 amigos se unen", r: "+10 días de Basic · +20 imágenes", p: x => [x.invites, 5] },
+  { k: "invite10", e: "🚀", t: "Embajador", d: "10 amigos se unen", r: "+30 días de Plan Basic", p: x => [x.invites, 10] }
 ];
 const BADGES = [
-  { t: "Madrugador", d: "10 mensajes antes de las 7:00", ok: x => x.all.hours.slice(0, 7).reduce((a, b) => a + b, 0) >= 10 },
-  { t: "Noctámbulo", d: "10 mensajes de 23:00 a 5:00", ok: x => [23, 0, 1, 2, 3, 4, 5].reduce((a, h) => a + x.all.hours[h], 0) >= 10 },
-  { t: "Charlatán", d: "1.000 mensajes", ok: x => x.all.msgs >= 1000 },
-  { t: "Creador", d: "25 imágenes creadas", ok: x => x.all.imgs >= 25 },
-  { t: "Explorador", d: "Usa 2 modelos distintos", ok: x => x.all.models >= 2 },
-  { t: "Fin de semana", d: "20 mensajes en sábado o domingo", ok: x => x.all.wd[5] + x.all.wd[6] >= 20 },
-  { t: "Fiel", d: "30 días activos", ok: x => x.all.days >= 30 },
-  { t: "Imparable", d: "Racha de 14 días", ok: x => x.best >= 14 }
+  { e: "🌅", t: "Madrugador", d: "10 mensajes antes de las 7:00", p: x => [x.all.hours.slice(0, 7).reduce((a, b) => a + b, 0), 10] },
+  { e: "🦉", t: "Noctámbulo", d: "10 mensajes de 23:00 a 5:00", p: x => [[23, 0, 1, 2, 3, 4, 5].reduce((a, h) => a + x.all.hours[h], 0), 10] },
+  { e: "🗣️", t: "Charlatán", d: "1.000 mensajes", p: x => [x.all.msgs, 1000] },
+  { e: "🖼️", t: "Creador", d: "25 imágenes creadas", p: x => [x.all.imgs, 25] },
+  { e: "🧪", t: "Explorador", d: "Usa 2 modelos distintos", p: x => [x.all.models, 2] },
+  { e: "🎉", t: "Fin de semana", d: "20 mensajes en sábado o domingo", p: x => [x.all.wd[5] + x.all.wd[6], 20] },
+  { e: "💎", t: "Fiel", d: "30 días activos", p: x => [x.all.days, 30] },
+  { e: "🏆", t: "Imparable", d: "Racha de 14 días", p: x => [x.best, 14] }
 ];
 const ctx_ = () => { const si = streakInfo(RW.rows); return { ...si, all: calc(RW.rows, null), invites: RW.invites }; };
+const LV = ["Novato", "Curioso", "Explorador", "Creador", "Maestro", "Leyenda"];
+function level(x) {
+  const xp = x.all.msgs * 2 + x.all.imgs * 10 + x.all.days * 20 + x.best * 15 + x.invites * 100, l = Math.floor(Math.sqrt(xp / 40)), b = l * l * 40, n = (l + 1) * (l + 1) * 40;
+  return { xp, lv: l + 1, name: LV[Math.min(l, LV.length - 1)], pct: (xp - b) / (n - b), next: n };
+}
+function countUp(el, to, ms) {
+  const t0 = performance.now(); ms = ms || 900;
+  const f = t => { const k = Math.min(1, (t - t0) / ms); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); };
+  requestAnimationFrame(f);
+}
+function burst(el) {
+  const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, cols = ["#ff9a3c", "#ff4d6d", "#3fa9ff", "#8a5cff", "#34d399", "#ffd166"];
+  for (let i = 0; i < 36; i++) {
+    const s = document.createElement("i"), a = Math.random() * Math.PI * 2, d = 70 + Math.random() * 150; s.className = "cf";
+    s.style.cssText = `left:${cx}px;top:${cy}px;background:${cols[i % 6]};--x:${Math.cos(a) * d}px;--y:${Math.sin(a) * d + 70}px;--r:${Math.random() * 720 - 360}deg`;
+    document.body.appendChild(s); setTimeout(() => s.remove(), 1200);
+  }
+}
 
 /* ---------- Pestaña: racha y logros ---------- */
+const MILES = [3, 7, 14, 30, 60, 100, 365];
 function renderStreak() {
-  const x = ctx_(), el = $("#rw-streak"), today = dnum(new Date());
-  const dots = Array.from({ length: 14 }, (_, i) => { const n = today - 13 + i; return `<i class="${x.set.has(n) ? "on" : ""}${n === today ? " now" : ""}"></i>`; }).join("");
-  el.innerHTML = `<div class="rw-hero"><div class="rw-flame">${x.cur}</div><div><b>${x.cur === 1 ? "día seguido" : "días seguidos"}</b><small>Mejor racha: ${x.best} · ${x.set.has(today) ? "hoy ya cuenta" : "escribe hoy para mantenerla"}</small></div></div>
-  <div class="rw-dots" aria-label="Últimos 14 días">${dots}</div>
-  <h4>Recompensas</h4><div class="rw-list">${REW.map(r => {
-    const got = RW.claims.has(r.k), can = r.ok(x);
-    return `<div class="rw-item${got ? " got" : ""}"><div><b>${r.t}</b><small>${r.d}</small><em>${r.r}</em></div><button type="button" class="btn-sm${can && !got ? " primary" : ""}" data-claim="${r.k}" ${got || !can ? "disabled" : ""}>${got ? "Reclamado" : can ? "Reclamar" : "Bloqueado"}</button></div>`;
-  }).join("")}</div>
-  <h4>Insignias</h4><div class="rw-badges">${BADGES.map(b => `<div class="rw-badge${b.ok(x) ? " on" : ""}"><b>${b.t}</b><small>${b.d}</small></div>`).join("")}</div>`;
+  const x = ctx_(), el = $("#rw-streak"), today = dnum(new Date()), L = level(x), C = 2 * Math.PI * 54;
+  const nextM = MILES.find(m => m > x.cur) || 365, prevM = [0, ...MILES].filter(m => m <= x.cur).pop(), pct = Math.min(1, (x.cur - prevM) / (nextM - prevM));
+  const tier = x.cur >= 30 ? "t3" : x.cur >= 7 ? "t2" : x.cur >= 1 ? "t1" : "t0", wl = ["L", "M", "X", "J", "V", "S", "D"];
+  const msg = x.set.has(today) ? "¡Hoy ya cuenta! Vuelve mañana para seguir." : x.cur > 0 ? "Escribe hoy para no perder tu racha." : "Escribe un mensaje hoy y empieza tu racha.";
+  const week = Array.from({ length: 7 }, (_, i) => { const n = today - 6 + i, on = x.set.has(n); return `<div class="st-day${on ? " on" : ""}${n === today ? " now" : ""}"><span>${wl[(new Date(n * DAY).getUTCDay() + 6) % 7]}</span><i>${on ? "🔥" : ""}</i></div>`; }).join("");
+  const cnt = {}; RW.rows.forEach(m => { if (m.role === "user") { const n = dnum(new Date(m.created_at)); cnt[n] = (cnt[n] || 0) + 1; } });
+  const start = today - ((new Date().getDay() + 6) % 7) - 14 * 7; let hm = "";
+  for (let i = 0; i < 105; i++) { const n = start + i; if (n > today) { hm += "<b></b>"; continue; } const c = cnt[n] || 0, l = c === 0 ? 0 : c < 3 ? 1 : c < 7 ? 2 : c < 15 ? 3 : 4; hm += `<i class="hm l${l}" data-n="${n}" data-c="${c}"></i>`; }
+  const bar = (a, b) => `<div class="bar"><i style="width:${Math.min(100, a / b * 100)}%"></i></div>`;
+  el.innerHTML = `<div class="st-hero ${tier}">
+    <div class="st-ring"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="54"/><circle class="fg" cx="60" cy="60" r="54" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-to="${C * (1 - pct)}"/></svg><div class="st-fire">🔥</div></div>
+    <div class="st-info"><div class="st-num"><b id="st-n">0</b><span>${x.cur === 1 ? "día" : "días"} de racha</span></div><p>${msg}</p><div class="st-next">Siguiente hito: <b>${nextM} días</b>${x.cur < nextM ? " · te faltan " + (nextM - x.cur) : ""}</div></div></div>
+  <div class="st-week">${week}</div>
+  <div class="st-level"><div class="lv-badge">${L.lv}</div><div class="lv-txt"><b>${L.name}</b><small>${L.xp} XP · ${Math.max(0, L.next - L.xp)} para el nivel ${L.lv + 1}</small><div class="bar big"><i style="width:${L.pct * 100}%"></i></div></div></div>
+  <h4>Tu actividad</h4><div class="st-hm">${hm}</div><p class="st-hminfo" id="hm-info">Toca un cuadrito para ver ese día. Mejor racha: ${x.best} días.</p>
+  <h4>Recompensas</h4><div class="rw-grid">${REW.map(r => { const [a, b] = r.p(x), got = RW.claims.has(r.k), can = a >= b;
+    return `<div class="rw-card${got ? " got" : can ? " can" : ""}"><div class="rw-ico">${got ? "✅" : r.e}</div><div class="rw-txt"><b>${r.t}</b><small>${r.d}</small>${bar(a, b)}<em>${r.r}</em></div><button type="button" class="rw-btn" data-claim="${r.k}" ${got || !can ? "disabled" : ""}>${got ? "Reclamado" : can ? "Reclamar" : Math.min(a, b) + "/" + b}</button></div>`; }).join("")}</div>
+  <h4>Insignias</h4><div class="bd-grid">${BADGES.map((b, i) => { const [a, t] = b.p(x), on = a >= t;
+    return `<button type="button" class="bd${on ? " on" : ""}" data-bd="${i}"><span>${on ? b.e : "🔒"}</span><b>${b.t}</b><small>${on ? "Conseguida" : Math.min(a, t) + "/" + t}</small></button>`; }).join("")}</div>`;
+  countUp($("#st-n"), x.cur);
+  requestAnimationFrame(() => requestAnimationFrame(() => { const f = el.querySelector(".st-ring .fg"); if (f) f.style.strokeDashoffset = f.dataset.to; }));
 }
 $("#rw-streak").addEventListener("click", async e => {
-  const b = e.target.closest("[data-claim]"); if (!b) return; b.disabled = true;
+  const hm = e.target.closest(".hm");
+  if (hm) { const c = +hm.dataset.c, d = new Date(hm.dataset.n * DAY).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }); $("#hm-info").textContent = d + ": " + (c ? c + (c === 1 ? " mensaje" : " mensajes") : "sin actividad"); return; }
+  const bd = e.target.closest("[data-bd]");
+  if (bd) { const b = BADGES[+bd.dataset.bd], [a, t] = b.p(ctx_()); toast(b.e + " " + b.t + ": " + b.d + (a >= t ? " (¡conseguida!)" : " · llevas " + Math.min(a, t) + " de " + t)); bd.classList.remove("pop"); void bd.offsetWidth; bd.classList.add("pop"); return; }
+  const b = e.target.closest("[data-claim]"); if (!b) return; b.disabled = true; b.textContent = "…";
   try {
     const { data, error } = await sb.rpc("claim_reward", { p_key: b.dataset.claim });
     if (error) throw error;
-    if (data && data.ok) { RW.claims.add(b.dataset.claim); toast("¡Recompensa reclamada!" + (data.days ? " +" + data.days + " días de Basic." : "") + (data.images ? " +" + data.images + " imágenes." : "")); try { refreshSubscription(); } catch (e) {} }
+    if (data && data.ok) { RW.claims.add(b.dataset.claim); burst(b); toast("🎉 ¡Recompensa reclamada!" + (data.days ? " +" + data.days + " días de Basic." : "") + (data.images ? " +" + data.images + " imágenes." : "")); try { refreshSubscription(); } catch (e) {} }
     else toast("Todavía no se puede reclamar esta recompensa.");
   } catch (err) { console.warn(err); toast("No se pudo reclamar ahora. Inténtalo en un rato."); }
-  renderStreak();
+  setTimeout(renderStreak, 500);
 });
 
 /* ---------- Pestaña: invita y gana ---------- */
 function renderInvite() {
-  const url = inviteUrl();
-  $("#rw-invite").innerHTML = `<p class="rw-lead">Tú y tu amigo ganáis <b>7 días de Plan Basic</b> cuando crea su cuenta con tu enlace.</p>
-  <div class="rw-link"><input id="inv-url" readonly value="${url}" aria-label="Tu enlace"><button class="btn-sm primary" id="inv-copy" type="button">Copiar</button></div>
-  <div class="rw-actions"><button class="btn-sm" id="inv-share" type="button">Compartir enlace</button></div>
-  <div class="rw-stats"><div><b>${RW.invites}</b><small>amigos se han unido</small></div><div><b>${Math.min(RW.invites, 20) * 7}</b><small>días de Basic ganados</small></div></div>
-  <p class="set-note">Máximo 20 invitaciones con premio. Solo cuentan cuentas nuevas. Al llegar a 1, 5 y 10 amigos se desbloquean recompensas extra en «Racha y logros».</p>`;
-  $("#inv-copy").onclick = async () => { try { await navigator.clipboard.writeText(url); toast("Enlace copiado"); } catch (e) { $("#inv-url").select(); toast("Selecciona y copia el enlace"); } };
-  $("#inv-share").onclick = () => { const d = { title: "PNova IA", text: "Prueba PNova IA, mi asistente de IA en español. Con mi enlace tienes 7 días de Plan Basic gratis:", url }; navigator.share ? navigator.share(d).catch(() => {}) : $("#inv-copy").click(); };
+  const url = inviteUrl(), txt = "Prueba PNova IA, mi asistente de IA en español. Con mi enlace tienes 7 días de Plan Basic gratis:", u = encodeURIComponent(url), t = encodeURIComponent(txt), n = RW.invites;
+  const ms = [[1, "🎁", "+3 días"], [5, "🤝", "+10 días y 20 imágenes"], [10, "🚀", "+30 días"]];
+  $("#rw-invite").innerHTML = `<div class="inv-hero"><div class="inv-gift">🎁</div><h3>Regala 7 días, llévate 7 días</h3><p>Cuando un amigo crea su cuenta con tu enlace, los dos ganáis 7 días de Plan Basic.</p></div>
+  <div class="inv-steps"><div><span>1</span>Comparte tu enlace</div><div><span>2</span>Tu amigo se registra</div><div><span>3</span>Ganáis 7 días</div></div>
+  <div class="rw-link"><input id="inv-url" readonly value="${url}" aria-label="Tu enlace"><button class="rw-btn on" id="inv-copy" type="button">Copiar</button></div>
+  <div class="inv-share"><a target="_blank" rel="noopener" style="--c:#25d366" href="https://wa.me/?text=${t}%20${u}">💬 WhatsApp</a><a target="_blank" rel="noopener" style="--c:#2aabee" href="https://t.me/share/url?url=${u}&text=${t}">✈️ Telegram</a><a target="_blank" rel="noopener" style="--c:#8a8f9c" href="https://twitter.com/intent/tweet?text=${t}&url=${u}">𝕏 X</a><a style="--c:#f59e0b" href="mailto:?subject=${encodeURIComponent("Te regalo 7 días de PNova IA")}&body=${t}%20${u}">✉️ Correo</a></div>
+  <h4>Tus amigos</h4><div class="inv-track"><div class="inv-fill" style="width:${Math.min(100, n / 10 * 100)}%"></div>${ms.map(m => `<div class="inv-node${n >= m[0] ? " on" : ""}" style="left:${m[0] * 10}%"><span>${n >= m[0] ? "✅" : m[1]}</span><b>${m[0]}</b><small>${m[2]}</small></div>`).join("")}</div>
+  <div class="rw-stats"><div><b id="inv-n">0</b><small>amigos se han unido</small></div><div><b id="inv-d">0</b><small>días de Basic ganados</small></div></div>
+  <p class="set-note">Máximo 20 invitaciones con premio. Solo cuentan cuentas nuevas. Los hitos de 1, 5 y 10 amigos se reclaman en «Racha y logros».</p>`;
+  countUp($("#inv-n"), n); countUp($("#inv-d"), Math.min(n, 20) * 7);
+  $("#inv-copy").onclick = async () => { try { await navigator.clipboard.writeText(url); $("#inv-copy").textContent = "¡Copiado!"; setTimeout(() => { $("#inv-copy").textContent = "Copiar"; }, 1500); } catch (e) { $("#inv-url").select(); toast("Selecciona y copia el enlace"); } };
 }
 
 /* ---------- Pestaña: tu resumen (tarjeta para compartir) ---------- */
@@ -5997,10 +6107,15 @@ function drawRecap(cv, st, si) {
 }
 async function renderRecap() {
   const el = $("#rw-recap");
+  const st0 = calc(RW.rows, since_()), hmax = Math.max(1, ...st0.hours);
   el.innerHTML = `<div class="rw-seg" role="group">${Object.entries(PER).map(([k, v]) => `<button type="button" data-per="${k}" aria-pressed="${k === per}">${v[0][0].toUpperCase() + v[0].slice(1)}</button>`).join("")}</div>
+  <div class="rc-cards"><div><b data-cu="${st0.msgs}">0</b><small>💬 mensajes</small></div><div><b data-cu="${st0.chats}">0</b><small>🧭 chats</small></div><div><b data-cu="${st0.days}">0</b><small>📅 días activos</small></div><div><b data-cu="${st0.imgs}">0</b><small>🎨 imágenes</small></div></div>
+  <div class="rc-hours" aria-label="Mensajes por hora">${st0.hours.map((v, h) => `<i data-h="${h}" data-v="${v}" class="${v === hmax && v > 0 ? "top" : ""}" style="height:${Math.max(5, v / hmax * 100)}%"></i>`).join("")}</div>
+  <p class="rc-hinfo" id="rc-hinfo">${st0.msgs ? "Tu hora más activa: " + String(st0.hour).padStart(2, "0") + ":00 · " + profile_(st0.hour) : "Aún no hay mensajes en este periodo."} Toca una barra para ver cada hora.</p>
   <div class="rw-cv"><canvas id="rc-cv"></canvas></div>
   <div class="rw-actions"><button class="btn-sm primary" id="rc-share" type="button">Compartir</button><button class="btn-sm" id="rc-dl" type="button">Descargar imagen</button></div>`;
   try { await document.fonts.load('124px "Instrument Serif"'); await document.fonts.load('40px Geist'); } catch (e) {}
+  el.querySelectorAll("[data-cu]").forEach(b => countUp(b, +b.dataset.cu));
   const cv = $("#rc-cv"); drawRecap(cv, calc(RW.rows, since_()), streakInfo(RW.rows));
   const blob = () => new Promise(r => cv.toBlob(r, "image/png"));
   $("#rc-dl").onclick = async () => { const a = document.createElement("a"); a.href = URL.createObjectURL(await blob()); a.download = "mi-" + PER[per][0] + "-con-pnova.png"; a.click(); };
@@ -6010,7 +6125,7 @@ async function renderRecap() {
     else $("#rc-dl").click();
   };
 }
-$("#rw-recap").addEventListener("click", e => { const b = e.target.closest("[data-per]"); if (b) { per = b.dataset.per; renderRecap(); } });
+$("#rw-recap").addEventListener("click", e => { const b = e.target.closest("[data-per]"); if (b) { per = b.dataset.per; renderRecap(); return; } const h = e.target.closest("[data-h]"); if (h) $("#rc-hinfo").textContent = String(h.dataset.h).padStart(2, "0") + ":00 → " + h.dataset.v + (h.dataset.v === "1" ? " mensaje" : " mensajes"); });
 
 /* ---------- Ventana de recompensas ---------- */
 function rwTab(n) {
