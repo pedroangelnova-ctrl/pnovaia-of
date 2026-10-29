@@ -136,6 +136,9 @@
 <meta name="apple-mobile-web-app-title" content="PNova IA">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="/logo.png">
+<script>
+(function(){try{var m=location.pathname.match(/^\/invite\/([A-Za-z0-9]{8,32})\/?$/);var q=new URLSearchParams(location.search).get("ref");var c=m?m[1]:(q&&/^[A-Za-z0-9]{8,32}$/.test(q)?q:"");if(c){localStorage.setItem("pnova.ref",c);history.replaceState(null,"","/");}}catch(e){}})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script>
@@ -1420,6 +1423,62 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
 
 </style>
 
+<style id="nova-extra">
+.modal-overlay[hidden]{display:none}
+#rw-modal,#ed-modal{z-index:80}
+#btn-editor,#btn-rewards{margin-top:6px;border-radius:14px;background:transparent;border:1px solid var(--border);color:var(--text)}
+#btn-editor:hover,#btn-rewards:hover{background:var(--hover)}
+#lb-edit{position:absolute;top:14px;right:68px}
+.ref-hl{color:var(--accent)}
+/* Recompensas */
+.rw,.ed{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:26px;box-shadow:0 30px 90px rgba(0,0,0,.4);width:min(720px,100%);max-height:calc(100dvh - 16px);overflow:auto;padding:22px 26px 28px}
+.rw-head,.ed-head{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.rw-head h3,.ed-head h3{margin:0;font-family:var(--serif);font-weight:400;font-size:28px}
+.rw-tabs{display:flex;gap:6px;margin:14px 0 18px;flex-wrap:wrap}
+.rw-tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--text);font:inherit;font-size:14px;cursor:pointer}
+.rw-tabs button[aria-selected="true"]{background:var(--grad);color:#fff;border-color:transparent}
+.rw-pane h4{margin:22px 0 10px;font-size:13px;color:var(--muted);font-weight:600}
+.rw-lead{color:var(--muted);line-height:1.55;margin:0 0 14px}
+.rw-hero{display:flex;align-items:center;gap:16px}
+.rw-hero b{display:block;font-size:17px}.rw-hero small{color:var(--muted)}
+.rw-flame{font-family:var(--serif);font-size:64px;line-height:1;min-width:92px;height:92px;border-radius:24px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#ff9a3c,#ff4d6d);box-shadow:0 12px 34px rgba(255,90,80,.35)}
+.rw-dots{display:flex;gap:6px;margin-top:16px}
+.rw-dots i{flex:1;height:10px;border-radius:5px;background:var(--hover)}
+.rw-dots i.on{background:linear-gradient(90deg,#ff9a3c,#ff4d6d)}.rw-dots i.now{outline:2px solid var(--accent);outline-offset:2px}
+.rw-list{display:grid;gap:8px}
+.rw-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+.rw-item b{display:block;font-size:14.5px}.rw-item small{display:block;color:var(--muted);font-size:12.5px;margin:2px 0}
+.rw-item em{font-style:normal;font-size:12.5px;color:var(--accent);font-weight:500}.rw-item.got{opacity:.6}
+.rw-badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.rw-badge{padding:12px;border:1px dashed var(--border-strong);border-radius:16px;opacity:.5}
+.rw-badge.on{opacity:1;border:1px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box}
+.rw-badge b{display:block;font-size:14px}.rw-badge small{color:var(--muted);font-size:12px}
+.rw-link{display:flex;gap:8px}.rw-link input{flex:1;min-width:0;padding:11px 14px;border-radius:12px;border:1px solid var(--border-strong);background:var(--card);color:var(--text);font:inherit;font-size:14px}
+.rw-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.rw-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.rw-stats div{padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--border)}
+.rw-stats b{display:block;font-family:var(--serif);font-weight:400;font-size:40px}.rw-stats small{color:var(--muted)}
+.rw-seg{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:var(--hover)}
+.rw-seg button{padding:7px 14px;border:0;border-radius:9px;background:transparent;color:var(--text);font:inherit;font-size:14px;cursor:pointer}
+.rw-seg button[aria-pressed="true"]{background:var(--grad);color:#fff}
+.rw-cv{margin-top:14px;text-align:center}.rw-cv canvas{max-height:52vh;max-width:100%;width:auto;height:auto;border-radius:20px;box-shadow:var(--shadow)}
+/* Editor */
+.ed{width:min(1100px,100%);height:min(760px,calc(100dvh - 16px));display:flex;flex-direction:column;padding:18px 20px}
+.ed-head #ed-info{margin-left:auto;color:var(--muted);font-size:13px}
+.ed-body{flex:1;min-height:0;display:grid;grid-template-columns:1fr 270px;gap:16px;margin-top:12px}
+.ed-stage{position:relative;display:grid;place-items:center;border-radius:20px;overflow:hidden;min-height:0;background:repeating-conic-gradient(var(--hover) 0 25%,var(--card) 0 50%) 0 0/20px 20px;border:1px solid var(--border)}
+#ed-cv{max-width:100%;max-height:100%;object-fit:contain}
+.ed-drop{display:grid;gap:4px;text-align:center;padding:30px;cursor:pointer;border-radius:18px;background:color-mix(in srgb,var(--bg) 82%,transparent)}.ed-drop small{color:var(--muted)}
+.ed-busy{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(4px);text-align:center;padding:20px}
+.ed-side{overflow:auto;display:flex;flex-direction:column;gap:8px}
+.ed-side h4{margin:10px 0 0;font-size:12.5px;color:var(--muted);font-weight:600}
+.ed-side button{padding:10px 12px;border-radius:12px;border:1px solid var(--border-strong);background:var(--card);color:var(--text);font:inherit;font-size:13.5px;cursor:pointer;transition:border-color .15s,background .15s}
+.ed-side button:hover{border-color:var(--accent);background:var(--hover)}
+.ed-chips{display:flex;flex-wrap:wrap;gap:6px}.ed-foot{margin-top:8px}
+.ed-side .ed-dl{background:var(--grad);color:#fff;border:0;font-weight:600;margin-top:auto}
+@media(max-width:760px){.rw,.ed{border-radius:0;height:100dvh;max-height:none;width:100%}.ed-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.ed-side{max-height:38vh}}
+
+</style>
 </head>
 <body>
 <div id="boot" role="status" aria-live="polite" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#05060f;color:#eef1ff">
@@ -1648,6 +1707,8 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
     <div class="side-nav">
       <button class="nav-item" id="btn-new" type="button"><span data-icon="newchat"></span>Nuevo chat</button>
       <button class="nav-item" id="btn-studio" type="button"><span data-icon="studio"></span>Studio</button>
+      <button class="nav-item" id="btn-editor" type="button"><span data-icon="image"></span>Editor de imágenes</button>
+      <button class="nav-item" id="btn-rewards" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>Recompensas</button>
     </div>
     <div class="search-box" id="search-box" hidden>
       <input id="search-input" type="search" placeholder="Buscar chats" aria-label="Buscar chats">
@@ -2050,10 +2111,54 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
 </div>
 
 
+<!-- ================= RECOMPENSAS ================= -->
+<div id="rw-modal" class="modal-overlay" hidden>
+  <div class="rw" role="dialog" aria-modal="true" aria-label="Recompensas">
+    <div class="rw-head"><h3>Recompensas</h3><button class="icon-btn" id="rw-close" type="button" aria-label="Cerrar"><span data-icon="x"></span></button></div>
+    <div class="rw-tabs" role="tablist">
+      <button type="button" role="tab" data-rw="streak" aria-selected="true">Racha y logros</button>
+      <button type="button" role="tab" data-rw="invite" aria-selected="false">Invita y gana</button>
+      <button type="button" role="tab" data-rw="recap" aria-selected="false">Tu resumen</button>
+    </div>
+    <div class="rw-pane" id="rw-streak"></div>
+    <div class="rw-pane" id="rw-invite" hidden></div>
+    <div class="rw-pane" id="rw-recap" hidden></div>
+  </div>
+</div>
+
+<!-- ================= EDITOR DE IMÁGENES ================= -->
+<div id="ed-modal" class="modal-overlay" hidden>
+  <div class="ed" role="dialog" aria-modal="true" aria-label="Editor de imágenes">
+    <div class="ed-head"><h3>Editor de imágenes</h3><span id="ed-info"></span><button class="icon-btn" id="ed-close" type="button" aria-label="Cerrar"><span data-icon="x"></span></button></div>
+    <div class="ed-body">
+      <div class="ed-stage">
+        <label class="ed-drop" id="ed-drop"><input type="file" id="ed-file" accept="image/*" hidden><b>Arrastra una imagen aquí</b><small>o pulsa para elegirla</small></label>
+        <canvas id="ed-cv" hidden></canvas>
+        <div class="ed-busy" id="ed-busy" hidden><span class="gen-spin" aria-hidden="true"></span><span id="ed-busy-t">Trabajando…</span></div>
+      </div>
+      <div class="ed-side" id="ed-side">
+        <h4>Fondo</h4>
+        <button type="button" data-ed="rmbg">Quitar fondo</button>
+        <h4>Estilo</h4>
+        <div class="ed-chips">
+          <button type="button" data-sty="vivid">Vivo</button><button type="button" data-sty="bw">Blanco y negro</button><button type="button" data-sty="noir">Noir</button><button type="button" data-sty="sepia">Sepia</button><button type="button" data-sty="vintage">Vintage</button><button type="button" data-sty="cool">Frío</button><button type="button" data-sty="warm">Cálido</button><button type="button" data-sty="cartoon">Cómic</button><button type="button" data-sty="pixel">Pixel art</button>
+        </div>
+        <h4>Tamaño</h4>
+        <div class="ed-chips"><button type="button" data-ed="x2">Ampliar ×2</button><button type="button" data-ed="x4">Ampliar ×4</button></div>
+        <h4>Transformar</h4>
+        <div class="ed-chips"><button type="button" data-ed="rotl">Girar ↺</button><button type="button" data-ed="rotr">Girar ↻</button><button type="button" data-ed="flip">Voltear</button></div>
+        <div class="ed-chips ed-foot"><button type="button" data-ed="undo">Deshacer</button><button type="button" data-ed="reset">Original</button><button type="button" data-ed="new">Otra imagen</button></div>
+        <button type="button" class="ed-dl" data-ed="dl">Descargar PNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="lightbox" role="dialog" aria-modal="true" aria-label="Vista previa de la imagen" hidden>
   <button type="button" class="lb-btn" id="lb-close" aria-label="Cerrar"><span data-icon="x"></span></button>
   <button type="button" class="lb-btn" id="lb-prev" aria-label="Imagen anterior"><span data-icon="chevron"></span></button>
   <button type="button" class="lb-btn" id="lb-next" aria-label="Imagen siguiente"><span data-icon="chevron"></span></button>
+  <button type="button" class="lb-btn" id="lb-edit" aria-label="Editar imagen" title="Editar imagen"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
   <figure><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
 </div>
 
@@ -5741,6 +5846,268 @@ renderSubscription = function () {
   else lead.textContent = lead.textContent.replace("; Galaxia llegará pronto.", ". Galaxy (10,99 € al mes) llega muy pronto.").replace(" Galaxia llegará pronto.", " Galaxy (10,99 € al mes) llega muy pronto.");
 };
 renderSubscription();
+
+/* =====================================================================
+   Invita y gana · Racha y logros · Tu resumen · Editor de imágenes
+   ===================================================================== */
+(function () {
+const S = (k, v) => v === undefined ? store.get(k) : store.set(k, v);
+const myCode = () => user ? user.id.replace(/-/g, "").slice(0, 10) : "";
+const inviteUrl = () => location.origin + "/invite/" + myCode();
+const DAY = 864e5, dnum = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY);
+
+/* ---------- Enlace de invitación: reclamar al entrar con cuenta nueva ---------- */
+let tries = 0, claiming = false;
+if (S("pnova.ref")) {
+  const t = "Te han invitado: crea tu cuenta y recibe 7 días de Plan Basic gratis.";
+  const e = document.querySelector(".ld-small"); if (e) e.textContent = t;
+}
+setInterval(async () => {
+  const ref = S("pnova.ref"); if (!ref || !user || !sb || claiming || tries > 5) return;
+  claiming = true; tries++;
+  try {
+    const { data, error } = await sb.rpc("claim_referral", { p_code: ref });
+    if (error) throw error;
+    S("pnova.ref", "");
+    if (data && data.ok) { toast("¡Bienvenido! Has ganado " + data.days + " días de Plan Basic."); try { refreshSubscription(); } catch (e) {} }
+    else if (data && data.error === "not_new") toast("Las invitaciones solo valen para cuentas nuevas.");
+  } catch (e) { console.warn("[PNova] invitación", e); } finally { claiming = false; }
+}, 4000);
+
+/* ---------- Datos y estadísticas ---------- */
+const STOP = new Set("para como pero esto esta esto este esos esas porque cuando donde desde hasta sobre entre tambien también quiero puedes puedo hacer algo ahora todo toda todos todas tiene tengo muy más mas sin con una uno unos unas del los las que por mis tus sus nos les ese eso aqui aquí hola gracias favor dame dime necesito ayuda".split(" "));
+let RW = null;
+async function loadData() {
+  const rows = await fetchAll("messages", "conversation_id,role,content,model,created_at,metadata", ["created_at", "id"]);
+  let claims = new Set(), invites = 0;
+  try { const r = await sb.from("reward_claims").select("reward_key"); (r.data || []).forEach(x => claims.add(x.reward_key)); } catch (e) {}
+  try { const r = await sb.from("referrals").select("invitee_id", { count: "exact", head: true }).eq("inviter_id", user.id); invites = r.count || 0; } catch (e) {}
+  RW = { rows, claims, invites };
+}
+function streakInfo(rows) {
+  const set = new Set(); rows.forEach(m => { if (m.role === "user") set.add(dnum(new Date(m.created_at))); });
+  const a = [...set].sort((x, y) => x - y); let best = 0, run = 0, prev = null;
+  a.forEach(n => { run = prev !== null && n === prev + 1 ? run + 1 : 1; best = Math.max(best, run); prev = n; });
+  const today = dnum(new Date()); let cur = 0, x = set.has(today) ? today : today - 1;
+  while (set.has(x)) { cur++; x--; }
+  return { cur, best, set, today };
+}
+function calc(rows, since) {
+  const days = new Set(), hours = Array(24).fill(0), wd = Array(7).fill(0), conv = new Set(), words = {}, models = new Set();
+  let msgs = 0, imgs = 0, wc = 0;
+  rows.forEach(m => {
+    const d = new Date(m.created_at); if (since && d < since) return;
+    if (m.role === "user") {
+      msgs++; days.add(dnum(d)); hours[d.getHours()]++; wd[(d.getDay() + 6) % 7]++; conv.add(m.conversation_id);
+      const w = String(m.content || "").toLowerCase().match(/[a-záéíóúüñ]{4,}/g) || [];
+      wc += w.length; w.forEach(x => { if (!STOP.has(x)) words[x] = (words[x] || 0) + 1; });
+    } else if (m.metadata && m.metadata.type === "image") imgs++;
+    if (m.role === "assistant" && m.model) models.add(m.model);
+  });
+  const top = Object.entries(words).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
+  return { msgs, imgs, wc, chats: conv.size, days: days.size, hour: hours.indexOf(Math.max(...hours)), hours, wd, wday: wd.indexOf(Math.max(...wd)), top, models: models.size };
+}
+const DAYS_ES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+const profile_ = h => h < 6 ? "Búho nocturno" : h < 10 ? "Madrugador" : h < 14 ? "Mente de mediodía" : h < 21 ? "Turno de tarde" : "Noctámbulo";
+
+/* ---------- Catálogo de recompensas y logros ---------- */
+const REW = [
+  { k: "streak3", t: "Racha de 3 días", d: "Escribe 3 días seguidos", r: "+1 día de Plan Basic", ok: x => x.best >= 3 },
+  { k: "streak7", t: "Una semana seguida", d: "7 días seguidos", r: "+3 días de Basic · +10 imágenes", ok: x => x.best >= 7 },
+  { k: "streak30", t: "Un mes imparable", d: "30 días seguidos", r: "+7 días de Basic · +50 imágenes", ok: x => x.best >= 30 },
+  { k: "msgs100", t: "Conversador", d: "Envía 100 mensajes", r: "+1 día de Plan Basic", ok: x => x.all.msgs >= 100 },
+  { k: "chats10", t: "Curioso", d: "Abre 10 conversaciones", r: "+5 imágenes extra", ok: x => x.all.chats >= 10 },
+  { k: "imgs10", t: "Artista", d: "Crea 10 imágenes", r: "+10 imágenes extra", ok: x => x.all.imgs >= 10 },
+  { k: "invite1", t: "Primera invitación", d: "Un amigo se une con tu enlace", r: "+3 días de Plan Basic", ok: x => x.invites >= 1 },
+  { k: "invite5", t: "Cinco amigos", d: "5 amigos se unen", r: "+10 días de Basic · +20 imágenes", ok: x => x.invites >= 5 },
+  { k: "invite10", t: "Embajador", d: "10 amigos se unen", r: "+30 días de Plan Basic", ok: x => x.invites >= 10 }
+];
+const BADGES = [
+  { t: "Madrugador", d: "10 mensajes antes de las 7:00", ok: x => x.all.hours.slice(0, 7).reduce((a, b) => a + b, 0) >= 10 },
+  { t: "Noctámbulo", d: "10 mensajes de 23:00 a 5:00", ok: x => [23, 0, 1, 2, 3, 4, 5].reduce((a, h) => a + x.all.hours[h], 0) >= 10 },
+  { t: "Charlatán", d: "1.000 mensajes", ok: x => x.all.msgs >= 1000 },
+  { t: "Creador", d: "25 imágenes creadas", ok: x => x.all.imgs >= 25 },
+  { t: "Explorador", d: "Usa 2 modelos distintos", ok: x => x.all.models >= 2 },
+  { t: "Fin de semana", d: "20 mensajes en sábado o domingo", ok: x => x.all.wd[5] + x.all.wd[6] >= 20 },
+  { t: "Fiel", d: "30 días activos", ok: x => x.all.days >= 30 },
+  { t: "Imparable", d: "Racha de 14 días", ok: x => x.best >= 14 }
+];
+const ctx_ = () => { const si = streakInfo(RW.rows); return { ...si, all: calc(RW.rows, null), invites: RW.invites }; };
+
+/* ---------- Pestaña: racha y logros ---------- */
+function renderStreak() {
+  const x = ctx_(), el = $("#rw-streak"), today = dnum(new Date());
+  const dots = Array.from({ length: 14 }, (_, i) => { const n = today - 13 + i; return `<i class="${x.set.has(n) ? "on" : ""}${n === today ? " now" : ""}"></i>`; }).join("");
+  el.innerHTML = `<div class="rw-hero"><div class="rw-flame">${x.cur}</div><div><b>${x.cur === 1 ? "día seguido" : "días seguidos"}</b><small>Mejor racha: ${x.best} · ${x.set.has(today) ? "hoy ya cuenta" : "escribe hoy para mantenerla"}</small></div></div>
+  <div class="rw-dots" aria-label="Últimos 14 días">${dots}</div>
+  <h4>Recompensas</h4><div class="rw-list">${REW.map(r => {
+    const got = RW.claims.has(r.k), can = r.ok(x);
+    return `<div class="rw-item${got ? " got" : ""}"><div><b>${r.t}</b><small>${r.d}</small><em>${r.r}</em></div><button type="button" class="btn-sm${can && !got ? " primary" : ""}" data-claim="${r.k}" ${got || !can ? "disabled" : ""}>${got ? "Reclamado" : can ? "Reclamar" : "Bloqueado"}</button></div>`;
+  }).join("")}</div>
+  <h4>Insignias</h4><div class="rw-badges">${BADGES.map(b => `<div class="rw-badge${b.ok(x) ? " on" : ""}"><b>${b.t}</b><small>${b.d}</small></div>`).join("")}</div>`;
+}
+$("#rw-streak").addEventListener("click", async e => {
+  const b = e.target.closest("[data-claim]"); if (!b) return; b.disabled = true;
+  try {
+    const { data, error } = await sb.rpc("claim_reward", { p_key: b.dataset.claim });
+    if (error) throw error;
+    if (data && data.ok) { RW.claims.add(b.dataset.claim); toast("¡Recompensa reclamada!" + (data.days ? " +" + data.days + " días de Basic." : "") + (data.images ? " +" + data.images + " imágenes." : "")); try { refreshSubscription(); } catch (e) {} }
+    else toast("Todavía no se puede reclamar esta recompensa.");
+  } catch (err) { console.warn(err); toast("No se pudo reclamar ahora. Inténtalo en un rato."); }
+  renderStreak();
+});
+
+/* ---------- Pestaña: invita y gana ---------- */
+function renderInvite() {
+  const url = inviteUrl();
+  $("#rw-invite").innerHTML = `<p class="rw-lead">Tú y tu amigo ganáis <b>7 días de Plan Basic</b> cuando crea su cuenta con tu enlace.</p>
+  <div class="rw-link"><input id="inv-url" readonly value="${url}" aria-label="Tu enlace"><button class="btn-sm primary" id="inv-copy" type="button">Copiar</button></div>
+  <div class="rw-actions"><button class="btn-sm" id="inv-share" type="button">Compartir enlace</button></div>
+  <div class="rw-stats"><div><b>${RW.invites}</b><small>amigos se han unido</small></div><div><b>${Math.min(RW.invites, 20) * 7}</b><small>días de Basic ganados</small></div></div>
+  <p class="set-note">Máximo 20 invitaciones con premio. Solo cuentan cuentas nuevas. Al llegar a 1, 5 y 10 amigos se desbloquean recompensas extra en «Racha y logros».</p>`;
+  $("#inv-copy").onclick = async () => { try { await navigator.clipboard.writeText(url); toast("Enlace copiado"); } catch (e) { $("#inv-url").select(); toast("Selecciona y copia el enlace"); } };
+  $("#inv-share").onclick = () => { const d = { title: "PNova IA", text: "Prueba PNova IA, mi asistente de IA en español. Con mi enlace tienes 7 días de Plan Basic gratis:", url }; navigator.share ? navigator.share(d).catch(() => {}) : $("#inv-copy").click(); };
+}
+
+/* ---------- Pestaña: tu resumen (tarjeta para compartir) ---------- */
+let per = "year";
+const PER = { week: ["semana", 7], month: ["mes", 30], year: ["año", 0] };
+function since_() { const d = new Date(); if (per === "year") return new Date(d.getFullYear(), 0, 1); d.setDate(d.getDate() - PER[per][1]); return d; }
+function glow(c, x, y, r, col) { const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col); g.addColorStop(1, "rgba(0,0,0,0)"); c.fillStyle = g; c.fillRect(0, 0, 1080, 1920); }
+function drawRecap(cv, st, si) {
+  const W = 1080, H = 1920, c = cv.getContext("2d"); cv.width = W; cv.height = H;
+  const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#0a0c13"); g.addColorStop(.55, "#141a3d"); g.addColorStop(1, "#2a1760"); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  glow(c, 900, 240, 560, "rgba(63,169,255,.38)"); glow(c, 120, 1560, 620, "rgba(138,92,255,.38)");
+  const SERIF = '"Instrument Serif", Georgia, serif', SANS = 'Geist, "Segoe UI", system-ui, sans-serif';
+  c.textAlign = "left"; c.fillStyle = "rgba(255,255,255,.7)"; c.font = "500 40px " + SANS; c.fillText("PNova IA", 80, 130);
+  c.fillStyle = "#fff"; c.font = "400 124px " + SERIF; c.fillText("Tu " + PER[per][0], 80, 330); c.fillText("con PNova", 80, 450);
+  c.font = "400 330px " + SERIF; c.fillText(String(st.msgs), 70, 790);
+  c.fillStyle = "rgba(255,255,255,.75)"; c.font = "400 46px " + SANS; c.fillText("mensajes enviados", 80, 870);
+  const cells = [[st.chats, "conversaciones"], [st.days, "días activos"], [st.imgs, "imágenes creadas"], [si.best, "mejor racha"]];
+  cells.forEach((v, i) => { const x = 80 + (i % 2) * 460, y = 1010 + Math.floor(i / 2) * 210;
+    c.fillStyle = "rgba(255,255,255,.07)"; c.beginPath(); c.roundRect(x, y, 430, 180, 28); c.fill();
+    c.fillStyle = "#fff"; c.font = "400 88px " + SERIF; c.fillText(String(v[0]), x + 32, y + 100);
+    c.fillStyle = "rgba(255,255,255,.7)"; c.font = "400 32px " + SANS; c.fillText(v[1], x + 32, y + 148); });
+  c.fillStyle = "#fff"; c.font = "400 64px " + SERIF; c.fillText(profile_(st.hour), 80, 1500);
+  c.fillStyle = "rgba(255,255,255,.7)"; c.font = "400 36px " + SANS; c.fillText("Tu hora favorita: " + String(st.hour).padStart(2, "0") + ":00 · tu día: " + DAYS_ES[st.wday], 80, 1556);
+  let x = 80, y = 1640; c.font = "500 36px " + SANS;
+  st.top.slice(0, 4).forEach(w => { const tw = c.measureText(w).width + 56; if (x + tw > 1000) { x = 80; y += 80; }
+    c.fillStyle = "rgba(255,255,255,.1)"; c.beginPath(); c.roundRect(x, y - 44, tw, 64, 32); c.fill(); c.fillStyle = "#fff"; c.fillText(w, x + 28, y); x += tw + 16; });
+  c.fillStyle = "rgba(255,255,255,.6)"; c.font = "400 34px " + SANS; c.fillText("pnova-ai.com", 80, 1850);
+}
+async function renderRecap() {
+  const el = $("#rw-recap");
+  el.innerHTML = `<div class="rw-seg" role="group">${Object.entries(PER).map(([k, v]) => `<button type="button" data-per="${k}" aria-pressed="${k === per}">${v[0][0].toUpperCase() + v[0].slice(1)}</button>`).join("")}</div>
+  <div class="rw-cv"><canvas id="rc-cv"></canvas></div>
+  <div class="rw-actions"><button class="btn-sm primary" id="rc-share" type="button">Compartir</button><button class="btn-sm" id="rc-dl" type="button">Descargar imagen</button></div>`;
+  try { await document.fonts.load('124px "Instrument Serif"'); await document.fonts.load('40px Geist'); } catch (e) {}
+  const cv = $("#rc-cv"); drawRecap(cv, calc(RW.rows, since_()), streakInfo(RW.rows));
+  const blob = () => new Promise(r => cv.toBlob(r, "image/png"));
+  $("#rc-dl").onclick = async () => { const a = document.createElement("a"); a.href = URL.createObjectURL(await blob()); a.download = "mi-" + PER[per][0] + "-con-pnova.png"; a.click(); };
+  $("#rc-share").onclick = async () => {
+    const f = new File([await blob()], "mi-pnova.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], text: "Mi " + PER[per][0] + " con PNova IA. Únete con mi enlace y llévate 7 días de Plan Basic: " + inviteUrl() }).catch(() => {});
+    else $("#rc-dl").click();
+  };
+}
+$("#rw-recap").addEventListener("click", e => { const b = e.target.closest("[data-per]"); if (b) { per = b.dataset.per; renderRecap(); } });
+
+/* ---------- Ventana de recompensas ---------- */
+function rwTab(n) {
+  document.querySelectorAll(".rw-tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.rw === n)));
+  ["streak", "invite", "recap"].forEach(k => { $("#rw-" + k).hidden = k !== n; });
+  if (!RW) return; ({ streak: renderStreak, invite: renderInvite, recap: renderRecap })[n]();
+}
+document.querySelector(".rw-tabs").addEventListener("click", e => { const b = e.target.closest("[data-rw]"); if (b) rwTab(b.dataset.rw); });
+$("#btn-rewards").addEventListener("click", async () => {
+  $("#rw-modal").hidden = false;
+  if (!RW) { $("#rw-streak").innerHTML = '<p class="rw-lead">Cargando tus datos…</p>'; try { await loadData(); } catch (e) { console.warn(e); $("#rw-streak").innerHTML = '<p class="rw-lead">No se pudieron cargar tus datos. Inténtalo más tarde.</p>'; return; } }
+  rwTab(document.querySelector('.rw-tabs [aria-selected="true"]').dataset.rw);
+});
+$("#rw-close").onclick = () => { $("#rw-modal").hidden = true; };
+$("#rw-modal").addEventListener("click", e => { if (e.target.id === "rw-modal") $("#rw-modal").hidden = true; });
+
+/* ---------- Editor de imágenes ---------- */
+const edCv = $("#ed-cv"), ed = { cv: null, orig: null, hist: [], busy: false };
+const mk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
+const snap = () => { const c = mk(ed.cv.width, ed.cv.height); c.getContext("2d").drawImage(ed.cv, 0, 0); return c; };
+function edDraw() { edCv.width = ed.cv.width; edCv.height = ed.cv.height; edCv.getContext("2d").drawImage(ed.cv, 0, 0); $("#ed-info").textContent = ed.cv.width + " × " + ed.cv.height + " px"; edCv.hidden = false; $("#ed-drop").hidden = true; }
+function edPush() { ed.hist.push(snap()); if (ed.hist.length > 10) ed.hist.shift(); }
+const busy = t => { ed.busy = !!t; $("#ed-busy").hidden = !t; if (t) $("#ed-busy-t").textContent = t; };
+async function edLoad(blob) {
+  try {
+    const bm = await createImageBitmap(blob); let w = bm.width, h = bm.height; const m = Math.max(w, h);
+    if (m > 3000) { const k = 3000 / m; w = Math.round(w * k); h = Math.round(h * k); }
+    ed.cv = mk(w, h); ed.cv.getContext("2d").drawImage(bm, 0, 0, w, h); ed.orig = snap(); ed.hist = []; edDraw();
+  } catch (e) { toast("No se pudo abrir esa imagen."); }
+}
+function edOpen() { $("#ed-modal").hidden = false; }
+$("#btn-editor").addEventListener("click", edOpen);
+$("#ed-close").onclick = () => { $("#ed-modal").hidden = true; };
+$("#ed-file").addEventListener("change", e => { const f = e.target.files[0]; if (f) edLoad(f); e.target.value = ""; });
+const stage = document.querySelector(".ed-stage");
+stage.addEventListener("dragover", e => e.preventDefault());
+stage.addEventListener("drop", e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f && /^image\//.test(f.type)) edLoad(f); });
+$("#lb-edit").addEventListener("click", async () => {
+  const src = $("#lb-img").src; if (!src) return;
+  try { const b = await (await fetch(src)).blob(); $("#lb-close").click(); edOpen(); await edLoad(b); }
+  catch (e) { toast("No se pudo abrir esta imagen en el editor. Descárgala y ábrela desde «Editor de imágenes»."); }
+});
+const sat = (d, s) => { for (let i = 0; i < d.length; i += 4) { const g = .299 * d[i] + .587 * d[i + 1] + .114 * d[i + 2]; d[i] = g + (d[i] - g) * s; d[i + 1] = g + (d[i + 1] - g) * s; d[i + 2] = g + (d[i + 2] - g) * s; } };
+const con = (d, k) => { for (let i = 0; i < d.length; i += 4) for (let j = 0; j < 3; j++) d[i + j] = (d[i + j] - 128) * k + 128; };
+const STY = {
+  bw: d => { sat(d, 0); con(d, 1.1); }, noir: d => { sat(d, 0); con(d, 1.6); },
+  sepia: d => { for (let i = 0; i < d.length; i += 4) { const r = d[i], g = d[i + 1], b = d[i + 2]; d[i] = .393 * r + .769 * g + .189 * b; d[i + 1] = .349 * r + .686 * g + .168 * b; d[i + 2] = .272 * r + .534 * g + .131 * b; } },
+  vintage: d => { sat(d, .7); for (let i = 0; i < d.length; i += 4) { d[i] = d[i] * .9 + 35; d[i + 1] = d[i + 1] * .85 + 25; d[i + 2] = d[i + 2] * .75 + 30; } },
+  vivid: d => { sat(d, 1.45); con(d, 1.12); },
+  cool: d => { for (let i = 0; i < d.length; i += 4) { d[i] -= 12; d[i + 2] += 20; } },
+  warm: d => { for (let i = 0; i < d.length; i += 4) { d[i] += 20; d[i + 2] -= 14; } },
+  cartoon: d => { sat(d, 1.4); for (let i = 0; i < d.length; i += 4) for (let j = 0; j < 3; j++) d[i + j] = Math.round(d[i + j] / 51) * 51; }
+};
+function edStyle(name) {
+  const w = ed.cv.width, h = ed.cv.height, x = ed.cv.getContext("2d");
+  if (name === "pixel") {
+    const k = Math.max(6, Math.round(Math.max(w, h) / 90)), s = mk(Math.ceil(w / k), Math.ceil(h / k));
+    s.getContext("2d").drawImage(ed.cv, 0, 0, s.width, s.height); x.clearRect(0, 0, w, h); x.imageSmoothingEnabled = false; x.drawImage(s, 0, 0, s.width, s.height, 0, 0, s.width * k, s.height * k);
+  } else { const im = x.getImageData(0, 0, w, h); STY[name](im.data); x.putImageData(im, 0, 0); }
+}
+function sharpen(c) {
+  const w = c.width, h = c.height, x = c.getContext("2d"), src = x.getImageData(0, 0, w, h), out = x.createImageData(w, h), a = .35, s = src.data, o = out.data;
+  for (let y = 0; y < h; y++) for (let X = 0; X < w; X++) { const i = (y * w + X) * 4;
+    for (let j = 0; j < 3; j++) { const v = (y > 0 && y < h - 1 && X > 0 && X < w - 1) ? s[i + j] * (1 + 4 * a) - a * (s[i - 4 + j] + s[i + 4 + j] + s[i - w * 4 + j] + s[i + w * 4 + j]) : s[i + j]; o[i + j] = v; }
+    o[i + 3] = s[i + 3]; }
+  x.putImageData(out, 0, 0);
+}
+function edScale(f) {
+  const w = ed.cv.width * f, h = ed.cv.height * f;
+  if (Math.max(w, h) > 6000 || w * h > 2.4e7) { toast("La imagen ya es demasiado grande para ampliarla más."); return false; }
+  edPush(); const n = mk(w, h), x = n.getContext("2d"); x.imageSmoothingQuality = "high"; x.drawImage(ed.cv, 0, 0, w, h); sharpen(n); ed.cv = n; return true;
+}
+async function edRmBg() {
+  busy("Quitando el fondo… la primera vez descarga el modelo y puede tardar un poco.");
+  try {
+    const mod = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm");
+    const blob = await new Promise(r => ed.cv.toBlob(r, "image/png"));
+    const out = await mod.removeBackground(blob, { output: { format: "image/png" }, progress: (key, cur, tot) => { if (tot) $("#ed-busy-t").textContent = "Quitando el fondo… " + Math.round(cur / tot * 100) + "%"; } });
+    const bm = await createImageBitmap(out); edPush(); const n = mk(bm.width, bm.height); n.getContext("2d").drawImage(bm, 0, 0); ed.cv = n; edDraw();
+  } catch (e) { console.warn(e); toast("No se pudo quitar el fondo. Comprueba tu conexión e inténtalo de nuevo."); }
+  busy(false);
+}
+$("#ed-side").addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b || ed.busy) return;
+  const a = b.dataset.ed, st = b.dataset.sty;
+  if (a === "new") { $("#ed-file").click(); return; }
+  if (!ed.cv) { toast("Primero elige una imagen."); return; }
+  if (st) { edPush(); edStyle(st); edDraw(); }
+  else if (a === "rmbg") await edRmBg();
+  else if (a === "x2" || a === "x4") { busy("Ampliando…"); await new Promise(r => setTimeout(r, 30)); if (edScale(a === "x2" ? 2 : 4)) edDraw(); busy(false); }
+  else if (a === "rotl" || a === "rotr") { edPush(); const n = mk(ed.cv.height, ed.cv.width), x = n.getContext("2d"); x.translate(n.width / 2, n.height / 2); x.rotate((a === "rotr" ? 1 : -1) * Math.PI / 2); x.drawImage(ed.cv, -ed.cv.width / 2, -ed.cv.height / 2); ed.cv = n; edDraw(); }
+  else if (a === "flip") { edPush(); const n = mk(ed.cv.width, ed.cv.height), x = n.getContext("2d"); x.translate(n.width, 0); x.scale(-1, 1); x.drawImage(ed.cv, 0, 0); ed.cv = n; edDraw(); }
+  else if (a === "undo") { const p = ed.hist.pop(); if (p) { ed.cv = p; edDraw(); } else toast("No hay nada que deshacer."); }
+  else if (a === "reset") { edPush(); ed.cv = ed.orig; ed.orig = snap(); edDraw(); }
+  else if (a === "dl") edCv.toBlob(bl => { const l = document.createElement("a"); l.href = URL.createObjectURL(bl); l.download = "pnova-editada.png"; l.click(); }, "image/png");
+});
+})();
 </script>
 </body>
 </html>
