@@ -82,8 +82,7 @@
   "Análisis de archivos adjuntos",
   "Dictado y lectura en voz alta",
   "Modo de conversación por voz",
-  "Historial de chats guardado en la cuenta",
-  "Instalable como PWA"
+  "Historial de chats guardado en la cuenta"
  ],
  "publisher": {
   "@id": "https://pnova-ai.com/#org"
@@ -126,20 +125,11 @@
     "@type": "Answer",
     "text": "Puedes entrar con correo y contraseña, con Google, con clave de acceso o con tu número de teléfono."
    }
-  },
-  {
-   "@type": "Question",
-   "name": "¿Puedo instalar PNova IA en el móvil u ordenador?",
-   "acceptedAnswer": {
-    "@type": "Answer",
-    "text": "Sí. PNova IA es una aplicación web progresiva (PWA): puedes instalarla desde tu navegador y usarla como una app."
-   }
   }
  ]
 }
 </script>
 <link rel="icon" type="image/png" href="/logo.png">
-<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#ffffff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -154,7 +144,7 @@
   try {
     var l = document.createElement("link");
     l.rel = "stylesheet";
-    l.href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap";
+    l.href = "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap";
     document.head.appendChild(l);
   } catch (e) {}
 })();
@@ -1100,19 +1090,7 @@
   .attach-btn { border-radius: 12px; }
   .col { max-width: 800px; }
 
-  /* ---------- Aviso de instalación (PWA) ---------- */
-  .pwa { position: fixed; z-index: 90; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); max-width: 420px; margin: 0 auto; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 16px 48px rgba(0, 0, 0, .3); padding: 16px; animation: pwa-in .28s ease-out; }
   @keyframes pwa-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .pwa-top { display: flex; gap: 12px; align-items: flex-start; }
-  .pwa-top > img { width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--border); background: #fff; object-fit: contain; flex: none; }
-  .pwa-top b { display: block; font-size: 16px; font-weight: 600; margin-bottom: 2px; }
-  .pwa-top p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
-  .pwa-steps { margin: 12px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 8px; font-size: 14px; }
-  .pwa-steps li { counter-increment: s; display: flex; gap: 10px; align-items: center; line-height: 1.4; }
-  .pwa-steps li::before { content: counter(s); width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 600; display: grid; place-items: center; flex: none; }
-  .pwa-steps .i { width: 18px; height: 18px; vertical-align: -4px; }
-  .pwa-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
-  .pwa-actions .btn-sm { flex: 1; max-width: 160px; }
 
   /* ---------- Voz ---------- */
   #toast { z-index: 95; }
@@ -1331,7 +1309,113 @@ body { font-feature-settings: normal; letter-spacing: 0; }
 
 /* Botones sólidos con texto blanco: relleno con contraste suficiente también en oscuro */
 .st-btn.primary, #pv-download, .btn-sm.primary, .mic-btn[data-state="listening"] { background: var(--accent-fill); }
-.pwa-steps li::before { background: var(--accent-fill); }
+</style>
+<style id="nova-theme">
+/* =====================================================================
+   Tema Nova: elegante, sereno, con un solo gesto memorable (el saludo serif
+   y la luz de la pantalla de inicio). El acento sigue siendo elegible.
+   ===================================================================== */
+:root{--font:"Geist","Segoe UI",system-ui,-apple-system,sans-serif;--serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+--bg:#f7f8fc;--sidebar:#eff1f8;--card:#fff;--hover:#e8ebf5;--active:#dde2f3;--text:#10131c;--muted:#5d6579;
+--border:rgba(22,30,60,.10);--border-strong:rgba(22,30,60,.18);--composer:#fff;--code-bg:#f0f2f9;
+--accent:#4a5dff;--accent-fill:#4a5dff;--grad:linear-gradient(135deg,#3fa9ff 0%,#4a5dff 50%,#8a5cff 100%);--accent-grad:var(--grad);
+--shadow:0 1px 2px rgba(20,28,60,.05),0 10px 30px rgba(20,28,60,.07);--colw:760px}
+:root[data-theme="dark"]{--bg:#0a0c13;--sidebar:#07080d;--card:#111420;--hover:#171b2a;--active:#1f2438;--text:#eceef6;--muted:#8d95aa;
+--border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.14);--composer:#111420;--code-bg:#080a11;--accent:#93a5ff;--accent-fill:#5568ff;
+--shadow:0 1px 2px rgba(0,0,0,.5),0 14px 44px rgba(0,0,0,.5)}
+:root[data-accent="green"]{--grad:linear-gradient(135deg,#34d399,#15803d);--accent-grad:var(--grad)}
+:root[data-accent="violet"]{--grad:linear-gradient(135deg,#a78bfa,#6d28d9);--accent-grad:var(--grad)}
+:root[data-accent="orange"]{--grad:linear-gradient(135deg,#fdba74,#c2410c);--accent-grad:var(--grad)}
+:root[data-accent="pink"]{--grad:linear-gradient(135deg,#f9a8d4,#be185d);--accent-grad:var(--grad)}
+body{font-family:var(--font);background:var(--bg);-webkit-font-smoothing:antialiased}
+:root[data-fs="s"]{--fs:14.5px}:root[data-fs="m"]{--fs:15.5px}:root[data-fs="l"]{--fs:17.5px}
+:root[data-width="compact"]{--colw:660px}:root[data-width="wide"]{--colw:960px}
+.col{max-width:var(--colw)}
+:root[data-motion="0"] *,:root[data-motion="0"] *::before{animation-duration:.001ms!important;transition-duration:.001ms!important}
+
+/* Barra lateral */
+.sidebar{background:var(--sidebar);border-right:1px solid var(--border)}
+.brand span{font-family:var(--serif);font-size:23px;font-weight:400;letter-spacing:-.01em}
+#btn-new,.btn-primary,.send,.voice-open,.ld-btn-main,.btn-sm.primary,.st-btn.primary,.limit-btn,#pv-download{background:var(--grad);color:#fff;border:0}
+#btn-new{border-radius:14px;min-height:44px;box-shadow:0 6px 20px color-mix(in srgb,var(--accent-fill) 32%,transparent)}
+#btn-new:hover{filter:brightness(1.08)}
+#btn-studio{border-radius:14px;background:transparent;border:1px solid var(--border-strong);color:var(--text)}
+#btn-studio:hover{background:var(--hover)}
+.chat-item{border-radius:12px;padding-block:9px;transition:background .15s}
+.chat-item.active{background:var(--active);box-shadow:inset 2px 0 0 var(--accent)}
+.side-label{font-size:12px;color:var(--muted);padding-inline:14px}
+.side-foot{border-top:1px solid var(--border)}
+.user-btn{border-radius:14px;transition:background .15s}.user-btn:hover{background:var(--hover)}
+.avatar{background:var(--grad);color:#fff;box-shadow:0 0 0 2px var(--sidebar),0 0 0 3px var(--border-strong)}
+
+/* Zona de chat */
+#main{position:relative;isolation:isolate}
+#main::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .8s;
+background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fill) 22%,transparent),transparent 72%),radial-gradient(34% 28% at 88% 14%,rgba(138,92,255,.12),transparent 72%),radial-gradient(30% 26% at 8% 40%,rgba(63,169,255,.10),transparent 72%)}
+#main.is-empty::before{opacity:1}
+:root[data-bg="0"] #main::before{display:none}
+.topbar{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent}
+.model-btn{border-radius:999px;border:1px solid var(--border);background:var(--card);padding:7px 14px 7px 16px;font-weight:500;font-size:14px;box-shadow:var(--shadow)}
+.model-btn:hover{border-color:var(--border-strong);background:var(--card)}
+.voice-open{border-radius:999px;box-shadow:0 6px 18px color-mix(in srgb,var(--accent-fill) 35%,transparent)}
+
+/* Pantalla vacía */
+#empty .logo{width:58px;height:58px;border-radius:17px;box-shadow:0 0 0 1px var(--border),0 14px 44px color-mix(in srgb,var(--accent-fill) 40%,transparent)}
+#empty h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5.4vw,52px);line-height:1.08;letter-spacing:-.02em;color:var(--text);-webkit-text-fill-color:var(--text);background:none}
+.empty-sub{color:var(--muted);font-size:16px}
+.suggest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:660px;margin-inline:auto}
+.suggest button{display:grid;grid-template-columns:38px 1fr;column-gap:13px;align-items:center;text-align:left;padding:14px 16px;border-radius:18px;background:color-mix(in srgb,var(--card) 82%,transparent);border:1px solid var(--border);backdrop-filter:blur(8px);transition:border-color .2s,background .2s,box-shadow .2s}
+.suggest button:hover{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:var(--card);box-shadow:var(--shadow);transform:none}
+.suggest button [data-icon]{grid-row:1/3;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent)}
+.suggest button b{font-weight:600;font-size:14.5px}.suggest button small{color:var(--muted);font-size:12.5px;font-weight:400}
+:root[data-sug="0"] .suggest{display:none}
+@media(max-width:560px){.suggest{grid-template-columns:1fr}}
+
+/* Mensajes */
+.msg.user .bubble{background:var(--grad);color:#fff;border:0;border-radius:20px 20px 6px 20px;padding:11px 16px;box-shadow:0 6px 20px color-mix(in srgb,var(--accent-fill) 24%,transparent);font-size:var(--fs)}
+.msg.assistant .content{font-size:var(--fs);line-height:1.72}
+:root[data-serif="1"] .msg.assistant .content{font-family:var(--serif);font-size:calc(var(--fs)*1.14);line-height:1.6}
+.msg.assistant::before{border-radius:50%;box-shadow:0 0 0 1px var(--border-strong),0 4px 14px color-mix(in srgb,var(--accent-fill) 30%,transparent)}
+.msg pre,.msg .code,.code-block{border-radius:14px;border:1px solid var(--border);background:var(--code-bg)}
+
+/* Cuadro de escritura */
+#composer-wrap{background:linear-gradient(to top,var(--bg) 55%,transparent)}
+.composer{border-radius:26px;background:color-mix(in srgb,var(--composer) 88%,transparent);backdrop-filter:blur(16px);border:1px solid var(--border-strong);box-shadow:var(--shadow);padding-inline:8px}
+.composer:focus-within{border-color:color-mix(in srgb,var(--accent) 60%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 14%,transparent),var(--shadow)}
+.send{width:38px;height:38px;border-radius:50%}.send:disabled{background:var(--hover);color:var(--muted);box-shadow:none}
+.attach-btn,.mic-btn{border-radius:50%}
+#disclaimer{color:var(--muted);font-size:12px;opacity:.8}
+
+/* Ajustes y planes */
+.modal-overlay{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.settings,.plan-modal{border-radius:26px;border:1px solid var(--border);box-shadow:0 30px 90px rgba(0,0,0,.4)}
+.set-nav{background:var(--sidebar);border-right:1px solid var(--border)}
+.set-nav-head h2,.set-body h3{font-family:var(--serif);font-weight:400;font-size:27px;letter-spacing:-.01em}
+.set-tab{border-radius:12px}.set-tab[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font-weight:600}
+.set-row{border-bottom:1px solid var(--border);padding-block:15px}
+.set-sec h4{font-size:13px;color:var(--muted);font-weight:600}
+.sel,.field input,.field textarea,.set-body textarea{border-radius:12px;border:1px solid var(--border-strong);background:var(--card);color:var(--text);font-family:inherit}
+.set-body textarea{width:100%;padding:11px 14px;resize:vertical;font-size:14.5px;line-height:1.5}
+.sel:focus,.field input:focus,.set-body textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+.seg{border-radius:12px}.seg button[aria-pressed="true"]{background:var(--grad);color:#fff}
+.swatch{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.plan{border-radius:22px;background:var(--card);padding:20px;position:relative}
+.plan.current{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.plan-price small{font-size:13px;font-weight:500;color:var(--muted)}
+.plan.galaxy{border:1px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:0 14px 44px color-mix(in srgb,var(--accent-fill) 26%,transparent)}
+.plan .pop{font-size:11px;font-weight:600;color:#fff;background:var(--grad);border-radius:999px;padding:3px 9px}
+.plans{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.btn-sm{border-radius:12px}
+.mo{border-radius:16px}.mo[aria-checked="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+
+/* Inicio y acceso */
+.auth-card{border-radius:26px;box-shadow:var(--shadow)}
+.auth-card h1{font-family:var(--serif);font-weight:400;font-size:32px}
+.ld-title{font-family:var(--serif);font-weight:400;letter-spacing:-.02em}
+.ld-btn-main{box-shadow:0 10px 34px rgba(74,93,255,.45);border-radius:999px}
+.ld-btn-ghost,.ld-pill{border-radius:999px}
+.ld-grid article{border-radius:20px}
+
 </style>
 
 </head>
@@ -1462,14 +1546,13 @@ body { font-feature-settings: normal; letter-spacing: 0; }
         <article><h3>Analizar archivos</h3><p>Adjunta archivos e imágenes y pide resúmenes, explicaciones o ayuda con su contenido.</p></article>
         <article><h3>Habla con tu voz</h3><p>Dicta tus mensajes, escucha las respuestas en voz alta y usa el modo de conversación por voz.</p></article>
         <article><h3>Chats guardados</h3><p>Tu historial se guarda en tu cuenta, listo para retomarlo en cualquier dispositivo y exportarlo cuando quieras.</p></article>
-        <article><h3>Instálala como app</h3><p>PNova IA es una PWA: instálala desde el navegador y ábrela como cualquier otra aplicación.</p></article>
+        <article><h3>Hecha a tu medida</h3><p>Elige tema, color, tono de las respuestas e instrucciones propias para que PNova IA hable como tú quieres.</p></article>
       </div>
       <h2>Preguntas frecuentes sobre PNova IA</h2>
       <details><summary>¿Qué es PNova IA?</summary><p>PNova IA es un asistente de inteligencia artificial en español con el que puedes conversar, escribir textos, programar, analizar archivos y crear imágenes desde el navegador o instalado como app.</p></details>
       <details><summary>¿Puedo hablar con PNova IA con la voz?</summary><p>Sí. PNova IA incluye dictado por voz, lectura de las respuestas en voz alta y un modo de conversación por voz.</p></details>
       <details><summary>¿Se guardan mis conversaciones?</summary><p>Sí. Tus chats se guardan en tu cuenta para que los recuperes desde cualquier dispositivo, y puedes exportarlos cuando quieras.</p></details>
       <details><summary>¿Cómo puedo iniciar sesión?</summary><p>Puedes entrar con correo y contraseña, con Google, con clave de acceso o con tu número de teléfono.</p></details>
-      <details><summary>¿Puedo instalar PNova IA en el móvil u ordenador?</summary><p>Sí. PNova IA es una aplicación web progresiva (PWA): puedes instalarla desde tu navegador y usarla como una app.</p></details>
     </div>
     <footer class="ld-foot">
       <span>© 2026 PNova IA · <a href="https://pnova-ai.com/">pnova-ai.com</a></span>
@@ -1595,10 +1678,10 @@ body { font-feature-settings: normal; letter-spacing: 0; }
             <h1 id="empty-title">¿Qué creamos hoy?</h1>
             <p class="empty-sub">Pregunta, escribe, programa o analiza archivos con PNova IA.</p>
             <div class="suggest" id="suggest">
-              <button type="button" data-prompt="Explícame un tema paso a paso: ">Aprender algo nuevo</button>
-              <button type="button" data-prompt="Ayúdame a redactar un correo sobre: ">Redactar un texto</button>
-              <button type="button" data-prompt="Revisa y mejora este código:\n">Revisar código</button>
-              <button type="button" data-prompt="Dame 5 ideas originales para: ">Lluvia de ideas</button>
+              <button type="button" data-prompt="Explícame un tema paso a paso: "><span data-icon="zap"></span><b>Aprender algo nuevo</b><small>Explicado paso a paso</small></button>
+              <button type="button" data-prompt="Ayúdame a redactar un correo sobre: "><span data-icon="paperclip"></span><b>Redactar un texto</b><small>Correos, cartas, posts</small></button>
+              <button type="button" data-prompt="Revisa y mejora este código:\n"><span data-icon="settings"></span><b>Revisar código</b><small>Errores y mejoras</small></button>
+              <button type="button" data-prompt="Dame 5 ideas originales para: "><span data-icon="studio"></span><b>Lluvia de ideas</b><small>Cinco ideas originales</small></button>
             </div>
           </div>
           <div id="messages" aria-live="polite"></div>
@@ -1695,6 +1778,8 @@ body { font-feature-settings: normal; letter-spacing: 0; }
       </div>
       <div class="set-tabs" role="tablist" aria-orientation="vertical">
         <button class="set-tab" type="button" role="tab" data-tab="general" aria-selected="true"><span data-icon="settings"></span>General</button>
+        <button class="set-tab" type="button" role="tab" data-tab="look" aria-selected="false"><span data-icon="image"></span>Apariencia</button>
+        <button class="set-tab" type="button" role="tab" data-tab="personal" aria-selected="false"><span data-icon="studio"></span>Personalización</button>
         <button class="set-tab" type="button" role="tab" data-tab="voice" aria-selected="false"><span data-icon="mic"></span>Voz</button>
         <button class="set-tab" type="button" role="tab" data-tab="account" aria-selected="false"><span data-icon="user"></span>Cuenta</button>
         <button class="set-tab" type="button" role="tab" data-tab="plans" aria-selected="false"><span data-icon="zap"></span>Planes</button>
@@ -1707,6 +1792,17 @@ body { font-feature-settings: normal; letter-spacing: 0; }
       <div class="set-pane" id="pane-general" role="tabpanel">
         <h3>General</h3>
         <div class="set-row"><div class="lbl"><b>Corregir mis mensajes automáticamente</b><small>Arregla abreviaturas, tildes y signos antes de enviarlos a la IA. Tu mensaje se ve igual que lo escribiste.</small></div><label class="switch"><input type="checkbox" id="set-autofix" aria-label="Corregir mis mensajes automáticamente"><i></i></label></div>
+        <div class="set-row"><div class="lbl"><b>Enviar mensajes con</b><small>Elige qué tecla envía el mensaje.</small></div><select class="sel" data-pref="enter" aria-label="Tecla de envío"><option value="enter">Enter (Shift+Enter = nueva línea)</option><option value="ctrl">Ctrl/⌘ + Enter</option></select></div>
+        <div class="set-row"><div class="lbl"><b>Mostrar sugerencias</b><small>Tarjetas de ideas en la pantalla de inicio del chat.</small></div><label class="switch"><input type="checkbox" data-pref="sug" aria-label="Mostrar sugerencias"><i></i></label></div>
+        <div class="set-row">
+          <div class="lbl"><b>Idioma</b><small>Español</small></div>
+          <span class="soon">Próximamente</span>
+        </div>
+      </div>
+
+      <!-- Apariencia -->
+      <div class="set-pane" id="pane-look" role="tabpanel" hidden>
+        <h3>Apariencia</h3>
         <div class="set-row">
           <div class="lbl"><b>Tema</b><small>Elige cómo se ve PNova IA.</small></div>
           <div class="seg" id="theme-seg" role="group" aria-label="Tema">
@@ -1725,10 +1821,21 @@ body { font-feature-settings: normal; letter-spacing: 0; }
             <button type="button" class="swatch" data-accent="pink" aria-pressed="false" aria-label="Rosa" title="Rosa" style="background:#be185d"></button>
           </div>
         </div>
-        <div class="set-row">
-          <div class="lbl"><b>Idioma</b><small>Español</small></div>
-          <span class="soon">Próximamente</span>
-        </div>
+        <div class="set-row"><div class="lbl"><b>Tamaño del texto</b><small>Afecta a los mensajes del chat.</small></div><select class="sel" data-pref="fs" aria-label="Tamaño del texto"><option value="s">Pequeño</option><option value="m">Normal</option><option value="l">Grande</option></select></div>
+        <div class="set-row"><div class="lbl"><b>Ancho de la conversación</b><small>Más estrecha para leer mejor, más ancha para código.</small></div><select class="sel" data-pref="width" aria-label="Ancho"><option value="compact">Compacta</option><option value="normal">Normal</option><option value="wide">Amplia</option></select></div>
+        <div class="set-row"><div class="lbl"><b>Fondo ambiental</b><small>Luz suave de color en la pantalla de inicio.</small></div><label class="switch"><input type="checkbox" data-pref="bg" aria-label="Fondo ambiental"><i></i></label></div>
+        <div class="set-row"><div class="lbl"><b>Respuestas en tipografía serif</b><small>Un aire más editorial al leer.</small></div><label class="switch"><input type="checkbox" data-pref="serif" aria-label="Tipografía serif"><i></i></label></div>
+        <div class="set-row"><div class="lbl"><b>Reducir animaciones</b><small>Menos movimiento en toda la interfaz.</small></div><label class="switch"><input type="checkbox" data-pref="motion" aria-label="Reducir animaciones"><i></i></label></div>
+      </div>
+
+      <!-- Personalización -->
+      <div class="set-pane" id="pane-personal" role="tabpanel" hidden>
+        <h3>Personalización</h3>
+        <p class="set-lead">Dile a PNova IA cómo quieres que te hable. Se aplica a tus próximos mensajes.</p>
+        <div class="set-sec"><label class="field"><span>¿Cómo quieres que te llame?</span><input type="text" data-pref="nick" maxlength="40" placeholder="Por ejemplo, Pedro"></label></div>
+        <div class="set-row"><div class="lbl"><b>Tono de las respuestas</b><small>El estilo con el que contesta.</small></div><select class="sel" data-pref="tone" aria-label="Tono"><option value="">Automático</option><option value="friendly">Cercano y amable</option><option value="pro">Profesional</option><option value="concise">Breve y directo</option><option value="fun">Divertido</option><option value="teacher">Como un profesor</option></select></div>
+        <div class="set-sec"><label class="field"><span>Instrucciones personales</span><textarea data-pref="about" rows="4" maxlength="600" placeholder="Soy estudiante de 2º de Bachillerato. Explícame con ejemplos y sin tecnicismos."></textarea></label></div>
+        <p class="set-note">Estas preferencias se guardan solo en este dispositivo.</p>
       </div>
 
       <!-- Voz -->
@@ -1837,16 +1944,17 @@ body { font-feature-settings: normal; letter-spacing: 0; }
             <div id="paypal-button-container" hidden></div>
             <div class="notice set-msg" id="msg-pp" role="status" hidden></div>
           </div>
-          <div class="plan">
-            <h4>Galaxia <span class="soon">Próximamente</span></h4>
-            <div class="plan-price muted">Precio por anunciar</div>
+          <div class="plan galaxy" id="plan-galaxy">
+            <h4>Galaxy <span class="soon" id="plan-galaxy-tag" hidden>Tu plan</span><span class="pop">Recomendado</span></h4>
+            <div class="plan-price">10,99 € <small>/ mes</small></div>
             <ul>
               <li>Todo lo del Plan Basic</li>
+              <li>PNova 3.0 Galaxy sin límite diario</li>
               <li>Crear imágenes con IA · 70 al día</li>
-              <li>Uso ampliado</li>
+              <li>Respuestas prioritarias</li>
               <li>Acceso anticipado a novedades</li>
             </ul>
-            <button class="btn-sm" type="button" disabled>Próximamente</button>
+            <button class="btn-sm primary" id="plan-galaxy-btn" type="button">Elegir Galaxy</button>
           </div>
         </div>
       </div>
@@ -1939,7 +2047,6 @@ body { font-feature-settings: normal; letter-spacing: 0; }
   <button class="btn-sm primary" id="ps-home" type="button">Volver al inicio</button>
 </div>
 
-<div id="pwa" class="pwa" role="dialog" aria-live="polite" hidden></div>
 
 <div id="lightbox" role="dialog" aria-modal="true" aria-label="Vista previa de la imagen" hidden>
   <button type="button" class="lb-btn" id="lb-close" aria-label="Cerrar"><span data-icon="x"></span></button>
@@ -2331,7 +2438,7 @@ const getModel = () => CONFIG.MODELS.find(m => m.id === modelId) || CONFIG.MODEL
 /* Galaxy: las primeras GALAXY_DAILY_QUESTIONS preguntas del día; después se pasa solo a PNova 1.5 */
 const galaxyKey = () => "pnova.galaxy." + (user ? user.id : "anon") + "." + new Date().toLocaleDateString("sv-SE");
 const galaxyUsed = () => parseInt(store.get(galaxyKey()) || "0", 10) || 0;
-const galaxyLeft = () => Math.max(0, CONFIG.GALAXY_DAILY_QUESTIONS - galaxyUsed());
+const galaxyLeft = () => pnTier === "galaxy" ? 9999 : Math.max(0, CONFIG.GALAXY_DAILY_QUESTIONS - galaxyUsed());
 function enforceModel() {
   if (modelId === CONFIG.GALAXY_MODEL && galaxyLeft() <= 0) { modelId = CONFIG.FALLBACK_MODEL; setModelLabel(); return true; }
   return false;
@@ -2457,6 +2564,7 @@ $("#btn-google").onclick = async () => {
 const PAYPAL_CFG = {
   CLIENT_ID: "BAASj0qjHI2-n9l1m_rLzhIBOCip3O0i4kgCsu5_FVymSjPGFBOwAxWEDI7wdi4LXSDb-kHxYgTbW06ojw",
   PLAN_ID: "P-3WX98865YT444350YNLPAVLQ",
+  GALAXY_READY: false,   // pon true cuando el Worker de pagos acepte plan:"galaxy" a 10,99 €/mes
   MODE: "onetime",            // "onetime" = pago único por meses (nuevo) · "subscription" = respaldo anterior
   ENV: "live",                // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
   SANDBOX_CLIENT_ID: "BAAchKxoA0MepTokGabR9Fl7pqa7Op4_Bq8vpaeNA8ht8ipwldG4FbsHbULHumm17qCkKdz0fjZGsecqIA",      // Client ID de la app SANDBOX de PayPal
@@ -2540,11 +2648,12 @@ async function payApi(path, body) {
   if (!res.ok) { const e = new Error(j.error || "http_" + res.status); e.payload = j; throw e; }
   return j;
 }
-const payCreate = async method => (await payApi("/pay/create-order", { months: payMonths, method })).orderId;
+const payCreate = async method => (await payApi("/pay/create-order", { months: payMonths, method, plan: payPlan })).orderId;
 /* ---------- Estado de suscripción (única fuente de verdad) ----------
    Estados: "unknown" (sin comprobar) · "free" · "basic" (fila válida en plan_access) · "error" (la consulta falló).
    La etiqueta de plan, la tarjeta de plan y el mensaje de vencimiento se pintan SIEMPRE desde subState.
    El acceso de pago solo se concede si Supabase devuelve, para el usuario autenticado, una fila con expires_at futuro. */
+var pnTier;
 let subState = { status: "unknown", expiresAt: null }, subSeq = 0, subTimer = null;
 function renderSubscription() {
   const st = subState.status, basic = st === "basic", free = st === "free";
@@ -2563,6 +2672,7 @@ function renderSubscription() {
   if (basic) n.textContent = "Tu Plan Basic está activo hasta el " + dateTxt + ". Si compras más meses, se suman a esa fecha.";
 }
 function setSubscription(status, expiresAt) {
+  if (status !== "basic") pnTier = "basic";
   subState = { status, expiresAt: status === "basic" ? expiresAt : null };
   clearTimeout(subTimer); subTimer = null;
   if (status === "basic") {                       // al vencer, se vuelve a comprobar solo
@@ -2580,11 +2690,11 @@ async function refreshSubscription() {
     const { data: ses } = await sb.auth.getSession();
     const authId = ses && ses.session && ses.session.user && ses.session.user.id;
     if (!authId || authId !== uid) throw new Error("auth");          // solo el usuario autenticado actual
-    const { data, error } = await sb.from("plan_access").select("user_id, expires_at").eq("user_id", authId).maybeSingle();
+    const { data, error } = await sb.from("plan_access").select("*").eq("user_id", authId).maybeSingle();
     if (error) throw error;                                          // supabase-js no lanza: devuelve error
     if (seq !== subSeq || !user || user.id !== authId) return;
     const exp = data && data.user_id === authId && data.expires_at ? new Date(data.expires_at) : null;
-    if (exp && Number.isFinite(exp.getTime()) && exp.getTime() > Date.now()) setSubscription("basic", exp);
+    if (exp && Number.isFinite(exp.getTime()) && exp.getTime() > Date.now()) { pnTier = /galaxy/i.test(String((data && (data.plan || data.tier)) || "")) ? "galaxy" : "basic"; setSubscription("basic", exp); }
     else setSubscription("free");
   } catch (e) {
     if (seq !== subSeq) return;
@@ -2596,7 +2706,7 @@ const loadPlanAccess = refreshSubscription;
 renderSubscription();
 async function payCapture(orderId) {
   const j = await payApi("/pay/capture-order", { orderId });
-  if (j.status === "granted") { ppMsg("¡Pago recibido! " + (j.months === 1 ? "Se ha activado 1 mes" : "Se han activado " + j.months + " meses") + " de Plan Basic. Tu acceso vence el " + pkDate(j.expires_at) + ".", "ok"); await refreshSubscription(); showPaySuccess(j); }
+  if (j.status === "granted") { ppMsg("¡Pago recibido! " + (j.months === 1 ? "Se ha activado 1 mes" : "Se han activado " + j.months + " meses") + " de " + PLAN_NAME[payPlan] + ". Tu acceso vence el " + pkDate(j.expires_at) + ".", "ok"); await refreshSubscription(); showPaySuccess(j); }
   else if (j.status === "pending") ppMsg("Tu pago está pendiente de confirmación por PayPal. El acceso se activará solo cuando se confirme; no hace falta que pagues otra vez.", "warn");
   else ppMsg("No se pudo verificar el pago, así que no se ha activado el acceso. Si te han cobrado, contacta con soporte indicando el pedido " + orderId + ".");
   return j;
@@ -2664,7 +2774,7 @@ async function initPay() {
 }
 function applePayStart(ap, merchantCapabilities, supportedNetworks) {      // begin() debe ejecutarse dentro del clic
   if (payBusy) return;
-  const total = { label: "PNova IA · Plan Basic (" + payMonths + (payMonths === 1 ? " mes)" : " meses)"), amount: (PLAN_CENTS[payMonths] / 100).toFixed(2), type: "final" };
+  const total = { label: "PNova IA · " + PLAN_NAME[payPlan] + " (" + payMonths + (payMonths === 1 ? " mes)" : " meses)"), amount: (PLAN_CENTS[payMonths] / 100).toFixed(2), type: "final" };
   const s = new ApplePaySession(4, { countryCode: "ES", currencyCode: "EUR", merchantCapabilities, supportedNetworks, requiredBillingContactFields: ["name", "phone", "email", "postalAddress"], requiredShippingContactFields: [], total });
   s.onvalidatemerchant = ev => ap.validateMerchant({ validationUrl: ev.validationURL })
     .then(p => s.completeMerchantValidation(p.merchantSession))
@@ -3261,7 +3371,7 @@ $("#chat-list").addEventListener("click", e => {
 
 function setGreeting() {
   const n = ((profile && profile.display_name) || "").trim().split(/\s+/)[0];
-  $("#empty-title").textContent = n ? `Hola, ${n}. ¿Qué creamos hoy?` : "¿Qué creamos hoy?";
+  $("#empty-title").textContent = n ? greetNow(n) : "¿Qué creamos hoy?";
 }
 /* ---- URL por chat: pnova-ai.com/chat/<id> ---- */
 function setChatUrl(id, replace) { setPath(id ? "/chat/" + id : "/", replace); }
@@ -4387,6 +4497,7 @@ async function callBackend(model) {
   const lastMsg = messages[messages.length - 1];
   const extra = ((lastMsg && attData[lastMsg.id]) || []).map(f => ({ name: f.name, type: f.type, size: f.size, data: f.dataUrl }));
   const last = history[history.length - 1];
+  { const pp = pnPrefix(); if (pp && last) last.content = last.content + "\n\n" + pp; }
   const headers = { "Content-Type": "application/json" };
   if (model.sendAuthToken) {
     const { data } = await sb.auth.getSession();
@@ -4514,7 +4625,7 @@ function setImageMode(on) {
 $("#img-toggle").addEventListener("click", () => { setImageMode(!imageMode); input.focus(); });
 input.addEventListener("input", autosize);
 input.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("#composer").requestSubmit(); }
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing && (getPref("enter") !== "ctrl" || e.ctrlKey || e.metaKey)) { e.preventDefault(); $("#composer").requestSubmit(); }
 });
 $("#composer").addEventListener("submit", e => {
   e.preventDefault();
@@ -4803,7 +4914,7 @@ $("#model-btn").onclick = e => {
     const out = m.id === CONFIG.GALAXY_MODEL && galaxyLeft() <= 0;
     const note = !m.endpoint ? "Próximamente"
       : out ? "Límite de hoy alcanzado"
-      : m.id === CONFIG.GALAXY_MODEL ? `${esc(m.description)} · ${galaxyLeft()} preguntas hoy`
+      : m.id === CONFIG.GALAXY_MODEL ? `${esc(m.description)} · ${galaxyLeft() > 999 ? "sin límite" : galaxyLeft() + " preguntas hoy"}`
       : esc(m.description);
     return `
     <button type="button" data-act="${m.id}" ${m.endpoint && !out ? "" : "disabled"}>
@@ -5084,76 +5195,9 @@ $("#btn-delete-all").onclick = async () => {
   btn.disabled = false;
 };
 
-/* =====================================================================
-   Instalar como app (PWA) en iPhone y Android
-   Paso 1: «¿Quieres instalarla?»  →  Paso 2: «¿Añadir a la pantalla de inicio?»
-   Para probarlo en el ordenador añade ?pwa=1 al final de la dirección.
-   ===================================================================== */
-ICONS.share = '<path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>';
-const UA = navigator.userAgent;
-const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-const isAndroid = /Android/i.test(UA);
-const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-const forcePwa = new URLSearchParams(location.search).has("pwa");
-let deferredInstall = null;
-
-if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-  window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
-}
-window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
-window.addEventListener("appinstalled", () => {
-  store.set("pnova.pwa", "installed"); deferredInstall = null; hidePwa(); toast("¡PNova IA instalada!");
-});
-
-const pwaBox = $("#pwa");
-function hidePwa() { pwaBox.hidden = true; pwaBox.innerHTML = ""; }
-function dismissPwa(days) { store.set("pnova.pwa", String(Date.now() - (7 - days) * 864e5)); hidePwa(); }
-function pwaShouldShow() {
-  if (forcePwa) return true;
-  if (!(isIOS || isAndroid) || isStandalone()) return false;
-  const v = store.get("pnova.pwa");
-  if (v === "installed") return false;
-  return !(v && Date.now() - Number(v) < 7 * 864e5);
-}
-function pwaCard(title, text, extra, buttons) {
-  pwaBox.innerHTML = `<div class="pwa-top"><img src="/logo.png" alt=""><div><b>${title}</b><p>${text}</p></div></div>${extra || ""}<div class="pwa-actions">${buttons}</div>`;
-  pwaBox.hidden = false;
-}
-function pwaStep1() {
-  pwaCard("Instala PNova IA", "¿Quieres usar PNova IA como una app en tu móvil? Se abre más rápido y a pantalla completa.", "",
-    `<button type="button" class="btn-sm" data-a="no">Ahora no</button><button type="button" class="btn-sm primary" data-a="yes">Sí, quiero</button>`);
-}
-function pwaStep2() {
-  if (deferredInstall) {
-    pwaCard("¿Añadir a la pantalla de inicio?", "Se creará un icono de PNova IA junto a tus otras apps.", "",
-      `<button type="button" class="btn-sm" data-a="cancel">Cancelar</button><button type="button" class="btn-sm primary" data-a="add">Añadir</button>`);
-  } else if (isIOS) {
-    pwaCard("Añadir a la pantalla de inicio", "En iPhone se hace desde el menú de Safari:",
-      `<ol class="pwa-steps"><li><span>Toca el botón <b>Compartir</b> ${icon("share")} de la barra del navegador.</span></li><li><span>Desliza y toca <b>«Añadir a pantalla de inicio»</b>.</span></li><li><span>Toca <b>«Añadir»</b> arriba a la derecha.</span></li></ol>`,
-      `<button type="button" class="btn-sm primary" data-a="ok">Entendido</button>`);
-  } else {
-    pwaCard("Añadir a la pantalla de inicio", "Desde tu navegador:",
-      `<ol class="pwa-steps"><li><span>Abre el menú <b>⋮</b> del navegador.</span></li><li><span>Toca <b>«Instalar aplicación»</b> o <b>«Añadir a la pantalla de inicio»</b>.</span></li><li><span>Confirma con <b>«Instalar»</b>.</span></li></ol>`,
-      `<button type="button" class="btn-sm primary" data-a="ok">Entendido</button>`);
-  }
-}
-pwaBox.addEventListener("click", async e => {
-  const b = e.target.closest("[data-a]"); if (!b) return;
-  const a = b.dataset.a;
-  if (a === "no") dismissPwa(0);                 // no vuelve a preguntar en 7 días
-  else if (a === "yes") pwaStep2();
-  else if (a === "cancel") dismissPwa(3);        // vuelve a preguntar en 3 días
-  else if (a === "ok") dismissPwa(0);
-  else if (a === "add") {
-    try {
-      deferredInstall.prompt();
-      const r = await deferredInstall.userChoice;
-      deferredInstall = null;
-      if (r.outcome === "accepted") hidePwa(); else dismissPwa(3);
-    } catch (err) { deferredInstall = null; pwaStep2(); }
-  }
-});
-setTimeout(() => { if (pwaShouldShow()) pwaStep1(); }, 4000);
+/* Sin PWA: se desregistran los service workers antiguos y se vacía su caché */
+if ("serviceWorker" in navigator) { navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {}); }
+if (window.caches) { caches.keys().then(ks => ks.forEach(k => caches.delete(k))).catch(() => {}); }
 
 /* =====================================================================
    Voz: dictado, lectura en voz alta y conversación por voz
@@ -5637,6 +5681,64 @@ syncAutoReadUI(); vcSyncLang(); ttsUI();
     if (window.__bootFail) window.__bootFail("Error al iniciar: " + ((err && err.message) || err) + ". Recarga la página; si sigue igual, prueba otra red o actualiza el navegador.");
   }
 })();
+
+/* =====================================================================
+   Preferencias nuevas, saludo, plan Galaxy
+   ===================================================================== */
+const PREF_DEF = { fs: "m", width: "normal", bg: "1", serif: "0", motion: "0", sug: "1", enter: "enter", tone: "", nick: "", about: "" };
+function getPref(k) { const v = store.get("pnova.pref." + k); return v == null ? PREF_DEF[k] : v; }
+function applyPrefs() {
+  const d = document.documentElement.dataset;
+  d.fs = getPref("fs"); d.width = getPref("width"); d.bg = getPref("bg"); d.serif = getPref("serif");
+  d.motion = getPref("motion") === "1" ? "0" : "1"; d.sug = getPref("sug");
+}
+document.querySelectorAll("[data-pref]").forEach(el => {
+  const k = el.dataset.pref, v = getPref(k), chk = el.type === "checkbox";
+  if (chk) el.checked = v === "1"; else el.value = v;
+  el.addEventListener(chk ? "change" : "input", () => {
+    store.set("pnova.pref." + k, chk ? (el.checked ? "1" : "0") : el.value);
+    applyPrefs(); if (k === "nick") { try { $("#empty-title").textContent = greetNow(user && user.name); } catch (e) {} }
+  });
+});
+applyPrefs();
+function pnPrefix() {
+  const tones = { friendly: "Habla con un tono cercano y amable.", pro: "Usa un tono profesional y preciso.", concise: "Sé muy conciso: respuestas breves y directas.", fun: "Usa un tono desenfadado y con algo de humor.", teacher: "Explica paso a paso, como un buen profesor." };
+  const nick = getPref("nick").trim(), about = getPref("about").trim().slice(0, 600);
+  const p = [tones[getPref("tone")], nick && "Llama al usuario «" + nick + "».", about && "Sobre el usuario y cómo quiere las respuestas: " + about].filter(Boolean);
+  return p.length ? "[Preferencias del usuario: " + p.join(" ") + "]" : "";
+}
+function greetNow(n) {
+  const h = new Date().getHours(), g = h < 6 ? "Buenas noches" : h < 13 ? "Buenos días" : h < 21 ? "Buenas tardes" : "Buenas noches";
+  const nn = getPref("nick").trim() || n;
+  return nn ? g + ", " + nn + ". ¿Qué creamos hoy?" : "¿Qué creamos hoy?";
+}
+
+const PLAN_UNIT = { basic: 399, galaxy: 1099 }, PLAN_NAME = { basic: "Plan Basic", galaxy: "Plan Galaxy" };
+let payPlan = "basic";
+function setPayPlan(p) {
+  payPlan = p;
+  Object.keys(PLAN_CENTS).forEach(m => { PLAN_CENTS[m] = PLAN_UNIT[p] * m; });
+  $("#mo-grid").innerHTML = Object.keys(PLAN_CENTS).map(m => `<button type="button" class="mo" role="radio" aria-checked="false" data-m="${m}"><b>${m}</b><small>${m === "1" ? "mes" : "meses"}</small><small class="mo-p">${eur(PLAN_CENTS[m])}</small></button>`).join("");
+  renderMonths(); renderCheckout();
+  $("#pm-title").textContent = PLAN_NAME[p]; $("#co-title").textContent = PLAN_NAME[p];
+  const li = document.querySelector(".co-lines li span"); if (li) li.textContent = PLAN_NAME[p];
+  document.querySelector(".pm-lead").textContent = p === "galaxy" ? "¿Cuántos meses de Galaxy quieres? PNova 3.0 Galaxy sin límite diario, 70 imágenes al día y acceso anticipado." : "¿Cuántos meses quieres? Más mensajes e imágenes, acceso a Nova AI y respuestas más rápidas.";
+}
+$("#plan-choose").addEventListener("click", () => { setPayPlan(window.__pg ? "galaxy" : "basic"); window.__pg = false; }, true);
+$("#plan-galaxy-btn").addEventListener("click", () => {
+  if (!PAYPAL_CFG.GALAXY_READY) { toast("Galaxy (10,99 € al mes) se activa muy pronto."); return; }
+  window.__pg = true; $("#plan-choose").click();
+});
+const _rsub = renderSubscription;
+renderSubscription = function () {
+  _rsub();
+  const gal = subState.status === "basic" && pnTier === "galaxy", lead = $("#plan-lead");
+  $("#plan-galaxy").classList.toggle("current", gal); $("#plan-galaxy-tag").hidden = !gal;
+  $("#plan-galaxy-btn").textContent = gal ? "Añadir más meses" : (PAYPAL_CFG.GALAXY_READY ? "Elegir Galaxy" : "Muy pronto");
+  if (gal) { lead.textContent = "Tu Plan Galaxy está activo hasta el " + pkDate(subState.expiresAt) + "."; $("#plan-basic").classList.remove("current"); $("#plan-basic-tag").hidden = true; }
+  else lead.textContent = lead.textContent.replace("; Galaxia llegará pronto.", ". Galaxy (10,99 € al mes) llega muy pronto.").replace(" Galaxia llegará pronto.", " Galaxy (10,99 € al mes) llega muy pronto.");
+};
+renderSubscription();
 </script>
 </body>
 </html>
