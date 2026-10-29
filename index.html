@@ -225,6 +225,7 @@
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
   input, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mbox { display: inline-block; padding: 1px 8px; margin: 0 1px; border: 1.5px solid currentColor; border-radius: 4px; font-weight: 600; }
   svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
   .logo { display: block; background: #fff; border-radius: 22%; object-fit: contain; }
 
@@ -2403,7 +2404,7 @@ const MATH_SYM = {
   implies: "⇒", Rightarrow: "⇒", rightarrow: "→", to: "→", leftarrow: "←", Leftrightarrow: "⇔", iff: "⇔", leftrightarrow: "↔",
   infty: "∞", circ: "°", degree: "°", angle: "∠", triangle: "△", perp: "⊥", parallel: "∥", sum: "∑", prod: "∏", int: "∫",
   cup: "∪", cap: "∩", in: "∈", notin: "∉", subset: "⊂", forall: "∀", exists: "∃", therefore: "∴", because: "∵", sim: "∼", equiv: "≡",
-  ldots: "…", dots: "…", cdots: "…", pi: "π", alpha: "α", beta: "β", gamma: "γ", delta: "δ", theta: "θ", lambda: "λ", mu: "μ",
+  Longrightarrow: "⟹", longrightarrow: "⟶", Longleftarrow: "⟸", Leftarrow: "⇐", Longleftrightarrow: "⟺", ldots: "…", dots: "…", cdots: "…", pi: "π", alpha: "α", beta: "β", gamma: "γ", delta: "δ", theta: "θ", lambda: "λ", mu: "μ",
   sigma: "σ", omega: "ω", phi: "φ", epsilon: "ε", rho: "ρ", tau: "τ", Delta: "Δ", Omega: "Ω", Sigma: "Σ", Pi: "Π", Theta: "Θ", Phi: "Φ",
   quad: " ", qquad: "  ", ",": " ", ";": " ", ":": " ", "!": "", " ": " ", "%": "%", "$": "$", "&": "&", "#": "#", "_": "_"
 };
@@ -2417,6 +2418,10 @@ function texToText(m) {
   let prev;
   do {                                              // anidados: de dentro hacia fuera
     prev = m;
+    const wrapArg = x => x[0] === "{" ? x : "{" + x + "}";
+    m = m.replace(/\\([dt]?frac)\s*(\{[^{}]*\}|\d)\s*(\{[^{}]*\}|\d)/g, (_, f, a, b) => "\\" + f + wrapArg(a) + wrapArg(b))   // \frac12 → \frac{1}{2}
+      .replace(/\\boxed\s*\{([^{}]*)\}/g, "⟦$1⟧")
+      .replace(/\\boxed\s*(\d[\d.,]*\d|\d)/g, "⟦$1⟧");
     m = m.replace(new RegExp("\\\\[dt]?frac\\s*" + grp + "\\s*" + grp, "g"), (_, a, b) =>
       (simpleTerm(a) ? a.trim() : "(" + a.trim() + ")") + "/" + (simpleTerm(b) ? b.trim() : "(" + b.trim() + ")"))
       .replace(new RegExp("\\\\sqrt\\s*\\[3\\]\\s*" + grp, "g"), (_, a) => "∛" + (simpleTerm(a) ? a : "(" + a + ")"))
@@ -2445,7 +2450,10 @@ function cleanMath(text) {
         .replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => texToText(m))
         .replace(/\\\(([\s\S]+?)\\\)/g, (_, m) => texToText(m))
         .replace(/\$([^$\n]{1,200}?)\$/g, (all, m) => /[\\^_{}=]/.test(m) || /^\s*[A-Za-z]\s*$/.test(m) ? texToText(m) : all)
-        .replace(/\\(?:[dt]?frac|sqrt|cdot|times|approx|implies|Rightarrow|rightarrow|neq|leq|geq|pm|div|infty|pi|text)\b[^\s]*/g, w => texToText(w));   // restos sueltos fuera de $…$
+        .replace(/\\boxed\s*(?:\{[^{}]*\}|\d[\d.,]*\d|\d)/g, w => texToText(w))
+        .replace(/\\[dt]?frac\s*(?:\{[^{}]*\}|\d)\s*(?:\{[^{}]*\}|\d)/g, w => texToText(w))
+        .replace(/\^\s*\(\s*°\s*\)/g, "°")
+        .replace(/\\(?:[dt]?frac|sqrt|cdot|times|approx|implies|Rightarrow|rightarrow|Longrightarrow|longrightarrow|Longleftarrow|Leftarrow|Longleftrightarrow|leftrightarrow|Leftrightarrow|neq|leq|geq|pm|div|infty|pi|text|circ)\b[^\s]*/g, w => texToText(w));   // restos sueltos fuera de $…$
     }).join("");
   }).join("```");
 }
@@ -2484,6 +2492,7 @@ function mdInline(t) {
     .replace(/~~([^~\n]+?)~~/g, "<del>$1</del>")
     .replace(/(^|[^*\w])\*([^*\s][^*\n]*?)\*(?![*\w])/g, "$1<em>$2</em>")
     .replace(/(^|[^_\w])_([^_\s][^_\n]*?)_(?![_\w])/g, "$1<em>$2</em>")
+    .replace(/⟦([^⟦⟧\n]+)⟧/g, '<span class="mbox">$1</span>')
     .replace(/\n/g, "<br>");
   return t.replace(/\u0000(\d+)\u0000/g, (_, n) => stash[+n]);
 }
