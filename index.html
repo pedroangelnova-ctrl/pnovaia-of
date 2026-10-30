@@ -686,7 +686,22 @@
   .ld-try-head b { color: #e6ebff; font-weight: 600; }
   .ld-try-log { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; margin-bottom: 10px; }
   .ld-try-log:empty { display: none; }
-  .ld-try-msg { padding: 9px 13px; border-radius: 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 92%; }
+  .ld-try-msg { padding: 9px 13px; border-radius: 16px; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; max-width: 92%; }
+  .ld-try-msg.u { white-space: pre-wrap; }
+  .ld-try-msg.a > :first-child { margin-top: 0; } .ld-try-msg.a > :last-child { margin-bottom: 0; }
+  .ld-try-msg.a p { margin: 0 0 8px; }
+  .ld-try-msg.a h1, .ld-try-msg.a h2, .ld-try-msg.a h3, .ld-try-msg.a h4 { font-size: 16px; line-height: 1.35; margin: 10px 0 6px; color: #fff; }
+  .ld-try-msg.a ul, .ld-try-msg.a ol { margin: 4px 0 8px; padding-left: 22px; }
+  .ld-try-msg.a li { margin: 2px 0; }
+  .ld-try-msg.a strong { color: #fff; }
+  .ld-try-msg.a a { color: #8fb4ff; }
+  .ld-try-msg.a code { background: rgba(0,0,0,.35); padding: 1px 5px; border-radius: 5px; font-size: 13.5px; }
+  .ld-try-msg.a .code-block { margin: 8px 0; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,.35); }
+  .ld-try-msg.a .cb-head { padding: 5px 10px; font-size: 12px; color: #7f89b3; }
+  .ld-try-msg.a pre { margin: 0; padding: 8px 10px; overflow-x: auto; font-size: 13px; }
+  .ld-try-msg.a .tbl { overflow-x: auto; } .ld-try-msg.a table { border-collapse: collapse; font-size: 14px; }
+  .ld-try-msg.a th, .ld-try-msg.a td { border: 1px solid rgba(255,255,255,.16); padding: 4px 8px; }
+  .ld-try-msg.a blockquote { margin: 6px 0; padding-left: 10px; border-left: 3px solid rgba(255,255,255,.25); color: #c9d1f5; }
   .ld-try-msg.u { align-self: flex-end; background: rgba(90,130,255,.28); color: #fff; }
   .ld-try-msg.a { align-self: flex-start; background: rgba(255,255,255,.08); color: #e6ebff; }
   .ld-try-msg.err { color: #ffb4b4; }
@@ -2343,8 +2358,8 @@ const CONFIG = {
   GALAXY_MODEL: "pnova-3.0-galaxy",
   FALLBACK_MODEL: "pnova-1.5",         // al agotar las preguntas de Galaxy se pasa a este
   GALAXY_DAILY_QUESTIONS: 10,          // preguntas con Galaxy antes de pasar a PNova 1.5 (se renuevan cada día)
-  // Prueba sin registro en la pantalla de inicio (usa el modelo indicado, que debe tener sendAuthToken:false).
-  GUEST_TRIAL: { ENABLED: true, MODEL: "pnova-1.5", QUESTIONS: 2, MAX_CHARS: 300 },
+  // Prueba sin registro en la pantalla de inicio (siempre con el modelo indicado; el Worker debe aceptar peticiones de invitado, user_id "guest").
+  GUEST_TRIAL: { ENABLED: true, MODEL: "pnova-3.0-galaxy", QUESTIONS: 2, MAX_CHARS: 300, TIMEOUT_MS: 45000 },
   HISTORY_LIMIT: 20,          // mensajes previos que se envían al backend
   REQUEST_TIMEOUT_MS: 90000,  // tiempo máximo de espera de la respuesta
 
@@ -3530,7 +3545,7 @@ landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", (
 /* ---------- Prueba sin registro (landing) ---------- */
 (function guestTrial() {
   const T = CONFIG.GUEST_TRIAL, box = document.getElementById("ld-try");
-  const model = T && T.ENABLED && CONFIG.MODELS.find(m => m.id === T.MODEL && m.endpoint && !m.sendAuthToken);
+  const model = T && T.ENABLED && CONFIG.MODELS.find(m => m.id === T.MODEL && m.endpoint);
   if (!box || !model) return;
   box.hidden = false;
   const log = document.getElementById("ld-try-log"), form = document.getElementById("ld-try-form"),
@@ -3552,14 +3567,17 @@ landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", (
     const q = inp.value.trim().slice(0, T.MAX_CHARS);
     if (!q || busy || used >= T.QUESTIONS) return;
     busy = true; inp.value = ""; add("u", q); const wait = add("a", "Pensando…"); render();
-    const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), CONFIG.REQUEST_TIMEOUT_MS);
+    const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), T.TIMEOUT_MS || 45000);
+    const headers = { "Content-Type": "application/json" };
+    if (model.sendAuthToken) headers.Authorization = "Bearer " + CONFIG.SUPABASE_ANON_KEY;   // invitado: sin sesión, solo la clave pública
     try {
-      const res = await fetch(model.endpoint, { method: "POST", signal: ctrl.signal, headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: q, history: hist.slice(-4), conversation_id: null, user_id: "guest", model: model.id }) });
+      const res = await fetch(model.endpoint, { method: "POST", signal: ctrl.signal, headers,
+        body: JSON.stringify({ message: q + "\n\n(Responde en español, directo y breve: unas 100 palabras como máximo.)", history: hist.slice(-2), conversation_id: null, user_id: "guest", model: model.id }) });
       if (!res.ok) throw new Error("http " + res.status);
-      const reply = extractReply(await res.json().catch(() => null)).replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      const reply = extractReply(await res.json().catch(() => null)).replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, "").trim();
       if (!reply) throw new Error("empty");
-      wait.textContent = reply;
+      wait.innerHTML = renderMd(reply);                      // mismo Markdown que el chat: negritas, títulos, listas…
+      wait.querySelectorAll(".cb-actions").forEach(x => x.remove());
       hist.push({ role: "user", content: q }, { role: "assistant", content: reply });
       used++; try { localStorage.setItem(KEY, String(used)); } catch (e) {}   // solo cuenta si hubo respuesta
     } catch (err) {
