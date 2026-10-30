@@ -1917,7 +1917,6 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
             <textarea id="input" rows="1" placeholder="Pregunta a PNova IA" aria-label="Mensaje"></textarea>
             <button class="model-btn" id="model-btn" type="button" aria-haspopup="menu" aria-label="Elegir modelo de IA" title="Elegir modelo de IA"><span id="model-name">PNova</span><span data-icon="chevron"></span></button>
             <button class="mic-btn" id="mic-btn" type="button" data-state="idle" aria-label="Dictar mensaje por voz" title="Dictar con la voz"><span data-icon="mic"></span></button>
-            <button class="img-toggle" id="img-toggle" type="button" hidden aria-pressed="false" aria-label="Crear imagen" title="Crear imagen"><span data-icon="image"></span></button>
             <button class="send" id="send" type="submit" aria-label="Enviar mensaje" disabled><span data-icon="send"></span></button>
           </form>
         </div>
@@ -4948,11 +4947,9 @@ function updateSend() { $("#send").disabled = sending || (!input.value.trim() &&
 
 function setImageMode(on) {
   imageMode = !!on;
-  $("#img-toggle").setAttribute("aria-pressed", String(imageMode));
   input.placeholder = imageMode ? "Describe la imagen que quieres crear" : "Pregunta a PNova IA";
   $("#send").setAttribute("aria-label", imageMode ? "Generar imagen" : "Enviar mensaje");
 }
-$("#img-toggle").addEventListener("click", () => { setImageMode(!imageMode); input.focus(); });
 input.addEventListener("input", autosize);
 input.addEventListener("keydown", e => {
   if (e.key === "Enter" && !e.shiftKey && !e.isComposing && (getPref("enter") !== "ctrl" || e.ctrlKey || e.metaKey)) { e.preventDefault(); $("#composer").requestSubmit(); }
@@ -5231,7 +5228,6 @@ $("#suggest").addEventListener("click", e => {
   input.value = b.dataset.prompt; autosize(); updateSend(); input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
 });
-$("#img-toggle").hidden = !CONFIG.IMAGE_ENABLED;
 
 /* =====================================================================
    Selector de modelo, menús y barra lateral
