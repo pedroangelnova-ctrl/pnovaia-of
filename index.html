@@ -3602,7 +3602,7 @@ landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", (
     try {
       const res = await fetch(model.endpoint, { method: "POST", signal: ctrl.signal, headers,
         body: JSON.stringify({ message: q + "\n\n(Responde en español, directo y breve: unas 100 palabras como máximo.)", history: hist.slice(-2), conversation_id: null, user_id: "guest", model: model.id }) });
-      if (!res.ok) throw new Error("http " + res.status);
+      if (!res.ok) { const bt = await res.text().catch(() => ""); throw new Error("http " + res.status + " " + bt.slice(0, 200)); }
       const reply = extractReply(await res.json().catch(() => null)).replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, "").trim();
       if (!reply) throw new Error("empty");
       wait.innerHTML = renderMd(reply);                      // mismo Markdown que el chat: negritas, títulos, listas…
@@ -3610,6 +3610,7 @@ landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", (
       hist.push({ role: "user", content: q }, { role: "assistant", content: reply });
       used++; try { localStorage.setItem(KEY, String(used)); } catch (e) {}   // solo cuenta si hubo respuesta
     } catch (err) {
+      console.warn("[PNova] prueba sin registro:", err);   // diagnóstico: el motivo real sale en la consola (F12)
       wait.classList.add("err");
       wait.textContent = err.name === "AbortError" ? "Tardó demasiado en responder. Inténtalo de nuevo." : "No se pudo obtener respuesta. Inténtalo de nuevo.";
     } finally { clearTimeout(timer); busy = false; render(); if (!inp.disabled) inp.focus(); }
