@@ -1589,6 +1589,28 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
 .rc-hours i:hover,.rc-hours i.top{opacity:1;transform:scaleY(1.06)}
 .rc-hinfo{color:var(--muted);font-size:13px;margin:6px 0 0}
 @media(max-width:560px){.st-hero{flex-direction:column;text-align:center}.st-num{justify-content:center}.rc-cards{grid-template-columns:repeat(2,1fr)}.inv-node{width:78px}}
+
+/* Invitación (te han invitado) */
+.ld-invite{width:100%;max-width:420px;margin:22px auto 0;padding:16px 18px;border-radius:22px;text-align:center;border:1px solid rgba(255,255,255,.22);background:linear-gradient(135deg,rgba(74,93,255,.28),rgba(138,92,255,.18));backdrop-filter:blur(10px);box-shadow:0 10px 36px rgba(70,110,255,.28);color:#eef1ff}
+.ld-invite[hidden]{display:none}
+.ld-invite .inv-ico{font-size:34px;line-height:1;display:inline-block;animation:bob 2.4s ease-in-out infinite}
+.ld-invite h2{margin:6px 0 4px;font-size:19px;font-weight:650;line-height:1.3;color:#fff}
+.ld-invite p{margin:0;font-size:14px;line-height:1.5;color:#c9d2ff}
+.ld-invite .ld-btn{margin-top:12px;min-width:0;height:44px;width:100%}
+.inv-note{margin:0 0 14px;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.45;text-align:center;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--text);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--border))}
+.inv-note[hidden]{display:none}
+/* Selector de modelo dentro de la barra del chat */
+.composer .model-btn{display:flex;align-items:center;gap:4px;height:38px;padding:0 8px 0 12px;font-size:14px;font-weight:600;border:1px solid var(--border);border-radius:999px;background:transparent;box-shadow:none;color:var(--muted);flex:none;white-space:nowrap;max-width:48vw}
+.composer .model-btn:hover{background:var(--hover);color:var(--text);border-color:var(--border-strong)}
+.composer .model-btn #model-name{overflow:hidden;text-overflow:ellipsis}
+.composer .model-btn .i{width:16px;height:16px;flex:none}
+/* Crear imagen: solo icono */
+.composer .img-toggle{width:38px;padding:0;justify-content:center;gap:0;border-radius:50%}
+@media(max-width:600px){
+  .composer .attach-row{order:-3}
+  .composer textarea{order:-2;flex:1 1 100%}
+  .composer .model-btn{margin-right:auto}
+}
 </style>
 </head>
 <body>
@@ -1702,6 +1724,12 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
     </div>
     <h1 class="ld-title ld-rise" style="--d:2.7s">PNova IA</h1>
     <p class="ld-tag ld-rise" style="--d:2.9s">Tu asistente de inteligencia artificial en español: chatea con IA, escribe, programa, crea imágenes y analiza archivos. Tus chats se guardan en tu cuenta.</p>
+    <section class="ld-invite ld-rise" id="ld-invite" style="--d:2.9s" aria-label="Invitación" hidden>
+      <span class="inv-ico" aria-hidden="true">🎁</span>
+      <h2 id="ld-invite-title">Te han invitado a PNova IA</h2>
+      <p>Crea tu cuenta con esta invitación y llévate <b>7 días de Plan Basic gratis</b>.</p>
+      <button type="button" class="ld-btn ld-btn-main" data-go="register">Aceptar invitación</button>
+    </section>
     <div class="ld-cta ld-rise" style="--d:3.1s">
       <button type="button" class="ld-btn ld-btn-main" data-go="register">Empezar</button>
       <button type="button" class="ld-btn ld-btn-ghost" data-go="login">Iniciar sesión</button>
@@ -1754,6 +1782,7 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
     <img class="logo" src="/logo.png" alt="PNova IA">
     <h1 id="auth-title">Inicia sesión en PNova IA</h1>
     <p class="sub" id="auth-sub">Tus chats se guardan en tu cuenta.</p>
+    <div class="inv-note" id="auth-invite" hidden></div>
 
     <div class="tabs" role="tablist">
       <button type="button" role="tab" id="tab-login" aria-selected="true">Iniciar sesión</button>
@@ -1853,7 +1882,6 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
     <header class="topbar">
       <button class="icon-btn only-collapsed" id="btn-open" type="button" aria-label="Abrir barra lateral"><span data-icon="panel"></span></button>
       <button class="icon-btn only-collapsed" id="btn-new2" type="button" aria-label="Nuevo chat"><span data-icon="newchat"></span></button>
-      <button class="model-btn" id="model-btn" type="button" aria-haspopup="menu"><span id="model-name">PNova</span><span data-icon="chevron"></span></button>
       <button class="icon-btn tts-toggle" id="tts-toggle" type="button" aria-pressed="false" aria-label="Leer respuestas en voz alta" title="Leer respuestas en voz alta"><span data-icon="volume"></span></button>
       <button class="voice-open" id="voice-open" type="button" aria-label="Iniciar conversación por voz" title="Conversación por voz"><span data-icon="wave"></span><span class="voice-open-label">Voz</span></button>
     </header>
@@ -1887,8 +1915,9 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
             <div class="attach-row" id="attach-row" hidden></div>
             <button class="attach-btn" id="attach-btn" type="button" aria-haspopup="menu" aria-label="Adjuntar archivos" title="Adjuntar archivos"><span data-icon="paperclip"></span></button>
             <textarea id="input" rows="1" placeholder="Pregunta a PNova IA" aria-label="Mensaje"></textarea>
+            <button class="model-btn" id="model-btn" type="button" aria-haspopup="menu" aria-label="Elegir modelo de IA" title="Elegir modelo de IA"><span id="model-name">PNova</span><span data-icon="chevron"></span></button>
             <button class="mic-btn" id="mic-btn" type="button" data-state="idle" aria-label="Dictar mensaje por voz" title="Dictar con la voz"><span data-icon="mic"></span></button>
-            <button class="img-toggle" id="img-toggle" type="button" hidden aria-pressed="false" title="Crear imagen"><span data-icon="image"></span><span class="img-toggle-label">Crear imagen</span></button>
+            <button class="img-toggle" id="img-toggle" type="button" hidden aria-pressed="false" aria-label="Crear imagen" title="Crear imagen"><span data-icon="image"></span></button>
             <button class="send" id="send" type="submit" aria-label="Enviar mensaje" disabled><span data-icon="send"></span></button>
           </form>
         </div>
@@ -2764,7 +2793,7 @@ $("#auth-form").addEventListener("submit", async e => {
       const { data, error } = await sb.auth.signUp({
         email, password,
         options: {
-          data: { display_name: name || email.split("@")[0] },
+          data: Object.assign({ display_name: name || email.split("@")[0] }, /^[A-Za-z0-9]{8,32}$/.test(store.get("pnova.ref") || "") ? { ref_code: store.get("pnova.ref") } : {}),
           emailRedirectTo: location.origin + "/"
         }
       });
@@ -5209,7 +5238,7 @@ $("#model-btn").onclick = e => {
       <span class="opt-text">${esc(m.name)}<small>${note}</small></span>
       ${m.id === modelId ? icon("check") : ""}
     </button>`; }).join(""),
-    id => { modelId = id; store.set("pnova.model", id); setModelLabel(); });
+    id => { modelId = id; store.set("pnova.model", id); setModelLabel(); }, null, true);
 };
 
 $("#user-btn").onclick = e => {
@@ -6046,19 +6075,49 @@ const myCode = () => user ? user.id.replace(/-/g, "").slice(0, 10) : "";
 const inviteUrl = () => location.origin + "/invite/" + myCode();
 const DAY = 864e5, dnum = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY);
 
-/* ---------- Enlace de invitación: reclamar al entrar con cuenta nueva ---------- */
+/* ---------- Enlace de invitación: banner «te han invitado» + reclamar al entrar con cuenta nueva ---------- */
 let tries = 0, claiming = false;
-if (S("pnova.ref")) {
-  const t = "Te han invitado: crea tu cuenta y recibe 7 días de Plan Basic gratis.";
-  const e = document.querySelector(".ld-small"); if (e) e.textContent = t;
+const REF_RE = /^[A-Za-z0-9]{8,32}$/;
+const refFor = () => {
+  const l = S("pnova.ref"); if (l && REF_RE.test(l)) return l;
+  const m = user && user.user_metadata && user.user_metadata.ref_code;
+  return m && REF_RE.test(String(m)) && !S("pnova.refdone." + user.id) ? String(m) : "";
+};
+function paintInvite(name) {
+  const lead = name ? name + " te ha invitado a PNova IA" : "Te han invitado a PNova IA";
+  const box = document.getElementById("ld-invite"), t = document.getElementById("ld-invite-title"), a = document.getElementById("auth-invite");
+  if (t) t.textContent = lead;
+  if (box) box.hidden = false;
+  if (a) { a.textContent = "🎁 " + lead + ". Crea tu cuenta y llévate 7 días de Plan Basic gratis."; a.hidden = false; }
 }
+function clearInvite() {
+  const box = document.getElementById("ld-invite"), a = document.getElementById("auth-invite");
+  if (box) box.hidden = true; if (a) a.hidden = true;
+}
+(async function showInvite() {
+  const ref = S("pnova.ref");
+  if (!ref || !REF_RE.test(ref) || user) return;       // con sesión iniciada no hace falta enseñar la invitación
+  paintInvite(S("pnova.refname") || "");                // pinta ya (con el nombre guardado, si lo hay) y se afina con la respuesta del servidor
+  try {
+    const res = await fetch(CONFIG.SUPABASE_URL + "/rest/v1/rpc/get_inviter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: CONFIG.SUPABASE_ANON_KEY, Authorization: "Bearer " + CONFIG.SUPABASE_ANON_KEY },
+      body: JSON.stringify({ p_code: ref })
+    });
+    if (!res.ok) return;                                 // si falla la red/función se queda el aviso genérico
+    const j = await res.json();
+    const name = String((j && typeof j === "object" ? j.name : j) || "").trim().slice(0, 40);
+    if (name) { S("pnova.refname", name); paintInvite(name); }
+    else { S("pnova.ref", ""); S("pnova.refname", ""); clearInvite(); }   // código que no existe: se descarta
+  } catch (e) { console.warn("[PNova] invitador", e); }
+})();
 setInterval(async () => {
-  const ref = S("pnova.ref"); if (!ref || !user || !sb || claiming || tries > 5) return;
+  const ref = refFor(); if (!ref || !user || !sb || claiming || tries > 5) return;
   claiming = true; tries++;
   try {
     const { data, error } = await sb.rpc("claim_referral", { p_code: ref });
     if (error) throw error;
-    S("pnova.ref", "");
+    S("pnova.ref", ""); S("pnova.refname", ""); S("pnova.refdone." + user.id, "1"); clearInvite();
     if (data && data.ok) { toast("¡Bienvenido! Has ganado " + data.days + " días de Plan Basic."); try { refreshSubscription(); } catch (e) {} }
     else if (data && data.error === "not_new") toast("Las invitaciones solo valen para cuentas nuevas.");
   } catch (e) { console.warn("[PNova] invitación", e); } finally { claiming = false; }
