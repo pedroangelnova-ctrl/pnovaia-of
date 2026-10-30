@@ -679,6 +679,25 @@
   .ld-small { margin: 18px 0 0; font-size: 13.5px; color: #7f89b3; }
   #landing-view :focus-visible { outline-color: #7fb0ff; }
 
+  /* Prueba sin registro */
+  .ld-try { width: 100%; max-width: 520px; margin-top: 28px; text-align: left; }
+  .ld-try-box { border: 1px solid rgba(255,255,255,.16); border-radius: 22px; background: rgba(255,255,255,.06); backdrop-filter: blur(10px); padding: 14px; }
+  .ld-try-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 2px 10px; font-size: 13.5px; color: #aab4dc; }
+  .ld-try-head b { color: #e6ebff; font-weight: 600; }
+  .ld-try-log { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; margin-bottom: 10px; }
+  .ld-try-log:empty { display: none; }
+  .ld-try-msg { padding: 9px 13px; border-radius: 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 92%; }
+  .ld-try-msg.u { align-self: flex-end; background: rgba(90,130,255,.28); color: #fff; }
+  .ld-try-msg.a { align-self: flex-start; background: rgba(255,255,255,.08); color: #e6ebff; }
+  .ld-try-msg.err { color: #ffb4b4; }
+  .ld-try-form { display: flex; gap: 8px; }
+  .ld-try-form input { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.28); color: #fff; font: inherit; font-size: 16px; }
+  .ld-try-form input::placeholder { color: #7f89b3; }
+  .ld-try-form button { height: 46px; padding: 0 20px; border-radius: 999px; font-weight: 600; color: #fff; background: var(--accent-grad); }
+  .ld-try-form button:disabled, .ld-try-form input:disabled { opacity: .5; cursor: not-allowed; }
+  .ld-try-end { margin-top: 12px; text-align: center; font-size: 14.5px; color: #c9d1f5; }
+  .ld-try-end .ld-btn { margin-top: 10px; min-width: 0; height: 44px; }
+
   /* La animación solo corre con .play; sin ella (o con movimiento reducido) se ve el estado final. */
   .ld-outline { opacity: 0; }
   .ld-flare, .ld-ray { opacity: 0; }
@@ -1673,6 +1692,20 @@ background:radial-gradient(55% 42% at 50% -4%,color-mix(in srgb,var(--accent-fil
       <button type="button" class="ld-btn ld-btn-ghost" data-go="login">Iniciar sesión</button>
     </div>
     <p class="ld-small ld-rise" style="--d:3.3s">Entra con correo, Google o teléfono.</p>
+    <section class="ld-try ld-rise" id="ld-try" style="--d:3.5s" aria-label="Pruébalo sin registrarte" hidden>
+      <div class="ld-try-box">
+        <div class="ld-try-head"><b>Pruébalo sin registrarte</b><span id="ld-try-left" aria-live="polite"></span></div>
+        <div class="ld-try-log" id="ld-try-log" role="log" aria-live="polite"></div>
+        <form class="ld-try-form" id="ld-try-form" autocomplete="off">
+          <input id="ld-try-input" type="text" maxlength="300" placeholder="Pregúntame lo que quieras" aria-label="Tu pregunta">
+          <button type="submit" id="ld-try-send">Enviar</button>
+        </form>
+        <div class="ld-try-end" id="ld-try-end" hidden>
+          ¿Te ha gustado? Crea tu cuenta gratis para seguir conversando y guardar tus chats.
+          <br><button type="button" class="ld-btn ld-btn-main" data-go="register">Crear cuenta gratis</button>
+        </div>
+      </div>
+    </section>
   </main>
   <section class="ld-seo" aria-labelledby="seo-h2">
     <div class="ld-seo-in">
@@ -2310,6 +2343,8 @@ const CONFIG = {
   GALAXY_MODEL: "pnova-3.0-galaxy",
   FALLBACK_MODEL: "pnova-1.5",         // al agotar las preguntas de Galaxy se pasa a este
   GALAXY_DAILY_QUESTIONS: 10,          // preguntas con Galaxy antes de pasar a PNova 1.5 (se renuevan cada día)
+  // Prueba sin registro en la pantalla de inicio (usa el modelo indicado, que debe tener sendAuthToken:false).
+  GUEST_TRIAL: { ENABLED: true, MODEL: "pnova-1.5", QUESTIONS: 2, MAX_CHARS: 300 },
   HISTORY_LIMIT: 20,          // mensajes previos que se envían al backend
   REQUEST_TIMEOUT_MS: 90000,  // tiempo máximo de espera de la respuesta
 
@@ -3491,6 +3526,49 @@ function routeAuth() {
   if (r === "phone") { if (CONFIG.PHONE_ENABLED) showPanel("phone"); else setPath("/login", true); }
 }
 landing.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => goAuth(b.dataset.go)));
+
+/* ---------- Prueba sin registro (landing) ---------- */
+(function guestTrial() {
+  const T = CONFIG.GUEST_TRIAL, box = document.getElementById("ld-try");
+  const model = T && T.ENABLED && CONFIG.MODELS.find(m => m.id === T.MODEL && m.endpoint && !m.sendAuthToken);
+  if (!box || !model) return;
+  box.hidden = false;
+  const log = document.getElementById("ld-try-log"), form = document.getElementById("ld-try-form"),
+        inp = document.getElementById("ld-try-input"), btn = document.getElementById("ld-try-send"),
+        left = document.getElementById("ld-try-left"), end = document.getElementById("ld-try-end");
+  const KEY = "pnova.guest.trial";
+  let used = 0, busy = false; const hist = [];
+  try { used = Math.min(T.QUESTIONS, parseInt(localStorage.getItem(KEY) || "0", 10) || 0); } catch (e) {}
+  const render = () => {
+    const rest = T.QUESTIONS - used;
+    left.textContent = rest > 0 ? (rest === 1 ? "Te queda 1 pregunta" : "Te quedan " + rest + " preguntas") : "";
+    inp.disabled = btn.disabled = busy || rest <= 0;
+    end.hidden = rest > 0;
+    if (rest <= 0) form.hidden = true;
+  };
+  const add = (cls, text) => { const d = document.createElement("div"); d.className = "ld-try-msg " + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
+  form.addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const q = inp.value.trim().slice(0, T.MAX_CHARS);
+    if (!q || busy || used >= T.QUESTIONS) return;
+    busy = true; inp.value = ""; add("u", q); const wait = add("a", "Pensando…"); render();
+    const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), CONFIG.REQUEST_TIMEOUT_MS);
+    try {
+      const res = await fetch(model.endpoint, { method: "POST", signal: ctrl.signal, headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: q, history: hist.slice(-4), conversation_id: null, user_id: "guest", model: model.id }) });
+      if (!res.ok) throw new Error("http " + res.status);
+      const reply = extractReply(await res.json().catch(() => null)).replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      if (!reply) throw new Error("empty");
+      wait.textContent = reply;
+      hist.push({ role: "user", content: q }, { role: "assistant", content: reply });
+      used++; try { localStorage.setItem(KEY, String(used)); } catch (e) {}   // solo cuenta si hubo respuesta
+    } catch (err) {
+      wait.classList.add("err");
+      wait.textContent = err.name === "AbortError" ? "Tardó demasiado en responder. Inténtalo de nuevo." : "No se pudo obtener respuesta. Inténtalo de nuevo.";
+    } finally { clearTimeout(timer); busy = false; render(); if (!inp.disabled) inp.focus(); }
+  });
+  render();
+})();
 landing.addEventListener("pointerdown", e => { if (!e.target.closest("button")) landing.classList.add("done"); });  // tocar = saltar la intro
 $("#auth-home").onclick = () => { showNotice(); showLanding(); setPath("/"); };
 
