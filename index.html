@@ -2756,7 +2756,7 @@ $("#btn-google").onclick = async () => {
 const PAYPAL_CFG = {
   CLIENT_ID: "BAASj0qjHI2-n9l1m_rLzhIBOCip3O0i4kgCsu5_FVymSjPGFBOwAxWEDI7wdi4LXSDb-kHxYgTbW06ojw",
   PLAN_ID: "P-3WX98865YT444350YNLPAVLQ",
-  GALAXY_READY: false,   // pon true cuando el Worker de pagos acepte plan:"galaxy" a 10,99 €/mes
+  GALAXY_READY: true,    // el Worker de pagos ya acepta plan:"galaxy" (10,99 €/mes). Ponlo en false para ocultar la compra de Galaxy
   MODE: "onetime",            // "onetime" = pago único por meses (nuevo) · "subscription" = respaldo anterior
   ENV: "live",                // "sandbox" mientras pruebas · "live" cuando todo esté verificado (usa CLIENT_ID)
   SANDBOX_CLIENT_ID: "BAAchKxoA0MepTokGabR9Fl7pqa7Op4_Bq8vpaeNA8ht8ipwldG4FbsHbULHumm17qCkKdz0fjZGsecqIA",      // Client ID de la app SANDBOX de PayPal
@@ -2850,8 +2850,8 @@ let subState = { status: "unknown", expiresAt: null }, subSeq = 0, subTimer = nu
 function renderSubscription() {
   const st = subState.status, basic = st === "basic", free = st === "free";
   const dateTxt = basic ? pkDate(subState.expiresAt) : "";
-  $("#plan-lead").textContent = basic ? "Tu Plan Basic está activo hasta el " + dateTxt + ". Galaxia llegará pronto."
-    : free ? "Estás usando el plan Gratis. El Plan Basic ya se puede contratar; Galaxia llegará pronto."
+  $("#plan-lead").textContent = basic ? "Tu Plan Basic está activo hasta el " + dateTxt + ". Cuando quieras, puedes pasarte a Galaxy."
+    : free ? "Estás usando el plan Gratis. Puedes contratar el Plan Basic o Galaxy."
     : st === "error" ? "No se pudo comprobar tu plan ahora mismo. Mientras tanto solo se aplica el acceso gratuito. Vuelve a abrir Planes para reintentarlo."
     : "Comprobando tu plan…";
   $("#plan-free").classList.toggle("current", free);
@@ -2903,7 +2903,7 @@ async function payCapture(orderId) {
   else ppMsg("No se pudo verificar el pago, así que no se ha activado el acceso. Si te han cobrado, contacta con soporte indicando el pedido " + orderId + ".");
   return j;
 }
-const payErrText = e => e && e.message === "auth" ? "Inicia sesión de nuevo para pagar." : e && e.message === "anonymous_not_allowed" ? "Necesitas una cuenta con correo o teléfono para pagar." : "No se pudo completar el pago. No se ha activado el acceso. Inténtalo de nuevo en unos minutos.";
+const payErrText = e => e && e.message === "auth" ? "Inicia sesión de nuevo para pagar." : e && e.message === "anonymous_not_allowed" ? "Necesitas una cuenta con correo o teléfono para pagar." : e && e.message === "higher_plan_active" ? "Ya tienes Galaxy activo, que incluye todo lo del Plan Basic. No hace falta comprar Basic." : "No se pudo completar el pago. No se ha activado el acceso. Inténtalo de nuevo en unos minutos.";
 async function payRun(fn, force) {
   if (payBusy && !force) return;
   payBusy = true; ppMsg(); setPayUI();
@@ -3046,7 +3046,7 @@ $("#plan-modal").addEventListener("mousedown", e => { if (e.target.id === "plan-
 function showPaySuccess(j) {
   const months = Number(j && j.months) || 0;
   const exp = (subState.status === "basic" && subState.expiresAt) ? subState.expiresAt : (j && j.expires_at);
-  $("#ps-text").textContent = (months ? (months === 1 ? "Se ha activado 1 mes" : "Se han activado " + months + " meses") + " de Plan Basic." : "Tu Plan Basic ya está activo.") + (exp ? " Tu acceso vence el " + pkDate(exp) + "." : "");
+  $("#ps-text").textContent = (months ? (months === 1 ? "Se ha activado 1 mes" : "Se han activado " + months + " meses") + " de " + PLAN_NAME[payPlan] + "." : "Tu " + PLAN_NAME[payPlan] + " ya está activo.") + (exp ? " Tu acceso vence el " + pkDate(exp) + "." : "");
   $("#plan-modal").hidden = true; $("#checkout-modal").hidden = true; $("#set-overlay").hidden = true;
   const ov = $("#pay-success"); ov.hidden = false;
   ov.querySelectorAll(".ps-circle, .ps-tick, .ps-badge, h2, p, .btn-sm, .ps-dot").forEach(n => { n.style.animation = "none"; void n.offsetWidth; n.style.animation = ""; });   // reinicia la animación
@@ -3682,14 +3682,14 @@ async function deleteConversation(id) {
 let typeToken = 0;
 /* Tarjeta de «límite diario de imágenes alcanzado» con botón para mejorar de plan */
 function limitCardHtml(info) {
-  const names = { free: "Gratis", basic: "Plan Basic", galaxy: "Galaxia" };
+  const names = { free: "Gratis", basic: "Plan Basic", galaxy: "Galaxy" };
   const plan = names[info.plan] || "actual";
   let text, btn = "";
   if (info.plan === "free") {
     text = `Tu plan Gratis incluye ${info.limit} imágenes al día. Se renuevan a medianoche. Con el Plan Basic puedes crear hasta 20 al día.`;
     btn = `<button type="button" class="limit-btn" id="btn-upgrade">Pasar a Basic</button>`;
   } else if (info.plan === "basic") {
-    text = `Tu Plan Basic incluye ${info.limit} imágenes al día. Se renuevan a medianoche. Galaxia, con 70 al día, llegará pronto.`;
+    text = `Tu Plan Basic incluye ${info.limit} imágenes al día. Se renuevan a medianoche. Con Galaxy puedes crear hasta 70 al día.`;
     btn = `<button type="button" class="limit-btn ghost" id="btn-upgrade">Ver planes</button>`;
   } else {
     text = `Tu plan ${plan} incluye ${info.limit} imágenes al día. Se renuevan a medianoche.`;
@@ -3739,7 +3739,7 @@ $("#messages").addEventListener("click", async e => {
   const srcBtn = e.target.closest("[data-sources]");
   if (srcBtn) openSources(messages[+srcBtn.dataset.sources]);
   if (e.target.closest("#btn-upgrade")) {
-    if (limitInfo && limitInfo.plan === "free") openPlanModal(); else openSettings("plans");
+    if (limitInfo && limitInfo.plan === "free") { setPayPlan("basic"); openPlanModal(); } else openSettings("plans");
     return;
   }
   if (e.target.closest("#btn-retry") && !sending) {
@@ -5915,20 +5915,29 @@ function setPayPlan(p) {
   $("#pm-title").textContent = PLAN_NAME[p]; $("#co-title").textContent = PLAN_NAME[p];
   const li = document.querySelector(".co-lines li span"); if (li) li.textContent = PLAN_NAME[p];
   document.querySelector(".pm-lead").textContent = p === "galaxy" ? "¿Cuántos meses de Galaxy quieres? PNova 3.0 Galaxy sin límite diario, 70 imágenes al día y acceso anticipado." : "¿Cuántos meses quieres? Más mensajes e imágenes, acceso a Nova AI y respuestas más rápidas.";
+  renderSubscription();
 }
-$("#plan-choose").addEventListener("click", () => { setPayPlan(window.__pg ? "galaxy" : "basic"); window.__pg = false; }, true);
+$("#plan-choose").addEventListener("click", () => setPayPlan("basic"), true);
 $("#plan-galaxy-btn").addEventListener("click", () => {
   if (!PAYPAL_CFG.GALAXY_READY) { toast("Galaxy (10,99 € al mes) se activa muy pronto."); return; }
-  window.__pg = true; $("#plan-choose").click();
+  setPayPlan("galaxy"); openPlanModal();
 });
 const _rsub = renderSubscription;
 renderSubscription = function () {
   _rsub();
-  const gal = subState.status === "basic" && pnTier === "galaxy", lead = $("#plan-lead");
+  const active = subState.status === "basic", gal = active && pnTier === "galaxy", lead = $("#plan-lead"), ready = PAYPAL_CFG.GALAXY_READY;
+  const date = active ? pkDate(subState.expiresAt) : "";
   $("#plan-galaxy").classList.toggle("current", gal); $("#plan-galaxy-tag").hidden = !gal;
-  $("#plan-galaxy-btn").textContent = gal ? "Añadir más meses" : (PAYPAL_CFG.GALAXY_READY ? "Elegir Galaxy" : "Muy pronto");
-  if (gal) { lead.textContent = "Tu Plan Galaxy está activo hasta el " + pkDate(subState.expiresAt) + "."; $("#plan-basic").classList.remove("current"); $("#plan-basic-tag").hidden = true; }
-  else lead.textContent = lead.textContent.replace("; Galaxia llegará pronto.", ". Galaxy (10,99 € al mes) llega muy pronto.").replace(" Galaxia llegará pronto.", " Galaxy (10,99 € al mes) llega muy pronto.");
+  $("#plan-galaxy-btn").textContent = !ready ? "Muy pronto" : gal ? "Añadir más meses" : active ? "Pasarme a Galaxy" : "Elegir Galaxy";
+  const pc = $("#plan-choose");                      // con Galaxy activo no tiene sentido comprar Basic (el servidor también lo rechaza)
+  pc.disabled = gal; if (gal) pc.textContent = "Incluido en Galaxy";
+  if (gal) { lead.textContent = "Tu Plan Galaxy está activo hasta el " + date + "."; $("#plan-basic").classList.remove("current"); $("#plan-basic-tag").hidden = true; }
+  const n = $("#mo-access");
+  if (active) {
+    n.textContent = gal ? "Tu Plan Galaxy está activo hasta el " + date + ". Si compras más meses, se suman a esa fecha."
+      : payPlan === "galaxy" ? "Tu Plan Basic está activo hasta el " + date + ". Al pasarte a Galaxy, el tiempo que te queda también pasa a ser Galaxy y se suman los meses nuevos."
+      : "Tu Plan Basic está activo hasta el " + date + ". Si compras más meses, se suman a esa fecha.";
+  }
 };
 renderSubscription();
 
