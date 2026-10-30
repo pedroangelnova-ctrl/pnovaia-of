@@ -2393,7 +2393,7 @@ const CONFIG = {
   REQUEST_TIMEOUT_MS: 90000,  // tiempo máximo de espera de la respuesta
 
   // Crear imagen (Worker POST /image, Workers AI · FLUX.1 schnell, cuota gratuita de Cloudflare).
-  IMAGE_ENDPOINT: "https://pnova-gemini.pedroangelnp-es.workers.dev/image",
+  IMAGE_ENDPOINT: "https://pnova-galaxy.pedroangelnp-es.workers.dev/image",
   IMAGE_TIMEOUT_MS: 120000,   // tiempo máximo de espera de una imagen
   IMAGE_PROMPT_MAX: 1000,     // longitud máxima de la descripción
 
@@ -3880,6 +3880,18 @@ function scrollDown(instant) {
   requestAnimationFrame(() => s.scrollTo({ top: s.scrollHeight, behavior: instant ? "instant" : "smooth" }));
 }
 
+/* Detecta cuando el usuario pide una imagen con palabras (sin pulsar el botón de crear imagen) */
+function wantsImage(t) {
+  t = String(t || "").trim();
+  if (t.length < 6 || t.length > 600) return false;
+  const W = s => new RegExp("(?:^|[^\\p{L}])(?:" + s + ")(?![\\p{L}])", "iu");
+  if (W("c[oó]mo|qu[eé] es|explica\\w*|c[oó]digo|programa\\w*|python|photoshop|canva|canvas|css|html|api|script|svg|gr[aá]fic[oa]s?|tabla|diagrama|matplotlib|funci[oó]n").test(t)) return false;
+  const V = "genera|gen[eé]rame|generar|crea|cr[eé]ame|crear|dibuja|dib[uú]jame|dibujar|haz|hazme|hacer|dise[ñn]a|dis[eé][ñn]ame|dise[ñn]ar|pinta|p[ií]ntame|ilustra|ilustrame|mu[eé]strame|ens[eé][ñn]ame|dame|d[aá]me";
+  const N = "im[aá]genes|imagen|fotograf[ií]as?|fotos?|ilustraci[oó]n(?:es)?|dibujos?|logo(?:tipo)?s?|retratos?|p[oó]sters?|carteles?|wallpapers?|fondos? de pantalla|avatar(?:es)?|iconos?|pegatinas?|stickers?|pinturas?|portadas?|banners?|memes?";
+  if (new RegExp("(?:^|[^\\p{L}])(?:" + V + ")(?![\\p{L}])[^.?!\\n]{0,40}?(?:^|[^\\p{L}])(?:" + N + ")(?![\\p{L}])", "iu").test(t)) return true;
+  return /^\s*(?:dibuja|dib[uú]jame|p[ií]ntame|pinta)(?![\p{L}])/iu.test(t);
+}
+
 async function sendMessage(text, opts = {}) {
   text = text.trim();
   const files = opts.files || [];
@@ -3923,7 +3935,7 @@ async function sendMessage(text, opts = {}) {
       attData[saved.id] = files.filter(f => f.kind !== "text");
     }
     renderMessages(); scrollDown();
-    await (opts.image ? requestImage(text) : requestReply());
+    await ((opts.image || (!files.length && wantsImage(text))) ? requestImage(text) : requestReply());
   } catch (err) {
     lastFailed = "No se pudo guardar el mensaje. Revisa tu conexión y vuelve a intentarlo.";
     $("#input").value = autoText ? "" : text; autosize();
