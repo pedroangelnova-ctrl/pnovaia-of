@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>PNova IA</title>
+<script>
+/* Respaldo SPA: guarda la ruta pedida y vuelve a "/" para que index.html la restaure. */
+(function () {
+  try { sessionStorage.setItem("pnova.spa", location.pathname + location.search + location.hash); } catch (e) {}
+  location.replace("/");
+})();
+</script>
+</head>
+<body style="background:#05060f;color:#aab4dc;font-family:system-ui,sans-serif;display:grid;place-items:center;height:100vh;margin:0">
+<p>Cargando PNova IA…</p>
+</body>
+</html>
